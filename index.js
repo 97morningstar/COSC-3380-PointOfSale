@@ -15,12 +15,19 @@ app.use(express.json()); // allow us to access request body req.body
 
 //app.use(express.static(path.join(__dirname, "client/build")));
 
-if(process.env.NODE_ENV === "production"){
+/*if(process.env.NODE_ENV === "production"){
   //serve static content
   //npm run build
   app.use(express.static(path.join(__dirname, "client/build")));
+}*/
+
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'));
 }
 
+app.get('*', (request, response) => {
+	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 console.log(path.join(__dirname, "client/build"));
 
