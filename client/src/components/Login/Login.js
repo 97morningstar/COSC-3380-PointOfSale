@@ -85,7 +85,7 @@ function Login() {
 
 
     axios
-      .post("http://localhost:5050/api/login", loginInfo)
+      .post("/api/login", loginInfo)
       .then((res) => {
 
         localStorage.setItem("email", res.data.email);

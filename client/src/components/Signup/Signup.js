@@ -149,7 +149,7 @@ console.log(studentFirst);
     }*/
 
     axios
-    .post("http://localhost:5050/create_customer", studentFirst, getConfig())
+    .post("/api/create_customer", studentFirst, getConfig())
     .then((res) => {
       console.log("SUCCESS");
       if (res.data.error) {

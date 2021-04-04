@@ -1,17 +1,34 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 5050;
+const port = process.env.PORT || 4000;
 const cors = require("cors");
 const pool = require("./services/db")
+const path = require("path");
+
+// process.env.NODE_ENV => production or undefined
+
+
 
 //middleware
 app.use(cors());
 app.use(express.json()); // allow us to access request body req.body
 
+app.use(express.static(path.join(__dirname, "client/build")));
+
+if(process.env.NODE_ENV === "production"){
+  //serve static content
+  //npm run build
+  app.use(express.static(path.join(__dirname, "client/build")));
+}
+
+
+console.log(path.join(__dirname, "client/build"));
+
+
 //routes
 
 // create a customer
-app.post("/create_customer", async (req, res) => {
+app.post("/api/create_customer", async (req, res) => {
   try {
     const data  = req.body;
     console.log(data);
@@ -37,7 +54,7 @@ app.post("/create_customer", async (req, res) => {
 
 
 // get all customers
-app.get("/view_all_customer", async (req, res) => {
+app.get("/api/view_all_customer", async (req, res) => {
     try {
       const all_customers = await pool.query("SELECT * FROM customer");
       res.json(all_customers);
@@ -47,7 +64,7 @@ app.get("/view_all_customer", async (req, res) => {
 })
 
 // get a customer by id
-app.get("/customer/:id", async (req, res) => {
+app.get("/api/customer/:id", async (req, res) => {
   try {
 
     const {id} = req.params;
@@ -61,7 +78,7 @@ app.get("/customer/:id", async (req, res) => {
 })
 
 // update a customer by id
-app.put("/customer/:id", async (req, res) => {
+app.put("/api/customer/:id", async (req, res) => {
     try {
       const {id} = req.params;
       const data  = req.body;
@@ -87,7 +104,7 @@ app.put("/customer/:id", async (req, res) => {
 });
 
 // delete a customer by id
-app.delete("/customer/:id", async (req, res) => {
+app.delete("/api/customer/:id", async (req, res) => {
     try {
       const {id} = req.params;
       const deleteCustomer = await pool.query("DELETE FROM customer WHERE customer_id = ?", [id]);
