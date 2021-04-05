@@ -18,11 +18,12 @@ import { Button, LinearProgress } from "@material-ui/core";
 import slogan from "../../assets/_Logo.gif";
 import food from "../../assets/food.png";
 /* Categories Images */
+/* Categories Images */
 import Electronics from "../../assets/Electronics.png";
-import MensClothing from "../../assets/MensClothing.png";
-import Shoes from "../../assets/Shoes.png";
-import Sportswear from "../../assets/Sportswear.png";
-import WomensClothing from "../../assets/WomensClothing.png";
+import Pets from "../../assets/Pets.png";
+import ToysAndGames from "../../assets/ToysAndGames.png";
+import Clothing from "../../assets/MensClothing.png";
+import Miscellaneous from "../../assets/Miscellaneous.png";
 import Groceries from "../../assets/Groceries.png";
 
 import Footer from "../../components/Footer/Footer";
@@ -280,36 +281,36 @@ const [imageArray, setimageArray] = useState([]);
                   </Link>
                 </Grid>
                 <Grid item xs={4}>
-                    <Link href="/sportswear" className={classes.link}>
-                        <img alt="category" className={classes.category} src={Sportswear} />
+                    <Link href="/clothing" className={classes.link}>
+                        <img alt="category" className={classes.category} src={Clothing} />
                         <Typography variant="h5" className={classes.Text} >
-                        Sportwear
+                        Clothing
                      </Typography>
                     </Link>
                 </Grid>
             </Grid>
             <Grid xs={12} container justify="center" alignItems="center" >
                 <Grid item xs={4}>
-                    <Link href="/shoes" className={classes.link}>
-                        <img alt="category" className={classes.category} src={Shoes} />
+                    <Link href="/toys-and-games" className={classes.link}>
+                        <img alt="category" className={classes.category} src={ToysAndGames} />
                         <Typography variant="h5" className={classes.Text} >
-                        Shoes
+                        Toys and Games
                      </Typography>
                     </Link>
                 </Grid>
                 <Grid item xs={4}>
-                    <Link href="/men" className={classes.link}>
-                        <img alt="category" className={classes.category} src={MensClothing} />
+                    <Link href="/pets" className={classes.link}>
+                        <img alt="category" className={classes.category} src={Pets} />
                         <Typography variant="h5" className={classes.Text} >
-                        Men's Clothing
+                        Pets
                      </Typography>
                     </Link>
                 </Grid>
                 <Grid item xs={4}>
-                    <Link href="/women" className={classes.link}>
-                        <img alt="category" className={classes.category} src={WomensClothing} />
+                    <Link href="/miscellaneous" className={classes.link}>
+                        <img alt="category" className={classes.category} src={Miscellaneous} />
                         <Typography variant="h5" className={classes.Text} >
-                        Women's Clothing
+                        Miscellaneous
                      </Typography>
                     </Link>
                 </Grid>
