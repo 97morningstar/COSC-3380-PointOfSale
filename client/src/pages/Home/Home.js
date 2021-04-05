@@ -274,7 +274,7 @@ const [imageArray, setimageArray] = useState([]);
                 </Grid>
                 <Grid item xs={4}>
                   <Link href="/electronics" className={classes.link} > 
-                      <img alt="category" className={classes.category} src={Electronics} />
+                      <img alt="category" className={classes.category1} src={Electronics} />
                       <Typography variant="h5" className={classes.Text} >
                       Electronics
                      </Typography>
@@ -282,7 +282,7 @@ const [imageArray, setimageArray] = useState([]);
                 </Grid>
                 <Grid item xs={4}>
                     <Link href="/clothing" className={classes.link}>
-                        <img alt="category" className={classes.category} src={Clothing} />
+                        <img alt="category" className={classes.category1} src={Clothing} />
                         <Typography variant="h5" className={classes.Text} >
                         Clothing
                      </Typography>
@@ -292,7 +292,7 @@ const [imageArray, setimageArray] = useState([]);
             <Grid xs={12} container justify="center" alignItems="center" >
                 <Grid item xs={4}>
                     <Link href="/toys-and-games" className={classes.link}>
-                        <img alt="category" className={classes.category} src={ToysAndGames} />
+                        <img alt="category" className={classes.category1} src={ToysAndGames} />
                         <Typography variant="h5" className={classes.Text} >
                         Toys and Games
                      </Typography>
@@ -300,7 +300,7 @@ const [imageArray, setimageArray] = useState([]);
                 </Grid>
                 <Grid item xs={4}>
                     <Link href="/pets" className={classes.link}>
-                        <img alt="category" className={classes.category} src={Pets} />
+                        <img alt="category" className={classes.category1} src={Pets} />
                         <Typography variant="h5" className={classes.Text} >
                         Pets
                      </Typography>
@@ -308,7 +308,7 @@ const [imageArray, setimageArray] = useState([]);
                 </Grid>
                 <Grid item xs={4}>
                     <Link href="/miscellaneous" className={classes.link}>
-                        <img alt="category" className={classes.category} src={Miscellaneous} />
+                        <img alt="category" className={classes.category1} src={Miscellaneous} />
                         <Typography variant="h5" className={classes.Text} >
                         Miscellaneous
                      </Typography>

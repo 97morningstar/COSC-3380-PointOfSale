@@ -12,7 +12,7 @@ import ReportBug from "./pages/ReportBug/ReportBug";
 /* Categories Routes */
 import Categories from "./pages/Categories/Categories";
 import Miscellaneous from "./pages/Categories/miscellaneous";
-import ToysAndGames from "./pages/ToysAndGames/toysandgames";
+import ToysAndGames from "./pages/Categories/toysandgames";
 import Clothing from "./pages/Categories/clothing";
 import Electronics from "./pages/Categories/electronics";
 import Pets from "./pages/Categories/pets";

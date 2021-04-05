@@ -31,7 +31,7 @@
     "react-material-ui-carousel": "^2.2.2",
     "react-phone-number-input": "^3.1.6",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "^3.4.3",
     "react-select": "^3.1.0",
     "react-vertical-timeline-component": "^3.3.1",
     "yup": "^0.29.3"
