@@ -1,8 +1,7 @@
-# COSC-3380-PointOfSale
+# COSC-3380-PointOfSale :credit_card:
 Team 4 - Point of Sale System
 
-## Instructions:
-
+## Instructions :receipt:
 > You need to install: npm, git, nodejs
 
 1. Create a folder in your computer
@@ -20,13 +19,13 @@ Team 4 - Point of Sale System
 
 `npm install -g nodemon`
 
-## To run the project in the root folder run
+## To run the project in the root folder run :runner:
 `nodemon`
 
-## Possible Problems
+## Possible Problems :massage_man:
 1. react-scripts is missing or not installed
 
-### Solution:
+### Solution :pill:
 
 1. Run the following in the /client:
 
@@ -76,10 +75,14 @@ index.js
 
 ## Tech Stack
 
-nodejs
+nodejs 
+
 expressjs
+
 react
+
 mysql
-heroku
+
+heroku :rocket:
 
 
