@@ -7,11 +7,17 @@ You need to install: npm, git, nodejs
 
 1. Create a folder in your computer
 2. Type in the command line:
+
 `git init` [inside that folder to initialize a got repository]
+
 `git clone https://github.com/97morningstar/COSC-3380-PointOfSale.git` [To copy the remote repository into your own computer]
+
 `cd COSC-3380-PointOfSale`
+
 `npm install` [inside /client to install client dependencies]
+
 `npm install` [in the root folder to install server dependencies]
+
 `npm install -g nodemon`
 
 # To run the project in the root folder run
@@ -25,10 +31,15 @@ Solution:
 1. Run the following in the /client:
 
 `rm-rf node_modules`
+
 `rm -rf package-lock.json`
+
 `npm install react-scripts`
+
 `npm install`
+
 `cd mainFolder`
+
 `nodemon `
 
 # If you want to work on the server, then main file that we will be working on is in the root folder
