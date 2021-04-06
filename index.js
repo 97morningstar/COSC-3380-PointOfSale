@@ -13,7 +13,7 @@ const path = require("path");
 app.use(cors());
 app.use(express.json()); // allow us to access request body req.body
 
-app.use(express.static(path.join(__dirname, "client/build")));
+//app.use(express.static(path.join(__dirname, "client/build")));
 
 /*if(process.env.NODE_ENV === "production"){
   //serve static content
@@ -30,7 +30,7 @@ app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 */
-app.get('/', (request, response) => {
+app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
