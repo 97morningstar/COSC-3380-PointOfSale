@@ -11,11 +11,11 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import ReportBug from "./pages/ReportBug/ReportBug";
 /* Categories Routes */
 import Categories from "./pages/Categories/Categories";
-import Women from "./pages/Categories/women";
-import Men from "./pages/Categories/men";
-import Sportswear from "./pages/Categories/sportwear";
+import Miscellaneous from "./pages/Categories/miscellaneous";
+import ToysAndGames from "./pages/Categories/toysandgames";
+import Clothing from "./pages/Categories/clothing";
 import Electronics from "./pages/Categories/electronics";
-import Shoes from "./pages/Categories/shoes";
+import Pets from "./pages/Categories/pets";
 import Groceries from "./pages/Categories/groceries";
 
 
@@ -33,11 +33,11 @@ const App = () => {
         <Route path="/report-bug" component={ReportBug} />
 
         <Route path="/categories" component={Categories} />
-        <Route path="/women" component={Women} />
-        <Route path="/men" component={Men} />
-        <Route path="/sportswear" component={Sportswear} />
+        <Route path="/miscellaneous" component={Miscellaneous} />
+        <Route path="/toys-and-games" component={ToysAndGames} />
+        <Route path="/clothing" component={Clothing} />
         <Route path="/electronics" component={Electronics} />
-        <Route path="/shoes" component={Shoes} />
+        <Route path="/pets" component={Pets} />
         <Route path="/groceries" component={Groceries} />
 
 
