@@ -122,31 +122,6 @@ export default function SignUp() {
       .substring(0, 10);;
 console.log(studentFirst);
 
-     /* axios
-        .post("http://18.213.74.196:8000/api/user_accounts/signup", signUpInfo)
-        .then((res) => {
-          if (res.data.error) {
-            setError(res.data.error);
-          } else {
-
-
-            //authenticate again after the user is created
-            const email = signUpInfo.email;
-            const password = signUpInfo.password1;
-            axios
-              .post("http://18.213.74.196:8000/api/token/", { email, password })
-              .then((res) => {
-              // localStorage.setItem("token", res.data.access);
-                localStorage.setItem("email_id", res.data.email);
-                history.push("/accountInfo");
-              });
-
-
-
-          }
-        })
-        .catch((err) => console.log(err));
-    }*/
 
     axios
     .post("/api/create_customer", studentFirst, getConfig())
