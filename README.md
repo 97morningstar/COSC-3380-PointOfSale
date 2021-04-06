@@ -45,7 +45,7 @@ Solution:
 # If you want to work on the server, then main file that we will be working on is in the root folder
 index.js
 
-# Branching - 
+# Branching 
 
 We create branches so we can work at the same time and then we merge those branches with the main one
 
