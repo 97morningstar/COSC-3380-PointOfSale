@@ -124,6 +124,8 @@ const arrayImages = ['Dog','Peach','Apple', 'Cup', 'Laptop'];
 
 
 const [imageArray, setimageArray] = useState([]);
+const [images, setimages] = useState([]);
+
 
   useEffect(() => {
 
@@ -154,6 +156,37 @@ const [imageArray, setimageArray] = useState([]);
           console.log(err);
         });
     });
+
+
+
+    axios
+    .get("/api/view_all_items" , getConfig())
+    .then((res) => {
+    
+    
+      setimages(res);
+      
+    console.log(res);
+    
+    
+     /* const image = {
+        images: res.data.hits,
+        name: index, // The name of the article
+        price: '$24.99'
+      }*/
+    
+    
+    //   setimageArray(imageArray => [...imageArray, image]);
+    
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+    
+
+
+
+
 
   },[]);
 
@@ -196,6 +229,8 @@ const [imageArray, setimageArray] = useState([]);
           </Grid>
        </Grid>
        <Grid xs={12} item className={classes.text}>
+
+    
 
       
         

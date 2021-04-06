@@ -25,7 +25,12 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'));
 }
 
+/* Prodcution
 app.get('*', (request, response) => {
+	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+*/
+app.get('/', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
@@ -57,6 +62,18 @@ app.post("/api/create_customer", async (req, res) => {
     console.log(err.message);
   }
 });
+
+
+// get all items
+app.get("/api/view_all_items", async (req, res) => {
+  try {
+    const all_items = await pool.query("SELECT * FROM item");
+    console.log(all_items);
+    res.json(all_items);
+  }catch (err) {
+    console.log(err.message);
+  }
+})
 
 
 
@@ -143,6 +160,7 @@ app.post("/api/login", async (req, res) => {
     console.log(err.message);
   }
 })
+
 
 
 
