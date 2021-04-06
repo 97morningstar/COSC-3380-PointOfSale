@@ -41,7 +41,7 @@ Team 4 - Point of Sale System
 
 `nodemon `
 
-## If you want to work on the server, then main file that we will be working on is in the root folder
+## If you want to work on the server, then main file that we will be working on is in the root folder :hammer:
 index.js
 
 ## Branching 
@@ -81,7 +81,7 @@ expressjs
 
 react
 
-mysql
+mysql :key:
 
 heroku :rocket:
 
