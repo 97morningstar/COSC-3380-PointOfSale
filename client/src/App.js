@@ -18,6 +18,8 @@ import Electronics from "./pages/Categories/electronics";
 import Pets from "./pages/Categories/pets";
 import Groceries from "./pages/Categories/groceries";
 
+import Profile from "./pages/CustomerProfile/CustomerProfile";
+
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
@@ -39,6 +41,8 @@ const App = () => {
         <Route path="/electronics" component={Electronics} />
         <Route path="/pets" component={Pets} />
         <Route path="/groceries" component={Groceries} />
+        <Route path="/profile" component={Profile} />
+
 
 
 

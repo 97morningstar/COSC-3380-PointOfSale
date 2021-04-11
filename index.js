@@ -32,6 +32,8 @@ app.use("/api", require("./routes/customer"));
 app.use("/api", require("./routes/item"));
 
 
+app.use("/get_profile", require("./routes/profile"));
+
 /* Do not move from here */
 app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
