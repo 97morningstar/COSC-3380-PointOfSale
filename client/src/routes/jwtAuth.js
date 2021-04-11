@@ -56,7 +56,9 @@ router.post("/create_employee", async (req, res) => {
 router.post("/create_customer", async (req, res) => {
     try {
         //destruct
+
       const data  = req.body;
+      console.log("auth create custoemr");
       var user = await pool.query("SELECT * FROM customer WHERE email = ?",[
         data.email
     ]); 
@@ -89,9 +91,9 @@ router.post("/create_customer", async (req, res) => {
         data.date_of_birth,
         data.is_member
       ] );
-      const token = jwtGenerator(newCustomer.user_id,false);
+      const token = jwtGenerator(newCustomer.customer_id,false);
 
-      res.json("A new customer was added. Success");
+      res.send(newCustomer);
 
     }catch (err){
       console.log(err.message);
@@ -131,12 +133,17 @@ router.post("/create_customer", async (req, res) => {
             if (result){
                 console.log("Valid password and email");
                 const token = jwtGenerator(user[0].user_id,is_employee);
-                res.json({token});
+                console.log("user",user[0]);
+                res.json({token, is_employee, user: user[0]});
             } else{
                 return res.status(401).json("Invalid Credentials");
             }
         }
     });
+
+
+ //   res.send({token, is_employee: false, user_id: newCustomer.customer_id});
+
     
       }catch(err){
           console.error(err.message);

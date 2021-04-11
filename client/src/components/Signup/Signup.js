@@ -124,9 +124,13 @@ console.log(studentFirst);
 
 
     axios
-    .post("/api/create_customer", studentFirst, getConfig())
+    .post("/auth/create_customer", studentFirst, getConfig())
     .then((res) => {
       console.log("SUCCESS");
+      console.log(res);
+
+    
+
       if (res.data.error) {
         setError(res.data.error);
       } else {

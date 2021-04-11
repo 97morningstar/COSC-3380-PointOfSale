@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.89b00181.chunk.css",
-    "main.js": "/static/js/main.7bf069db.chunk.js",
-    "main.js.map": "/static/js/main.7bf069db.chunk.js.map",
+    "main.css": "/static/css/main.86752d04.chunk.css",
+    "main.js": "/static/js/main.36ccfbde.chunk.js",
+    "main.js.map": "/static/js/main.36ccfbde.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.4775ebf3.js",
     "runtime-main.js.map": "/static/js/runtime-main.4775ebf3.js.map",
-    "static/css/2.181c4ea7.chunk.css": "/static/css/2.181c4ea7.chunk.css",
-    "static/js/2.77249b52.chunk.js": "/static/js/2.77249b52.chunk.js",
-    "static/js/2.77249b52.chunk.js.map": "/static/js/2.77249b52.chunk.js.map",
+    "static/css/2.72c09316.chunk.css": "/static/css/2.72c09316.chunk.css",
+    "static/js/2.ce88a3db.chunk.js": "/static/js/2.ce88a3db.chunk.js",
+    "static/js/2.ce88a3db.chunk.js.map": "/static/js/2.ce88a3db.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.d9fb54cd1d1d7c7f44c8a6757dcdd673.js": "/precache-manifest.d9fb54cd1d1d7c7f44c8a6757dcdd673.js",
+    "precache-manifest.ff65f4af96ae2cfe03e3c88201299b38.js": "/precache-manifest.ff65f4af96ae2cfe03e3c88201299b38.js",
     "service-worker.js": "/service-worker.js",
-    "static/css/2.181c4ea7.chunk.css.map": "/static/css/2.181c4ea7.chunk.css.map",
-    "static/css/main.89b00181.chunk.css.map": "/static/css/main.89b00181.chunk.css.map",
-    "static/js/2.77249b52.chunk.js.LICENSE.txt": "/static/js/2.77249b52.chunk.js.LICENSE.txt",
+    "static/css/2.72c09316.chunk.css.map": "/static/css/2.72c09316.chunk.css.map",
+    "static/css/main.86752d04.chunk.css.map": "/static/css/main.86752d04.chunk.css.map",
+    "static/js/2.ce88a3db.chunk.js.LICENSE.txt": "/static/js/2.ce88a3db.chunk.js.LICENSE.txt",
     "static/media/CompanyDashboard.jpg": "/static/media/CompanyDashboard.51c962f8.jpg",
     "static/media/Electronics.png": "/static/media/Electronics.7fca2511.png",
     "static/media/Groceries.png": "/static/media/Groceries.eff843dd.png",
@@ -27,15 +27,17 @@
     "static/media/ToysAndGames.png": "/static/media/ToysAndGames.7c9639b6.png",
     "static/media/UHLogo.png": "/static/media/UHLogo.ab32729f.png",
     "static/media/WomensClothing.png": "/static/media/WomensClothing.5f7770b3.png",
+    "static/media/_Logo (1).png": "/static/media/_Logo (1).23d169d5.png",
     "static/media/_Logo.gif": "/static/media/_Logo.21d497dd.gif",
+    "static/media/background1.jpg": "/static/media/background1.c2169ed6.jpg",
     "static/media/food.png": "/static/media/food.45d8ea93.png",
     "static/media/image.jpg": "/static/media/image.882dccfd.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.4775ebf3.js",
-    "static/css/2.181c4ea7.chunk.css",
-    "static/js/2.77249b52.chunk.js",
-    "static/css/main.89b00181.chunk.css",
-    "static/js/main.7bf069db.chunk.js"
+    "static/css/2.72c09316.chunk.css",
+    "static/js/2.ce88a3db.chunk.js",
+    "static/css/main.86752d04.chunk.css",
+    "static/js/main.36ccfbde.chunk.js"
   ]
 }

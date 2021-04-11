@@ -15,7 +15,7 @@ import { Chip } from "@material-ui/core";
 import { Button, LinearProgress } from "@material-ui/core";
 
 /* Images */
-import slogan from "../../assets/_Logo.gif";
+import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 /* Categories Images */
 /* Categories Images */
@@ -27,6 +27,9 @@ import Miscellaneous from "../../assets/Miscellaneous.png";
 import Groceries from "../../assets/Groceries.png";
 
 import Footer from "../../components/Footer/Footer";
+
+import back from "../../assets/background1.jpg";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,9 +58,13 @@ const useStyles = makeStyles((theme) => ({
     color: "white"
   },
   design: {
+
+    backgroundImage: `url(${back})`,
     backgroundColor: "#007EB4",
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
     height: "150px !important",
-    paddingTop: "80px"
+    paddingTop: "60px"
   },
   logo: {
     width: "170px",
@@ -203,9 +210,7 @@ const [images, setimages] = useState([]);
             <Grid container xs={6} className={classes.logoContainer} justify="center">
                   <img alt="uh logo" className={classes.logo} src={slogan} />
             </Grid>
-            <Grid container xs={6} className={classes.foodContainer} justify="flex-end">
-                  <img alt="uh logo" className={classes.food} src={food} />
-            </Grid>
+          
        
           </Grid>
           <Navbarnavigation />
