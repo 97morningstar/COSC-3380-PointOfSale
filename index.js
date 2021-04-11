@@ -225,6 +225,106 @@ app.use((err, req, res, next) => {
   return;
 });
 
+/*invoice 
+- update (time of transaction = 'current timestamp', order status = 'purchased') [when the customer clicks on button 'BUY']
+- delete [when the employee clicks on button 'DELETE'] ?
+-instead of delete update order_status = 'refunded'
+- get all [dashboard]
+- get (total_cost,time_of_transaction) by and order_status=purchased and customer_id=? [Order history of a specific customer]
+- get (total_cost) by and order_status=cart and customer_id=? [cart of specific customer]
+-these two gets will be combinded with the invoice_item gets in order to show entire histories and carts
+- get all by customer_id = ? [dashboard]
+*/
+
+// - get all by customer_id = ? [dashboard]
+app.get("/api/invoice/:id", async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const invoice_by_customer_id = await pool.query("SELECT * FROM invoice WHERE customer_id = ?", [id]);
+
+    res.json(invoice_by_customer_id);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+//get all [dashboard]
+app.get("/api/view_all_invoice", async (req, res) => {
+  try {
+    const all_invoice = await pool.query("SELECT * FROM invoice");
+    res.json(all_invoice);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+
+
+
+
+
+/*invoice_item
+    - update (quantity)
+    - delete [customer deletes an item from cart]
+    - get all by invoice_id = ? 
+    -combine with the invoice gets to give full transaction history and cart
+    - create a new invoice_item   [you need: quantity, item_id_fk]
+    */
+
+//  - update (quantity)
+app.put("/api/invoice_item/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    const update_quantity = await pool.query("UPDATE invoice_item SET quantity = ? WHERE invoice_item_id = ? ",
+      [
+        data.quantity,
+        id
+      ]);
+
+    res.json("Quantity was updated successfully!");
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+
+//- get all by invoice_id = ? 
+app.get("/api/invoice_item/:id", async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const all_invoice_item_by_invoice_id = await pool.query("SELECT * FROM invoice_item WHERE invoice_id = ?", [id]);
+
+    res.json(all_invoice_item_by_invoice_id);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+//- create a new invoice_item
+app.post("/api/create__invoice_item", async (req, res) => {
+  try {
+    const data = req.body;
+    console.log(data);
+    const newInvoiceItem = await pool.query("INSERT INTO invoice_item(invoice_item_id, quantity, total_cost, item_id_fk , invoice_id_fk) VALUES ( ?, ?, ?, ?, ?)",
+      [data.invoice_item_id,
+      data.quantity,
+      data.total_cost,
+      data.item_id_fk,
+      data.invoice_id_fk,
+      ]);
+
+    res.json("A Invoice Item was added. Success");
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
