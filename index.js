@@ -15,27 +15,31 @@ app.use(express.json()); // allow us to access request body req.body
 
 app.use(express.static(path.join(__dirname, "client/build")));
 
+
+/* try */
+/*app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});*/
+
 /*if(process.env.NODE_ENV === "production"){
   //serve static content
   //npm run build
   app.use(express.static(path.join(__dirname, "client/build")));
 }*/
 
-if (process.env.NODE_ENV === 'production') {
+/*if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'));
-}
+}*/
 
 //Prodcution
 /*
 app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+
 });*/
 
-app.get('/', (request, response) => {
-	response.sendFile(path.join(__dirname, 'client/build','index.html'));
-});
 
-console.log(path.join(__dirname, "client/build"));
 
 
 //routes
@@ -47,7 +51,7 @@ app.use("/auth", require("./client/src/routes/jwtAuth"));
 app.get("/api/view_all_items", async (req, res) => {
   try {
     const all_items = await pool.query("SELECT * FROM item");
-    console.log(all_items);
+
     res.json(all_items);
   }catch (err) {
     console.log(err.message);
@@ -117,6 +121,13 @@ app.delete("/api/customer/:id", async (req, res) => {
     }
 });
 
+
+
+
+/* Do not move from here */
+app.get('*', (request, response) => {
+	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 
 /* Error handler middleware */
