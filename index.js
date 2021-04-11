@@ -236,15 +236,47 @@ app.use((err, req, res, next) => {
 - get all by customer_id = ? [dashboard]
 */
 
-// - get all by customer_id = ? [dashboard]
-app.get("/api/invoice/:id", async (req, res) => {
+//- update (time of transaction = 'current timestamp', order status = 'purchased') [when the customer clicks on button 'BUY']
+app.put("/api/invoice_transition/:id", async (req, res) => {
   try {
-
     const { id } = req.params;
+    const data = req.body;
 
-    const invoice_by_customer_id = await pool.query("SELECT * FROM invoice WHERE customer_id = ?", [id]);
+    const invoiceTransaction = await pool.query("UPDATE invoice SET time_of_transaction = 'current timestamp' , order_status = 'purchased'",
+      [data.time_of_transaction,
+      data.order_status,
+        id
+      ]);
 
-    res.json(invoice_by_customer_id);
+    res.json("Transaction was Sucessful !");
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+// delete [when the employee clicks on button 'DELETE'] ?
+app.delete("/api/invoice/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteInvoice = await pool.query("DELETE invoice FROM invoice WHERE invoice_id = ?", [id]);
+    res.json("Invoice was deleted successfully");
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+//-instead of delete update order_status = 'refunded'
+app.put("/api/invoice_refund/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    const invoiceRefund = await pool.query("UPDATE invoice SET order_status = 'refunded'",
+      [data.order_status,
+        id
+      ]);
+
+    res.json("Transaction was Sucessfully Refunded !");
   } catch (err) {
     console.log(err.message);
   }
@@ -253,12 +285,40 @@ app.get("/api/invoice/:id", async (req, res) => {
 //get all [dashboard]
 app.get("/api/view_all_invoice", async (req, res) => {
   try {
-    const all_invoice = await pool.query("SELECT * FROM invoice");
-    res.json(all_invoice);
+    const allInvoice = await pool.query("SELECT * FROM invoice");
+    res.json(allInvoice);
   } catch (err) {
     console.log(err.message);
   }
 });
+
+//get (total_cost,time_of_transaction) by and order_status=purchased and customer_id=? [Order history of a specific customer]
+app.get("/api/invoice_history/:id", async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const invoiceHistory = await pool.query("SELECT total_cost, time_of_transaction FROM invoice WHERE order_status='purchased', customer_id = ?", [id]);
+
+    res.json(invoiceHistory);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+// get (total_cost) by and order_status=cart and customer_id=? [cart of specific customer]
+app.get("/api/invoice_cart/:id", async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const invoiceCart = await pool.query("SELECT total_cost FROM invoice WHERE order_status=cart, customer_id = ?", [id]);
+
+    res.json(invoiceCart);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
 
 
 
@@ -298,20 +358,32 @@ app.get("/api/invoice_item/:id", async (req, res) => {
 
     const { id } = req.params;
 
-    const all_invoice_item_by_invoice_id = await pool.query("SELECT * FROM invoice_item WHERE invoice_id = ?", [id]);
+    const allInvoiceitem = await pool.query("SELECT * FROM invoice_item WHERE invoice_id = ?", [id]);
 
-    res.json(all_invoice_item_by_invoice_id);
+    res.json(allInvoiceitem);
   } catch (err) {
     console.log(err.message);
   }
 });
 
+//- delete [customer deletes an item from cart]
+app.delete("/api/invoice_item/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteCustomer = await pool.query("DELETE FROM customer WHERE customer_id = ?", [id]);
+    res.json("Customer was deleted successfully");
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+
 //- create a new invoice_item
-app.post("/api/create__invoice_item", async (req, res) => {
+app.post("/api/invoice_item", async (req, res) => {
   try {
     const data = req.body;
     console.log(data);
-    const newInvoiceItem = await pool.query("INSERT INTO invoice_item(invoice_item_id, quantity, total_cost, item_id_fk , invoice_id_fk) VALUES ( ?, ?, ?, ?, ?)",
+    const newInvoiceitem = await pool.query("INSERT INTO invoice_item(invoice_item_id, quantity, total_cost, item_id_fk , invoice_id_fk) VALUES ( ?, ?, ?, ?, ?)",
       [data.invoice_item_id,
       data.quantity,
       data.total_cost,
@@ -319,7 +391,22 @@ app.post("/api/create__invoice_item", async (req, res) => {
       data.invoice_id_fk,
       ]);
 
-    res.json("A Invoice Item was added. Success");
+    res.json("An item was sucessfully added to your cart !");
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+
+//- get all cart items
+app.get("/api/cart_invoice/", async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const allInvoiceitem = await pool.query("SELECT * FROM invoice_item WHERE order_status = 'cart'");
+
+    res.json(allInvoiceitem);
   } catch (err) {
     console.log(err.message);
   }
