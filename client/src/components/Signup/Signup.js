@@ -124,7 +124,7 @@ console.log(studentFirst);
 
 
     axios
-    .post("http://localhost:3000/auth/create_customer", studentFirst, getConfig())
+    .post("/auth/create_customer", studentFirst, getConfig())
     .then((res) => {
       console.log("SUCCESS");
       console.log(res);

@@ -147,7 +147,7 @@ const [imageArray, setimageArray] = useState([]);
 useEffect(() => {
 
   axios
-  .get("http://localhost:3000/api/item/category/Miscellaneous")
+  .get("/api/item/category/Miscellaneous")
   .then((res) => {
 
     console.log(res.data);
