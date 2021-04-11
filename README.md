@@ -44,7 +44,7 @@ Team 4 - Point of Sale System
 ## If you want to work on the server, then main file that we will be working on is in the root folder :hammer:
 index.js
 
-## Branching 
+## Branching :octocat:
 
 > We create branches so we can work at the same time and then we merge those branches with the main one
 
@@ -75,11 +75,11 @@ index.js
 
 ## Tech Stack
 
-nodejs 
+nodejs :sparkle:
 
-expressjs
+expressjs :steam_locomotive:
 
-react
+react :electron:
 
 mysql :key:
 
