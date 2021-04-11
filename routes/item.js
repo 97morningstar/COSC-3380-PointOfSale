@@ -46,7 +46,7 @@ app.get("/item/:item_id", async (req, res) => {
   })
 
   // get items by category
-app.get("/item/:category", async (req, res) => {
+app.get("/item/category/:category", async (req, res) => {
     try {
   
       const {category} = req.params;

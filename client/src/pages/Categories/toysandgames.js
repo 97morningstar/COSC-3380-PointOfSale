@@ -144,37 +144,51 @@ const arrayImages = ['heels','sandals','Tennis Shoe', 'converse'];
 
 const [imageArray, setimageArray] = useState([]);
 
-  useEffect(() => {
+useEffect(() => {
 
-    arrayImages.map((index) => {
+  axios
+  .get("http://localhost:3000/api/item/category/Toys and Games")
+  .then((res) => {
 
-      axios
-        .get(
-          `${data.apiUrl}/?key=${data.apiK}&q=${index}&image_type=photo&per_page=${data.amount}&safesearch=true`
-          , 
-          { crossdomain: true }
-        )
-        .then((res) => {
-          
-        //  console.log(res.data.hits);
+    console.log(res.data);
+
+     res.data.map((index) => {
+       index.name = index.name.replace(" ","+");
+          axios
+          .get(
+            `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
+            , 
+            { crossdomain: true }
+          )
+          .then((response) => {
+            
+           console.log(response.data.hits);
+  
+  
+            const image = {
+              images: response.data.hits,
+              name: index.name.replace("+"," "), 
+              price: "$"+index.selling_price
+            }
+  
+              console.log(image);
+
+  
+            setimageArray(imageArray => [...imageArray, image]);
+  
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+ });
 
 
-          const image = {
-            images: res.data.hits,
-            name: index, // The name of the article
-            price: '$24.99'
-          }
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
-
-          setimageArray(imageArray => [...imageArray, image]);
-
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-
-  },[]);
+},[]);
 
 
   theme.typography.h3 = {
@@ -212,7 +226,7 @@ const [imageArray, setimageArray] = useState([]);
        <Grid  container  xs={12}  spacing={5}   direction="column"   alignItems="center"  justify="center">
             <Grid xs={12} item className={classes.text} >
                 <Typography variant="h3" className={classes.Text1} >
-                      Shoes
+                      Toys and Games
                 </Typography>
             </Grid>
         </Grid>
