@@ -85,7 +85,7 @@ function Login() {
 
 
     axios
-      .post("/api/login", loginInfo)
+      .post("/auth/login", loginInfo)
       .then((res) => {
 
         localStorage.setItem("email", res.data.email);
