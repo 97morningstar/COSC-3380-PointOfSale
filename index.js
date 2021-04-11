@@ -25,13 +25,14 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'));
 }
 
-/* Prodcution
+//Prodcution
+/*
 app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
-*/
+});*/
+
 app.get('/', (request, response) => {
-	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+	response.sendFile(path.join(__dirname, 'client/build','index.html'));
 });
 
 console.log(path.join(__dirname, "client/build"));
@@ -39,30 +40,8 @@ console.log(path.join(__dirname, "client/build"));
 
 //routes
 
-// create a customer
-app.post("/api/create_customer", async (req, res) => {
-  try {
-    const data  = req.body;
-    console.log(data);
-    const newCustomer = await pool.query("INSERT INTO customer(first_name, middle_initial, last_name, password, email, street_number, street_name, zip_code, date_of_birth, is_member) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-     [data.first_name, 
-      data.middle_initial,
-      data.last_name,
-      data.password,
-      data.email,
-      data.street_number,
-      data.street_name,
-      data.zip_code,
-      data.date_of_birth,
-      data.is_member
-    ] );
-    
-    res.json("A new customer was added. Success");
-  }catch (err){
-    console.log(err.message);
-  }
-});
-
+//login and sign up
+app.use("/auth", require("./client/src/routes/jwtAuth"));
 
 // get all items
 app.get("/api/view_all_items", async (req, res) => {
@@ -138,30 +117,6 @@ app.delete("/api/customer/:id", async (req, res) => {
     }
 });
 
-/* Login */
-// get a customer by email and password
-app.post("/api/login", async (req, res) => {
-  try {
-
-    const data  = req.body;
-
-    console.log("request",data);
-
-    const customer_login = await pool.query("SELECT * FROM customer WHERE email = ? AND password = ?", [data.email, data.password]);
-
-    console.log("customer_login",customer_login);
-
-    if(customer_login.length === 0){
-      return res.status(401).send("Invalid Credential");
-    }
-
-    res.json(customer_login);
-  }catch (err) {
-    console.log(err.message);
-  }
-})
-
-
 
 
 /* Error handler middleware */
@@ -178,3 +133,4 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
+
