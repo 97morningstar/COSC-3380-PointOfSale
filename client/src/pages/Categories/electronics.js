@@ -151,7 +151,7 @@ const [imageArray, setimageArray] = useState([]);
 useEffect(() => {
 
   axios
-  .get("/api/item/category/Electronics")
+  .get("http://localhost:4000/api/item/category/Electronics")
   .then((res) => {
 
     console.log(res.data);
@@ -214,9 +214,11 @@ useEffect(() => {
           component="main">
           <Navbar />
           <Grid container xs={12} className={classes.design}>
-            <Grid container xs={6} className={classes.logoContainer} justify="center">
-                  <img alt="uh logo" className={classes.logo} src={slogan} />
-            </Grid>
+          <Grid container xs={6} className={classes.logoContainer} justify="center">
+                  <Link href="/" className={classes.logoContainer} justify="center">
+                      <img alt="uh logo" className={classes.logo} src={slogan} />
+                    </Link>
+              </Grid>
           
        
           </Grid>

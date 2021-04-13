@@ -305,6 +305,7 @@ export default function CompanyProject({ match }) {
     setOpenDeleteDialog(false);
   };
 
+  /* WORRY LATER */
   const handleDelete = () => {
     axios
       .delete(

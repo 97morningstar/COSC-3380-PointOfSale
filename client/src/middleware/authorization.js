@@ -16,6 +16,6 @@ module.exports = async(req,res,next) => {
         next();
     }catch (err){
         console.error(err.message);
-        return res.status(403).json("Not Authorizedd");
+        return res.status(403).json("Token Invalid");
     }
 }

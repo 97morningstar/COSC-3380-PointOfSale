@@ -106,6 +106,9 @@ export default function SignUp() {
     });
   };
 
+
+  
+
   const signUp = (e) => {
     /*const len = studentFirst.email.length;
     const domain = studentFirst.email.substring(len - 13); //must be @uh.edu
