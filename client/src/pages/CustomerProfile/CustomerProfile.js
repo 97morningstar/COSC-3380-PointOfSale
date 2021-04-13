@@ -284,7 +284,7 @@ const [updateError, setUpdateErrors] = useState({});
 
     axios
     .put(
-      "http://localhost:4000/api/customer/" +
+      "/api/customer/" +
       localStorage.getItem("user_id"),
       data
     )
@@ -326,7 +326,7 @@ const [updateError, setUpdateErrors] = useState({});
   console.log("data",data);
 
     axios
-    .post("http://localhost:4000/get_profile", data)
+    .post("/get_profile", data)
     .then((res) => {
       setIsLoading(false);
     console.log("e",res)

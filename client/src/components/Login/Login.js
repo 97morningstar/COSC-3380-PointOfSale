@@ -85,7 +85,7 @@ function Login() {
 
 
     axios
-      .post("http://localhost:4000/auth/login", loginInfo)
+      .post("/auth/login", loginInfo)
       .then((res) => {
 
         console.log(res.data)
