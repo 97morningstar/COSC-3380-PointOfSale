@@ -15,27 +15,30 @@ app.use(express.json()); // allow us to access request body req.body
 
 app.use(express.static(path.join(__dirname, "client/build")));
 
+
+/* try */
+/*app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});*/
+
 /*if(process.env.NODE_ENV === "production"){
   //serve static content
   //npm run build
   app.use(express.static(path.join(__dirname, "client/build")));
 }*/
 
-if (process.env.NODE_ENV === 'production') {
+/*if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'));
-}
+}*/
 
 //Prodcution
 /*
 app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});*/
-
-app.get('/', (request, response) => {
-	response.sendFile(path.join(__dirname, 'client/build','index.html'));
 });
+*/
 
-console.log(path.join(__dirname, "client/build"));
 
 
 //routes
@@ -47,7 +50,7 @@ app.use("/auth", require("./client/src/routes/jwtAuth"));
 app.get("/api/view_all_items", async (req, res) => {
   try {
     const all_items = await pool.query("SELECT * FROM item");
-    console.log(all_items);
+
     res.json(all_items);
   }catch (err) {
     console.log(err.message);
@@ -116,6 +119,77 @@ app.delete("/api/customer/:id", async (req, res) => {
       console.log(err.message);
     }
 });
+
+
+/* Invoice */
+/* Get all invoice */
+app.get("/api/view_all_invoices", async (req, res) => {
+  try {
+    const all_invoice = await pool.query("SELECT * FROM invoice");
+
+    res.json(all_invoice);
+  }catch (err) {
+    console.log(err.message);
+  }
+})
+
+/* create a new invoice */
+/* Note: The correct format for the time of transaction is YYYY-MM-DD */
+app.post("/api/create_invoice", async (req, res) => {
+  try {
+    const data  = req.body;
+
+    const newInvoice = await pool.query("INSERT INTO invoice(total_cost, time_of_transaction, order_status, payment_id_fk, customer_id_fk, store_id_fk) VALUES ( ?, ?, ?, ?, ?, ?)",
+     [data.total_cost, 
+      data.time_of_transaction,
+      data.order_status,
+      data.payment_id_fk,
+      data.customer_id_fk,
+      data.store_id_fk,
+    ] );
+    
+    res.json("A new invoice was added. Success.");
+  }catch (err){
+    console.log(err.message);
+  }
+});
+
+/* Get All <table>*/
+/* Get by id <table> */
+/* Update <table> */
+/* Create a new <table> */
+/* Delete? */
+
+
+/* Login */
+// get a customer by email and password
+app.post("/api/login", async (req, res) => {
+  try {
+
+    const data  = req.body;
+
+    console.log("request",data);
+
+    const customer_login = await pool.query("SELECT * FROM customer WHERE email = ? AND password = ?", [data.email, data.password]);
+
+    console.log("customer_login",customer_login);
+
+    if(customer_login.length === 0){
+      return res.status(401).send("Invalid Credential");
+    }
+
+    res.json(customer_login);
+  }catch (err) {
+    console.log(err.message);
+  }
+})
+
+/* Do not move from here */
+app.get('*', (request, response) => {
+	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
+
 
 
 

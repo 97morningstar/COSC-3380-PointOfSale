@@ -139,7 +139,7 @@ const [images, setimages] = useState([]);
         )
         .then((res) => {
           
-        //  console.log(res.data.hits);
+    
 
 
           const image = {
@@ -165,18 +165,8 @@ const [images, setimages] = useState([]);
     
     
       setimages(res);
-      
-    console.log(res);
     
     
-     /* const image = {
-        images: res.data.hits,
-        name: index, // The name of the article
-        price: '$24.99'
-      }*/
-    
-    
-    //   setimageArray(imageArray => [...imageArray, image]);
     
     })
     .catch((err) => {
