@@ -107,7 +107,7 @@ export default function SignUp() {
   };
 
   const signUp = (e) => {
-    const len = studentFirst.email.length;
+    /*const len = studentFirst.email.length;
     const domain = studentFirst.email.substring(len - 13); //must be @uh.edu
 
     if (studentFirst.role_id === "") {
@@ -115,7 +115,7 @@ export default function SignUp() {
     } else if (studentFirst.role_id === "1" && domain !== "theoutlet.com") {
       setError('You must use a "username@theoutlet.com email" for a employee account');
     } else {
-      setError("");
+      setError("");*/
 
   
       studentFirst.date_of_birth = valueDateOfBirth.toJSON()
@@ -152,6 +152,10 @@ console.log(studentFirst);
     .post("/auth/create_customer", studentFirst, getConfig())
     .then((res) => {
       console.log("SUCCESS");
+      console.log(res);
+
+    
+
       if (res.data.error) {
         setError(res.data.error);
       } else {
@@ -162,7 +166,7 @@ console.log(studentFirst);
 
   
 
-    }
+    
 
     e.preventDefault();
   };

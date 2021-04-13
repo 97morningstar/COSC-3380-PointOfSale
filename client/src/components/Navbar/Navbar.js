@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { AppBar, Toolbar, Button, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import UHLogo from "../../assets/UHLogo.png";
@@ -6,6 +6,12 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import Link from "@material-ui/core/Link";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect 
+} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -15,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     height: "50px",
   },
   AppBar: {
-    background: "rgba(66,166,245,1)",
+    background: "#112232",
     display: "flex",
     width: "100%"
   },
@@ -25,32 +31,68 @@ const useStyles = makeStyles((theme) => ({
   SignUp: {
     objectFit: "contain",
   },
+  icon:{
+    margin: "10px"
+  }
 }));
 
-export default function Navbar() {
+export default function Navbar({user}) {
   const classes = useStyles();
   const history = useHistory();
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState(null);
+
+ 
   //Check if token exists
   const isLoggedIn = () => {
-    if (localStorage.getItem("token") && localStorage.getItem("slug")) {
+    if (localStorage.getItem("token")) {
+      console.log("token exists");
       axios
-        .post("http://18.213.74.196:8000/api/token/refresh/", {
-          refresh: localStorage.getItem("refresh"),
-        })
+        .post("http://localhost:3000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
-          localStorage.setItem("token", res.data.access);
-          setTimeout(isLoggedIn, 17900 * 1000);
-          history.push("/dashboard");
+          console.log("res", res);
+         // localStorage.setItem("token", res.data.jwtToken);
+         // setTimeout(isLoggedIn, 17900 * 1000);
+
+          setIsAuthenticated(true);
+
+                axios
+               .get("http://localhost:3000/api/customer/"+localStorage.getItem("user_id"))
+               .then((res) => {
+            
+          
+                  setUserName(res.data[0].first_name)
+          
+                  console.log(res.data[0].first_name);
+          
+                })
+               .catch((err) => {
+                  console.log(err);
+                });
+         
+      
         })
         .catch((err) => {
-          history.push("/login");
+          console.log("error");
+          console.log(err.response.data);
+         // history.push("/login");
         });
-    } else {
-      history.push("/login");
+    }else{
+      console.log("no token x");
+
     }
   };
+
+  const routeChange = () =>{ 
+    let path = `/login`; 
+    history.push(path);
+  }
+
+  useEffect(() => {
+    isLoggedIn();
+  }, []);
 
   return (
     <div>
@@ -62,29 +104,46 @@ export default function Navbar() {
                 
               </Link>
             </Grid>
-            <Grid item>
+            <Grid item className={classes.icon}>
               <AccountCircleIcon />
             </Grid>
-            <Grid item>
+           
+
+
+            {!isAuthenticated ? (  
+           <>
+           <Grid item>
               <Button
                 size="small"
                 color="inherit"
-                onClick={isLoggedIn}
+                onClick={routeChange}
                 className={classes.Login}
               >
                 Login
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                size="small"
-                color="inherit"
-                className={classes.SignUp}
-                href="/signup"
-              >
-                Sign Up
-              </Button>
-            </Grid>
+              </Button> 
+              </Grid>
+               <Grid item>
+               <Button
+                 size="small"
+                 color="inherit"
+                 className={classes.SignUp}
+                 href="/signup"
+               >
+                 Sign Up
+               </Button>
+             </Grid>
+              </>
+              
+              ) :
+              (
+               <> Welcome {userName ? (userName) : (null)} </>
+              )}
+             
+
+
+
+            
+           
           </Toolbar>
         </AppBar>
       </React.Fragment>

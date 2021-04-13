@@ -1,9 +1,12 @@
 const router = require("express").Router()
-const pool = require("./../../../services/db")
+const pool = require("../../../services/db")
 const bcrypt = require("bcrypt")
 const jwtGenerator = require("../utils/jwtGenerator")
+const validInfo = require("../middleware/validInfo");
+const authorize = require("../middleware/authorization");
+
 //registering
-router.post("/create_employee", async (req, res) => {
+router.post("/create_employee", validInfo ,async (req, res) => {
     try {
         //destruct
       const data  = req.body;
@@ -53,10 +56,12 @@ router.post("/create_employee", async (req, res) => {
     }
   });
 // create a customer
-router.post("/create_customer", async (req, res) => {
+router.post("/create_customer", validInfo, async (req, res) => {
     try {
         //destruct
+
       const data  = req.body;
+      console.log("auth create custoemr");
       var user = await pool.query("SELECT * FROM customer WHERE email = ?",[
         data.email
     ]); 
@@ -89,9 +94,9 @@ router.post("/create_customer", async (req, res) => {
         data.date_of_birth,
         data.is_member
       ] );
-      const token = jwtGenerator(newCustomer.user_id,false);
+      const token = jwtGenerator(newCustomer.customer_id,false);
 
-      res.json("A new customer was added. Success");
+      res.send(newCustomer);
 
     }catch (err){
       console.log(err.message);
@@ -100,7 +105,7 @@ router.post("/create_customer", async (req, res) => {
   });
   
   //login
-  router.post("/login",async (req,res) =>{
+  router.post("/login", validInfo, async (req,res) =>{
       try{
         const data  = req.body;
 
@@ -131,15 +136,31 @@ router.post("/create_customer", async (req, res) => {
             if (result){
                 console.log("Valid password and email");
                 const token = jwtGenerator(user[0].user_id,is_employee);
-                res.json({token});
+                console.log("user",user[0]);
+                res.json({token, is_employee, user: user[0]});
             } else{
                 return res.status(401).json("Invalid Credentials");
             }
         }
     });
+
+
+ //   res.send({token, is_employee: false, user_id: newCustomer.customer_id});
+
     
       }catch(err){
           console.error(err.message);
       }
   })
+
+  router.post("/verify", authorize, (req, res) => {
+    try {
+      res.json(true);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  });
+
+
 module.exports = router;
