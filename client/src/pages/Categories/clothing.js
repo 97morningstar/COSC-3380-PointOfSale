@@ -15,16 +15,8 @@ import { Chip } from "@material-ui/core";
 import { Button, LinearProgress } from "@material-ui/core";
 
 /* Images */
-import slogan from "../../assets/_Logo.gif";
+import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
-/* Categories Images */
-import Electronics from "../../assets/Electronics.png";
-import MensClothing from "../../assets/MensClothing.png";
-import Shoes from "../../assets/Shoes.png";
-import Sportswear from "../../assets/Sportswear.png";
-import WomensClothing from "../../assets/WomensClothing.png";
-import Groceries from "../../assets/Groceries.png";
-
 
 
 import Card from "@material-ui/core/Card";
@@ -35,6 +27,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 
 
 
+import back from "../../assets/background1.jpg";
 
 
 import Footer from "../../components/Footer/Footer";
@@ -67,9 +60,12 @@ const useStyles = makeStyles((theme) => ({
     color: "white"
   },
   design: {
+    backgroundImage: `url(${back})`,
     backgroundColor: "#007EB4",
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
     height: "150px !important",
-    paddingTop: "80px"
+    paddingTop: "60px"
   },
   logo: {
     width: "170px",
@@ -137,42 +133,52 @@ function Home() {
     apiK: '20983112-12d43bcb17250999b789e998a',
     images: []
 }
-
-const arrayImages = ['shoe+baseball','soccer','football', 'racket'];
   
-
-
 const [imageArray, setimageArray] = useState([]);
 
   useEffect(() => {
 
-    arrayImages.map((index) => {
-
-      axios
-        .get(
-          `${data.apiUrl}/?key=${data.apiK}&q=${index}&image_type=photo&per_page=${data.amount}&safesearch=true`
-          , 
-          { crossdomain: true }
-        )
+        axios
+        .get("/api/item/category/Clothing")
         .then((res) => {
-          
-        //  console.log(res.data.hits);
 
+          console.log(res.data);
 
-          const image = {
-            images: res.data.hits,
-            name: index, // The name of the article
-            price: '$24.99'
-          }
+           res.data.map((index) => {
+             index.name = index.name.replace(" ","+");
+                axios
+                .get(
+                  `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
+                  , 
+                  { crossdomain: true }
+                )
+                .then((response) => {
+                  
+                 console.log(response.data.hits);
+        
+        
+                  const image = {
+                    images: response.data.hits,
+                    name: index.name.replace("+"," "), 
+                    price: "$"+index.selling_price
+                  }
+        
+                    console.log(image);
 
+        
+                  setimageArray(imageArray => [...imageArray, image]);
+        
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+       });
 
-          setimageArray(imageArray => [...imageArray, image]);
 
         })
         .catch((err) => {
           console.log(err);
         });
-    });
 
   },[]);
 
@@ -199,9 +205,7 @@ const [imageArray, setimageArray] = useState([]);
             <Grid container xs={6} className={classes.logoContainer} justify="center">
                   <img alt="uh logo" className={classes.logo} src={slogan} />
             </Grid>
-            <Grid container xs={6} className={classes.foodContainer} justify="flex-end">
-                  <img alt="uh logo" className={classes.food} src={food} />
-            </Grid>
+          
        
           </Grid>
           <Navbarnavigation />
@@ -212,7 +216,7 @@ const [imageArray, setimageArray] = useState([]);
        <Grid  container  xs={12}  spacing={5}   direction="column"   alignItems="center"  justify="center">
             <Grid xs={12} item className={classes.text} >
                 <Typography variant="h3" className={classes.Text1} >
-                      Sportswear
+                      Clothing
                 </Typography>
             </Grid>
         </Grid>
@@ -237,13 +241,6 @@ const [imageArray, setimageArray] = useState([]);
          { index.images.map((a,b) => {
            return ( <>
 
-
-       
-         
-           
-
-          
-      
         <CardMedia
           component="img"
           alt="Photo"

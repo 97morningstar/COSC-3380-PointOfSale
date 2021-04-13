@@ -88,6 +88,7 @@ function Login() {
       .post("/auth/login", loginInfo)
       .then((res) => {
 
+        console.log(res.data)
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("is_employee", res.data.is_employee);
         localStorage.setItem("user_id", res.data.user.customer_id);

@@ -15,6 +15,10 @@ app.use(express.json()); // allow us to access request body req.body
 
 app.use(express.static(path.join(__dirname, "client/build")));
 
+
+
+
+
 if (process.env.NODE_ENV === 'production') {
     //serve static content
   //npm run build
@@ -28,10 +32,13 @@ app.use("/api", require("./routes/customer"));
 app.use("/api", require("./routes/item"));
 
 
+app.use("/get_profile", require("./routes/profile"));
+
 /* Do not move from here */
 app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

@@ -2,8 +2,11 @@ const router = require("express").Router()
 const pool = require("./../../../services/db")
 const bcrypt = require("bcrypt")
 const jwtGenerator = require("../utils/jwtGenerator")
+const validInfo = require("../middleware/validInfo");
+const authorize = require("../middleware/authorization");
+
 //registering
-router.post("/create_employee", async (req, res) => {
+router.post("/create_employee", validInfo ,async (req, res) => {
     try {
         //destruct
       const data  = req.body;
@@ -53,7 +56,7 @@ router.post("/create_employee", async (req, res) => {
     }
   });
 // create a customer
-router.post("/create_customer", async (req, res) => {
+router.post("/create_customer", validInfo, async (req, res) => {
     try {
         //destruct
 
@@ -102,7 +105,7 @@ router.post("/create_customer", async (req, res) => {
   });
   
   //login
-  router.post("/login",async (req,res) =>{
+  router.post("/login", validInfo, async (req,res) =>{
       try{
         const data  = req.body;
 
@@ -149,4 +152,15 @@ router.post("/create_customer", async (req, res) => {
           console.error(err.message);
       }
   })
+
+  router.post("/verify", authorize, (req, res) => {
+    try {
+      res.json(true);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  });
+
+
 module.exports = router;
