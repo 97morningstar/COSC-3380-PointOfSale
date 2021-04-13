@@ -13,6 +13,16 @@ import {
   Redirect 
 } from "react-router-dom";
 
+//Icons
+
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
 const useStyles = makeStyles((theme) => ({
   logo: {
     objectFit: "contain",
@@ -33,23 +43,38 @@ const useStyles = makeStyles((theme) => ({
   },
   icon:{
     margin: "10px"
+  },
+  menu:{
+    color: "#fff"
   }
 }));
 
 export default function Navbar({user}) {
   const classes = useStyles();
   const history = useHistory();
-
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState(null);
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    setAnchorEl(null);
+    history.push("/profile");
+  }
  
   //Check if token exists
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
       axios
-        .post("http://localhost:3000/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -59,7 +84,7 @@ export default function Navbar({user}) {
           setIsAuthenticated(true);
 
                 axios
-               .get("http://localhost:3000/api/customer/"+localStorage.getItem("user_id"))
+               .get("http://localhost:4000/api/customer/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -76,7 +101,11 @@ export default function Navbar({user}) {
         })
         .catch((err) => {
           console.log("error");
-          console.log(err.response.data);
+          console.log(err.response);
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("is_employee");
+
          // history.push("/login");
         });
     }else{
@@ -104,14 +133,15 @@ export default function Navbar({user}) {
                 
               </Link>
             </Grid>
-            <Grid item className={classes.icon}>
-              <AccountCircleIcon />
-            </Grid>
+
            
 
 
             {!isAuthenticated ? (  
            <>
+            <Grid item className={classes.icon}>
+              <AccountCircleIcon />
+            </Grid>
            <Grid item>
               <Button
                 size="small"
@@ -136,7 +166,30 @@ export default function Navbar({user}) {
               
               ) :
               (
-               <> Welcome {userName ? (userName) : (null)} </>
+               <> Welcome {userName ? (userName) : (null)} 
+               
+               <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menu}>
+        Menu <KeyboardArrowDownIcon/>
+      </Button>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
+        <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
+
+        <MenuItem onClick={handleClose}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
+
+        {/* Check if the user is an employee, if yes, show employee dashboard */}        
+
+        <MenuItem onClick={handleClose}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
+
+      </Menu>
+               
+               </>
               )}
              
 

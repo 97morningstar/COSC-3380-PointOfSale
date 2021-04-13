@@ -25,18 +25,58 @@ app.get("/customer/:id", async (req, res) => {
     }
   })
 
+  String.prototype.isNumber = function(){
+    
+    for(let i = 0; i < this.length; i++){
+      if(this[i] < '0' || this[i] > '9'){
+        return false;
+      }
+    }
+    return true;
+  
+  }
   // update a customer by id
 app.put("/customer/:id", async (req, res) => {
     try {
       const {id} = req.params;
       const data  = req.body;
 
-      const updateCustomer = await pool.query("UPDATE customer SET first_name = ?, middle_initial = ?, last_name = ?, password = ?, email = ?, street_number = ?, street_name = ?, zip_code = ?, date_of_birth = ?, is_member = ? WHERE customer_id = ? ", 
+      if(data.first_name == ""){
+        const error = {
+          first_name: "First Name can't be empty."
+        }
+       res.status(400).send(error);
+      }else if(data.last_name == ""){
+        const error = {
+          last_name: "Last Name can't be empty."
+        }
+       res.status(400).send(error);
+      }else if(data.middle_initial == ""){
+        const error = {
+          middle_initial: "Middle Initial can't be empty."
+        }
+       res.status(400).send(error);
+      }else if(String(data.street_number).length == 0){
+        const error = {
+          street_number: "Street Number can't be empty."
+        }
+       res.status(400).send(error);
+      }else if(data.street_name == ""){
+        const error = {
+          street_name: "Street Name can't be empty."
+        }
+       res.status(400).send(error);
+      }else if(String(data.zip_code).length == 0){
+        const error = {
+          zip_code: "Zip Code can't be empty."
+        }
+       res.status(400).send(error);
+      }else{
+
+      const updateCustomer = await pool.query("UPDATE customer SET first_name = ?, middle_initial = ?, last_name = ?, street_number = ?, street_name = ?, zip_code = ?, date_of_birth = ?, is_member = ? WHERE customer_id = ? ", 
       [ data.first_name, 
       data.middle_initial,
       data.last_name,
-      data.password,
-      data.email,
       data.street_number,
       data.street_name,
       data.zip_code,
@@ -46,6 +86,7 @@ app.put("/customer/:id", async (req, res) => {
       ]);
       
       res.json("Customer was updated successfully!");
+    }
     }catch (err) {
       console.log(err.message);
     }
