@@ -64,7 +64,7 @@ index.js
 
 > Always pull before starting to work for the day, or first verify that you have the latest code
 
-1. `git pull origin master`
+1. `git pull heroku-deploy your-branch`
 
 ## How to open a pull request
 
