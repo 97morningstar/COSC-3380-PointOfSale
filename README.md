@@ -7,7 +7,7 @@ Team 4 - Point of Sale System
 1. Create a folder in your computer
 2. Type in the command line:
 
-`git init` [inside that folder to initialize a got repository]
+`git init` [inside that folder to initialize a git repository]
 
 `git clone https://github.com/97morningstar/COSC-3380-PointOfSale.git` [To copy the remote repository into your own computer]
 
