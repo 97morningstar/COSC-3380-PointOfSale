@@ -85,4 +85,18 @@ mysql :key:
 
 heroku :rocket:
 
+## To test your queries
 
+To test the queries:
+
+1. Install Postman
+2. Create collection (once)
+3. Click the 3 dots and create a new request by clicking Add request
+4. Select the right method (get, put, post, delete)
+5. Run the server
+6. Copy the localhot address and go to the link on the request (example: http://localhost:3000/api/create_item)
+
+get: just send
+post/put: 
+1. Go to Body > raw > select JSON
+2. Copy the object, and send
