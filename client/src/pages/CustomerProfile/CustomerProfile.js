@@ -55,6 +55,7 @@ import { useHistory } from "react-router-dom";
 
 import RoomIcon from '@material-ui/icons/Room';
 import StorefrontIcon from '@material-ui/icons/Storefront';
+import Select from "react-select";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -176,6 +177,15 @@ grid2: {
 },
 alignStart:{
   textAlign: "start"
+},
+selectStore: {
+ 
+    width: "100%",
+    zIndex: 1000,
+    paddingTop: "10px",
+    paddingRight: "10px",
+    paddingLeft: "10px",
+  
 }
 }));
 
@@ -270,7 +280,7 @@ const [updateError, setUpdateErrors] = useState({});
       is_member: userInput.is_member,
       last_name: userInput.last_name || "",
       middle_initial: userInput.middle_initial || "",
-      store_id_fk: userInput.store_id_fk || "",
+      store_id_fk: myStore.value || "",
       street_name: userInput.street_name || "",
       street_number: userInput.street_number,
       zip_code: userInput.zip_code || "",
@@ -278,14 +288,11 @@ const [updateError, setUpdateErrors] = useState({});
     };
 
     console.log("data",data);
-    console.log("is member",userInput.is_member);
-
-
 
     axios
     .put(
       "/api/customer/" +
-      localStorage.getItem("user_id"),
+      localStorage.getItem("user_id") + "/" + data.store_id_fk,
       data
     )
     .then((res) => {
@@ -313,6 +320,10 @@ const [updateError, setUpdateErrors] = useState({});
     };
   
 
+    const [store, setStore] = useState({});
+    const [myStore, setMyStore] = useState({});
+
+
   useEffect(() => {
     
     setIsLoading(true);
@@ -337,12 +348,45 @@ const [updateError, setUpdateErrors] = useState({});
       setUserInput(res.data[0]);
 
     
+
+      axios
+      .get("/api/view_all_stores")
+      .then((res) => {
+        const data = res.data.map((item, index) => {
+          return {
+            label: item.store_name,
+            value: item.store_id,
+          };
+        });
+        setStore(data)
+       })
+      .catch((err) => {
+         console.log(err);
+       });
+
+       console.log("id",res.data[0].store_id_fk)
+
+       axios
+       .get("/api/store/" + res.data[0].store_id_fk)
+       .then((res) => {
+         setMyStore({
+           label: res.data[0].store_name,
+           value: res.data[0].store_id
+          })
+         console.log("store",res.data[0].store_name);
+        })
+       .catch((err) => {
+          console.log(err);
+        });
+
+
+    
       
     
     })
     .catch((err) => {
       console.log(err.response);
-      history.push("/login");
+      history.push("/login")
     });
     
 
@@ -373,7 +417,7 @@ const [updateError, setUpdateErrors] = useState({});
           component="main">
           <Navbar />
           <Grid container item xs={12} className={classes.design}   alignItems="center"  justify="center">
-          <Grid item xs={6} className={classes.logoContainer} justify="center">
+          <Grid item xs={6} className={classes.logoContainer} >
                   <Link href="/" className={classes.logoContainer} justify="center">
                       <img alt="uh logo" className={classes.logo} src={slogan} />
                     </Link>
@@ -401,7 +445,7 @@ const [updateError, setUpdateErrors] = useState({});
       ) : (
           <>
            <Grid  container item xs={12}  spacing={0}   direction="column" >
-                <Grid  container item xs={12}  spacing={0}   direction="column" className={classes.grid2}  alignItems="left"  justify="left">
+                <Grid  container item xs={12}  spacing={0}   direction="column" className={classes.grid2}  alignItems="flex-start"  justify="flex-start">
                     <Grid xs={12} item className={classes.text} >
                       <Typography variant="h4" className={classes.Text1} >
                             Profile Of {userInfo.first_name} {userInfo.last_name} 
@@ -439,9 +483,9 @@ const [updateError, setUpdateErrors] = useState({});
                           multiline={true}
                           name="first_name"
                           inputProps={{
-                            maxLength: 100,
+                            maxLength: 50,
                           }}
-                          helperText={`${userInput.first_name.length}/100`}
+                          helperText={`${userInput.first_name.length}/50`}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleSave("first_name");
@@ -530,9 +574,9 @@ const [updateError, setUpdateErrors] = useState({});
                           multiline={true}
                           name="last_name"
                           inputProps={{
-                            maxLength: 100,
+                            maxLength: 50,
                           }}
-                          helperText={`${userInput.last_name.length}/100`}
+                          helperText={`${userInput.last_name.length}/50`}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleSave("last_name");
@@ -621,9 +665,9 @@ const [updateError, setUpdateErrors] = useState({});
                           multiline={true}
                           name="middle_initial"
                           inputProps={{
-                            maxLength: 100,
+                            maxLength: 2,
                           }}
-                          helperText={`${userInput.middle_initial.length}/100`}
+                          helperText={`${userInput.middle_initial.length}/2`}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleSave("middle_initial");
@@ -714,9 +758,9 @@ const [updateError, setUpdateErrors] = useState({});
                           multiline={true}
                           name="street_number"
                           inputProps={{
-                            maxLength: 100,
+                            maxLength: 11,
                           }}
-                          helperText={`${String(userInput.street_number).length}/100`}
+                          helperText={`${String(userInput.street_number).length}/11`}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleSave("street_number");
@@ -1032,6 +1076,12 @@ const [updateError, setUpdateErrors] = useState({});
                   </Grid>
                 </Grid>
 
+                <Divider
+                  variant="inset"
+                  component="li"
+                  className={classes.divider}
+                />
+
                 <Grid container item direction="row" spacing={3} className={classes.grid}>
                 <Grid item xs={1} className={classes.iconList}>
                         <StorefrontIcon />
@@ -1050,7 +1100,7 @@ const [updateError, setUpdateErrors] = useState({});
                           <>
                             <Typography
                             className={classes.grid}
-                              variant="body"
+                              variant="body1"
                               color="textSecondary"
                               component="div">
                                 You are a member of this store
@@ -1060,7 +1110,7 @@ const [updateError, setUpdateErrors] = useState({});
                             <>
                               <Typography
                               className={classes.grid}
-                                variant="body"
+                                variant="body1"
                                 color="textSecondary"
                                 component="div">
                                  
@@ -1137,6 +1187,94 @@ const [updateError, setUpdateErrors] = useState({});
                                   handleSave("is_member");
                                 }}
                               >
+                                <CheckRoundedIcon style={{ color: "green" }} />
+                              </IconButton>
+                            </Grid>
+                          </Grid>
+                        </>
+                      )}
+                  </Grid>
+                </Grid>
+
+                <Divider
+                  variant="inset"
+                  component="li"
+                  className={classes.divider}
+                />
+
+
+                <Grid container direction="row" spacing={3} className={classes.grid}>
+                  <Grid item xs={1} className={classes.iconList}>
+                    <StorefrontIcon />
+                  </Grid>
+                  <Grid item xs={9} className={classes.alignStart}>
+                    <Box component={"span"} className={classes.sectionHeader}>
+                      My Store
+                  </Box>
+                    {customerEdit.store_id_fk === false ? (
+                      <Box
+                        component="div"
+                        variant="body2"
+                        className={classes.information}
+                        color="textPrimary">
+                        {myStore.label}
+                      </Box>
+                    ) : (
+                        <>
+                          <Select
+                            autoFocus
+                            className={`${classes.selectStore} ${classes.information}`}
+                            closeMenuOnSelect={true}
+                            options={store}
+                            value={{
+                              label: myStore.label,
+                              value: myStore.value,
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleSave("store_id_fk");
+                              }
+                            }}
+                            name="store_id_fk"
+                            onChange={(e) => {
+                              setMyStore(
+                                {
+                               label: e.label,
+                              value: e.value
+                              });
+                              console.log(e.value)
+                            }}
+                          />
+                        </>
+                      )}
+                  </Grid>
+                  <Grid item xs={2} className={classes.iconListGrid}>
+                    {customerEdit.store_id_fk === false ? (
+                      <IconButton
+                        className={classes.icon}
+                        onClick={() => {
+                          handleOpenEdit("store_id_fk");
+                        }}>
+                        <EditTwoToneIcon />
+                      </IconButton>
+                    ) : (
+                        <>
+                          <Grid container direction="row">
+                            <Grid item xs={6}>
+                              <IconButton
+                                className={classes.icon}
+                                onClick={() => {
+                                  handleCancel("store_id_fk");
+                                }}>
+                                <ClearRoundedIcon />
+                              </IconButton>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <IconButton
+                                className={classes.icon}
+                                onClick={() => {
+                                  handleSave("store_id_fk");
+                                }}>
                                 <CheckRoundedIcon style={{ color: "green" }} />
                               </IconButton>
                             </Grid>

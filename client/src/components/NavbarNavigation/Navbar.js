@@ -71,7 +71,7 @@ export default function Navbar() {
        
           <Toolbar className={classes.bar}>
         
-          <Grid container xs={12}  direction="row"   alignItems="center"  justify="center"> 
+          <Grid container direction="row"   alignItems="center"  justify="center"> 
                 <Grid item xs={1}  className={classes.aligns} >
                 <Link href="/" className={classes.words}>
                   Home

@@ -19,6 +19,9 @@ import Pets from "./pages/Categories/pets";
 import Groceries from "./pages/Categories/groceries";
 
 import Profile from "./pages/CustomerProfile/CustomerProfile";
+import Item from "./pages/Item/Item";
+import Cart from "./pages/Cart/cart";
+
 
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
@@ -42,6 +45,9 @@ const App = () => {
         <Route path="/pets" component={Pets} />
         <Route path="/groceries" component={Groceries} />
         <Route path="/profile" component={Profile} />
+        <Route path="/item/:name" render={(props) => <Item {...props} key={Date.now()}/>} />
+        <Route path="/cart" component={Cart} />
+        
 
 
 
