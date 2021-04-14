@@ -68,6 +68,11 @@ export default function Navbar({user}) {
     setAnchorEl(null);
     history.push("/profile");
   }
+
+  const handleCart = () => {
+    setAnchorEl(null);
+    history.push("/cart");
+  }
  
   //Check if token exists
   const isLoggedIn = () => {
@@ -181,7 +186,7 @@ export default function Navbar({user}) {
         <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
         <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
 
-        <MenuItem onClick={handleClose}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
+        <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
 
         {/* Check if the user is an employee, if yes, show employee dashboard */}        
 

@@ -36,9 +36,11 @@ app.get("/customer/:id", async (req, res) => {
   
   }
   // update a customer by id
-app.put("/customer/:id", async (req, res) => {
+app.put("/customer/:id/:store_id_fk", async (req, res) => {
     try {
       const {id} = req.params;
+      const {store_id_fk} = req.params;
+
       const data  = req.body;
 
       if(data.first_name == ""){
@@ -73,7 +75,7 @@ app.put("/customer/:id", async (req, res) => {
        res.status(400).send(error);
       }else{
 
-      const updateCustomer = await pool.query("UPDATE customer SET first_name = ?, middle_initial = ?, last_name = ?, street_number = ?, street_name = ?, zip_code = ?, date_of_birth = ?, is_member = ? WHERE customer_id = ? ", 
+      const updateCustomer = await pool.query("UPDATE customer SET first_name = ?, middle_initial = ?, last_name = ?, street_number = ?, street_name = ?, zip_code = ?, date_of_birth = ?, is_member = ?, store_id_fk = ? WHERE customer_id = ?", 
       [ data.first_name, 
       data.middle_initial,
       data.last_name,
@@ -82,7 +84,8 @@ app.put("/customer/:id", async (req, res) => {
       data.zip_code,
       data.date_of_birth,
       data.is_member,
-      id
+      store_id_fk,
+      id,
       ]);
       
       res.json("Customer was updated successfully!");
