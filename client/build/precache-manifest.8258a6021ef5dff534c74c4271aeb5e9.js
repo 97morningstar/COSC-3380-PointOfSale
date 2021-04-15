@@ -1,35 +1,31 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f18bed63e47fa5aac537c561231dd7a0",
+    "revision": "c5d2ed58d956ba28d19203a1edfe9884",
     "url": "/index.html"
   },
   {
-    "revision": "0de8a546a2b59f4da8cc",
-    "url": "/static/css/2.72c09316.chunk.css"
+    "revision": "518f4e370c0bef03c94d",
+    "url": "/static/css/2.058fa3a9.chunk.css"
   },
   {
-    "revision": "db6efa180b4ab16c354a",
-    "url": "/static/css/main.86752d04.chunk.css"
+    "revision": "304c2bf825fddb4eebc2",
+    "url": "/static/css/main.89b00181.chunk.css"
   },
   {
-    "revision": "0de8a546a2b59f4da8cc",
-    "url": "/static/js/2.bee88e11.chunk.js"
+    "revision": "518f4e370c0bef03c94d",
+    "url": "/static/js/2.44320fef.chunk.js"
   },
   {
-    "revision": "c4c3a267234135485b5c29bd0f4e4948",
-    "url": "/static/js/2.bee88e11.chunk.js.LICENSE.txt"
+    "revision": "9efecc6e366a89e935d3722c67df4853",
+    "url": "/static/js/2.44320fef.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "db6efa180b4ab16c354a",
-    "url": "/static/js/main.41417d86.chunk.js"
+    "revision": "304c2bf825fddb4eebc2",
+    "url": "/static/js/main.5241bdc7.chunk.js"
   },
   {
     "revision": "ce52a3f297470fd68ccd",
     "url": "/static/js/runtime-main.4775ebf3.js"
-  },
-  {
-    "revision": "51c962f8b2612884bffaa2abd2ff6ab9",
-    "url": "/static/media/CompanyDashboard.51c962f8.jpg"
   },
   {
     "revision": "7fca251113ba6a36095dfb903c14fc51",
@@ -64,10 +60,6 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/Sportswear.e75651fe.png"
   },
   {
-    "revision": "bbbefee8782017eaacb486f2df57d276",
-    "url": "/static/media/StudentDashboard.bbbefee8.jpg"
-  },
-  {
     "revision": "7c9639b625adddc99e8cbc0f3c56d79e",
     "url": "/static/media/ToysAndGames.7c9639b6.png"
   },
@@ -92,7 +84,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/food.45d8ea93.png"
   },
   {
-    "revision": "882dccfdd40965f4ca12447fde1df8ae",
-    "url": "/static/media/image.882dccfd.jpg"
+    "revision": "6a9d678d39afb26b74bfaf58fb169c10",
+    "url": "/static/media/placeholder.6a9d678d.png"
   }
 ]);

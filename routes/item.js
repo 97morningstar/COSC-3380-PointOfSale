@@ -74,7 +74,6 @@ app.put("/item/:item_id", async (req, res) => {
         data.brand,
         data.discount,
         item_id
-        
       ]);
       console.log(updateItem);
       var invoiceIdCarts = await pool.query("SELECT invoice_id FROM invoice WHERE order_status = 'cart'");

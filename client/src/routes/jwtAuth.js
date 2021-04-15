@@ -82,7 +82,7 @@ router.post("/create_customer", validInfo, async (req, res) => {
 
       
       console.log(bcryptPassword.length);
-      const newCustomer = await pool.query("INSERT INTO customer(first_name, middle_initial, last_name, password, email, street_number, street_name, zip_code, date_of_birth, is_member) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      const newCustomer = await pool.query("INSERT INTO customer(first_name, middle_initial, last_name, password, email, street_number, street_name, zip_code, date_of_birth, is_member, store_id_fk) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
        [data.first_name, 
         data.middle_initial,
         data.last_name,
@@ -92,10 +92,15 @@ router.post("/create_customer", validInfo, async (req, res) => {
         data.street_name,
         data.zip_code,
         data.date_of_birth,
-        data.is_member
+        data.is_member,
+        data.store_id_fk
       ] );
       const token = jwtGenerator(newCustomer.customer_id,false);
-
+      const newInvoice = await pool.query("INSERT INTO invoice(customer_id_fk,store_id_fk) VALUES (?,?)",
+      [
+        newCustomer.customer_id,
+        newCustomer.store_id_fk
+      ]);
       res.send(newCustomer);
 
     }catch (err){

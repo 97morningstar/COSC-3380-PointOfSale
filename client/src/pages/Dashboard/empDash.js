@@ -219,7 +219,7 @@ const [imageArray, setimageArray] = useState([]);
                     <Link href="/pets" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Pets} />
                         <Typography variant="h5" className={classes.Text} >
-                          Something Else
+                          Reports
                      </Typography>
                     </Link>
                 </Grid>

@@ -24,19 +24,13 @@ import Footer from "../../components/Footer/Footer";
 
 import back from "../../assets/background1.jpg";
 import { useHistory } from "react-router-dom";
-import Box from '@material-ui/core/Box';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -134,6 +128,7 @@ function DenseTable({rows}) {
                 <TableCell align="right">employment date</TableCell>
                 <TableCell align="right">date of birth</TableCell>
                 <TableCell align="right">email</TableCell>
+                <TableCell align="right">password</TableCell>
                 <TableCell align="right">salary</TableCell>
                 <TableCell align="right">street number</TableCell>
                 <TableCell align="right">street name</TableCell>
@@ -156,6 +151,7 @@ function DenseTable({rows}) {
               <TableCell align="right">{row.employment_date}</TableCell>
               <TableCell align="right">{row.date_of_birth}</TableCell>
               <TableCell align="right">{row.email}</TableCell>
+              <TableCell align="right">{row.password}</TableCell>
               <TableCell align="right">{row.salary}</TableCell>
               <TableCell align="right">{row.street_number}</TableCell>
               <TableCell align="right">{row.street_name}</TableCell>
@@ -175,35 +171,69 @@ function DenseTable({rows}) {
 function Home() {
   const classes = useStyles();
   const theme = createMuiTheme();
+
+  /* Recommended Items 15 */
   const data = {
-    jwtToken: localStorage.getItem("token"),
-    user_id: localStorage.getItem("user_id"),
-    is_employee: localStorage.getItem("is_employee")
-  }
+    searchText: 'dog',
+    amount: 3,
+    apiUrl: 'https://pixabay.com/api',
+    apiK: '20983112-12d43bcb17250999b789e998a',
+    images: []
+}
+
+const arrayImages = ['Dog','Peach','Apple', 'Cup', 'Laptop'];
+  
+
+
+//const [imageArray, setimageArray] = useState([]);
 const [rows, setRows] = useState([]);
+const [user, setUser] = useState(null);
 let history = useHistory();
+
   useEffect(() => {
-    if (data.is_employee === "true"){
-      axios
-      .post("/api/view_all_employee",data)
-      .then((res) => {
-      
-      console.log("RESDATA",res.data[0].employee_id)
-      setRows(res.data);
-      console.log(res.data);
-      console.log(rows);
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-        history.push("/login");
-      });
-      
-    }
-    else{
-      history.push("/login");
-    }
     
- 
+    axios
+    .get("/api/view_all_employee")
+    .then((res) => {
+    
+    console.log("RESDATA",res.data[0].employee_id)
+    //setTable(res.data);
+    setRows(res.data);
+    console.log(res.data);
+    console.log(rows);
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+      history.push("/login");
+    });
+    
+  const data = {
+      jwtToken: localStorage.getItem("token"),
+      user_id: localStorage.getItem("user_id"),
+      is_employee: localStorage.getItem("is_employee")
+  }
+
+  console.log("data",data);
+
+    axios
+    .post("/get_profile", data)
+    .then((res) => {
+    
+    console.log("e",res)
+      setUser(res.data[0]);
+    
+    
+    
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+      history.push("/login");
+    });
+    
+
+
+
+
 
   },[]);
 
