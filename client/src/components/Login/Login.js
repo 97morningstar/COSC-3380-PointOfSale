@@ -91,7 +91,14 @@ function Login() {
         console.log(res.data)
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("is_employee", res.data.is_employee);
-        localStorage.setItem("user_id", res.data.user.customer_id);
+        console.log("Testing:",res.data.is_employee);
+        if (res.data.is_employee == true){
+          localStorage.setItem("user_id", res.data.user.employee_id);
+        }
+        else{
+          localStorage.setItem("user_id", res.data.user.customer_id);
+        }
+        
 
  
           console.log("Inside Login: ", res);

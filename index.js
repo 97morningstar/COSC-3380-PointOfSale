@@ -31,10 +31,13 @@ app.use("/auth", require("./client/src/routes/jwtAuth"));
 app.use("/api", require("./routes/customer")); 
 app.use("/api", require("./routes/item"));
 app.use("/api", require("./routes/store"));
+app.use("/api", require("./routes/search"));
+app.use("/api", require("./routes/employee"));
 /* Register Protect routes */
 app.use("/get_profile", require("./routes/profile"));
 app.use("/get_cart", require("./routes/cart"));
 app.use("/", require("./routes/invoice_item_cart"));
+
 
 
 

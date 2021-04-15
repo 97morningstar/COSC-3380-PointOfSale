@@ -6,6 +6,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import Link from "@material-ui/core/Link";
+
 import {
   BrowserRouter as Router,
   Route,
@@ -39,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
     objectFit: "contain",
   },
   SignUp: {
+    objectFit: "contain",
+  },
+  Logout: {
     objectFit: "contain",
   },
   icon:{
@@ -83,13 +87,30 @@ export default function Navbar({user}) {
         .then((res) => {
           //Got new access token.
           console.log("res", res);
+          console.log("jwt", localStorage.is_employee);
          // localStorage.setItem("token", res.data.jwtToken);
          // setTimeout(isLoggedIn, 17900 * 1000);
 
           setIsAuthenticated(true);
 
-                axios
-               .get("/api/customer/"+localStorage.getItem("user_id"))
+          if (localStorage.is_employee == false){
+            axios
+            .get("/api/customer/"+localStorage.getItem("user_id"))
+            .then((res) => {
+         
+       
+               setUserName(res.data[0].first_name)
+       
+               console.log(res.data[0].first_name);
+       
+             })
+            .catch((err) => {
+               console.log(err);
+             });
+          }
+          else {
+            axios
+               .get("/api/employee/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -101,16 +122,20 @@ export default function Navbar({user}) {
                .catch((err) => {
                   console.log(err);
                 });
+          }
+                
          
       
         })
         .catch((err) => {
           console.log("error");
+          console.log(err.response.data);
+         
           console.log(err.response);
           localStorage.removeItem("token");
           localStorage.removeItem("user_id");
           localStorage.removeItem("is_employee");
-
+          history.push("/login");
          // history.push("/login");
         });
     }else{
@@ -120,10 +145,14 @@ export default function Navbar({user}) {
   };
 
   const routeChange = () =>{ 
+    console.log("login attempt");
     let path = `/login`; 
     history.push(path);
   }
-
+  const logoutButton = () =>{
+    localStorage.clear();
+    history.go(0);
+  } 
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -190,7 +219,7 @@ export default function Navbar({user}) {
 
         {/* Check if the user is an employee, if yes, show employee dashboard */}        
 
-        <MenuItem onClick={handleClose}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
+        <MenuItem onClick={logoutButton}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
 
       </Menu>
                
