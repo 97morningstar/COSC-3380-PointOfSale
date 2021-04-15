@@ -7,7 +7,7 @@ import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
 
 import { Link, useRouteMatch, router } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Divider } from "@material-ui/core";
+import { Grid, Typography, Divider, Paper } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Carousel from 'react-material-ui-carousel'
 
@@ -47,7 +47,12 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     listStyle: "none",
     margin: "10px",
-    width: "90%"
+    width: "100%"
+  },
+  divider2: {
+    listStyle: "none",
+    margin: "10px",
+    width: "99%"
   },
   text: {
     position: "relative",
@@ -122,7 +127,7 @@ const useStyles = makeStyles((theme) => ({
   },
   wrapper: {
     marginBottom: "40px",
-    marginTop: "50px"
+    marginTop: "100px"
 
   },
   rootCard: {
@@ -137,10 +142,12 @@ const useStyles = makeStyles((theme) => ({
 
   },
   image: {
-    width: "100%",
+    width: "250px",
     paddingLeft: "40px",
     paddingRight: "10px",
-    height: "440px",
+    paddingBottom: "20px",
+
+    height: "200px",
   },
   selectStore: {
 
@@ -154,6 +161,12 @@ const useStyles = makeStyles((theme) => ({
   botton: {
     width: "90%",
     margin: "10px"
+  },
+  selectStore: {
+    zIndex: "1000"
+  },
+  information: {
+    zIndex: "1000"
   }
 }));
 
@@ -163,8 +176,10 @@ function Item({ match }) {
   const theme = createMuiTheme();
   let history = useHistory();
 
+  const [numberOfItems, setNumberOfItems] = useState(0);
+
   /* Recommended Items 15 */
-  const data = {
+  const pixel = {
     searchText: 'dog',
     amount: 4,
     apiUrl: 'https://pixabay.com/api',
@@ -172,9 +187,11 @@ function Item({ match }) {
     images: []
   }
 
-  const [imageArray, setimageArray] = useState([]);
+  const [invoice, setInvoice] = useState({});
 
-  const [numberOfItems, setNumberOfItems] = useState(0);
+  const [invoiceItems, setInvoiceItems] = useState([]);
+  const [invoiceItemsName, setInvoiceItemsName] = useState([]);
+
 
 
   const items = [
@@ -220,8 +237,9 @@ function Item({ match }) {
     },
   ]
 
-  const [imageArrayCategory, setimageArrayCategory] = useState([]);
+  const [imageArray, setimageArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState([]);
 
   useEffect(() => {
 
@@ -236,170 +254,57 @@ function Item({ match }) {
       is_employee: localStorage.getItem("is_employee")
     }
 
-    console.log("data", data);
-
     /* VERIFY USER IS LOGGED IN */
     axios
-      .post("/get_cart", data)
+      .post("http://localhost:4000/get_cart", data)
       .then((res) => {
         setIsLoading(false);
 
-        console.log("e", res.data[0].invoice_id)
-
+        setInvoice(res.data[0]);
         /* GET INVOICE ITEMS */
         axios
-        .get("/get_invoice_items/" + res.data[0].invoice_id)
-        .then((response) => {
+          .get("http://localhost:4000/get_invoice_items/" + data.user_id)
+          .then((response) => {
+            setIsLoading(false);
+            console.log("invoice items", response.data);
+            setInvoiceItems(response.data);
 
-          console.log("invoice items",response);
-         /* const data = res.data.map((item, index) => {
-            return {
-              label: item.store_name,
-              value: item.store_id,
-            };
-          });
-          setStore(data)*/
-        })
-        .catch((err) => {
-          console.log(err);
-         
-        });
+            /* GET IMAGES */
+            response.data.map((index) => {
+              index.name = index.name.replace(" ", "+");
+              axios
+                .get(
+                  `${pixel.apiUrl}/?key=${pixel.apiK}&q=${index.name}&image_type=photo&per_page=${pixel.amount}&safesearch=true`
+                  ,
+                  { crossdomain: true }
+                )
+                .then((response) => {
 
+                  console.log(response.data.hits);
+                  index.name = index.name.replace("+", " ");
 
-      //  res.data[0].date_of_birth = res.data[0].date_of_birth.substring(0, 10);
+                  const image = {
+                    images: response.data.hits[0],
+                  }
 
-    //    setUserInfo(res.data[0]);
-     //   setUserInput(res.data[0]);
+                  setimageArray(imageArray => [...imageArray, image]);
 
-
-        /* GET CART */
-      /*  axios
-          .get("http://localhost:4000/api/view_all_stores")
-          .then((res) => {
-            const data = res.data.map((item, index) => {
-              return {
-                label: item.store_name,
-                value: item.store_id,
-              };
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             });
-            setStore(data)
+
+
           })
           .catch((err) => {
             console.log(err);
-          });*/
-
-        console.log("id", res.data[0].store_id_fk)
-
-      /*  axios
-          .get("http://localhost:4000/api/store/" + res.data[0].store_id_fk)
-          .then((res) => {
-            setMyStore({
-              label: res.data[0].store_name,
-              value: res.data[0].store_id
-            })
-            console.log("store", res.data[0].store_name);
-          })
-          .catch((err) => {
-            console.log(err);
-          });*/
+          });
       })
       .catch((err) => {
         console.log(err.response);
         history.push("/login")
       });
-
-
-
-
-    /* NO ******************************************/
-/*    axios
-      .get("http://localhost:4000/api/item/" + match.params.name)
-      .then((res) => {
-
-        console.log("item", res.data);
-
-
-        res.data[0].name = res.data[0].name.replace(" ", "+");
-
-        axios
-          .get(
-            `${data.apiUrl}/?key=${data.apiK}&q=${res.data[0].name}&image_type=photo&per_page=${data.amount}&safesearch=true`
-            ,
-            { crossdomain: true }
-          )
-          .then((response) => {
-
-            console.log(response.data.hits);
-
-
-            const image = {
-              images: response.data.hits,
-              name: res.data[0].name.replace("+", " "),
-              price: "$" + res.data[0].selling_price,
-              category: res.data[0].category,
-              brand: res.data[0].brand
-            }
-
-            console.log(image);
-
-
-            setimageArray(imageArray => [...imageArray, image]);
-
-
-            // SHOP ITEMS IN THE SAME CATEGORY 
-
-            axios
-              .get("http://localhost:4000/api/item/category/" + res.data[0].category)
-              .then((res) => {
-
-                console.log(res.data);
-
-                res.data.map((index) => {
-                  index.name = index.name.replace(" ", "+");
-                  axios
-                    .get(
-                      `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
-                      ,
-                      { crossdomain: true }
-                    )
-                    .then((response) => {
-
-                      console.log(response.data.hits);
-
-
-                      const image = {
-                        images: response.data.hits,
-                        name: index.name.replace("+", " "),
-                        price: "$" + index.selling_price,
-                        item_id: index.item_id
-                      }
-
-                      console.log(image);
-
-
-                      setimageArrayCategory(imageArrayCategory => [...imageArrayCategory, image]);
-
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                    });
-                });
-
-
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });*/
-    /* NO ******************************************/
-
   }, []);
 
 
@@ -421,220 +326,207 @@ function Item({ match }) {
           className={classes.root}
           component="main">
           <Navbar />
-          <Grid container xs={12} className={classes.design}>
-            <Grid container xs={6} className={classes.logoContainer} justify="center">
-              <Link href="/" className={classes.logoContainer} justify="center">
-                <img alt="uh logo" className={classes.logo} src={slogan} />
-              </Link>
-            </Grid>
+          <Grid xs={12} item container className={classes.wrapper}>
 
 
-          </Grid>
-          <Navbarnavigation />
-
-
-
-
-
-          {imageArray.length !== 0 ? (
-            <Grid xs={12} item container className={classes.wrapper}>
-              {imageArray[0].images.length !== 0 ? (
-                <>
-                  <Grid xs={2} item>
-                    {imageArray[0].images[0] ? (<img src={imageArray[0].images[0].largeImageURL} className={classes.thumbnail} />) : (<img src={placeholder} className={classes.thumbnail} />)}
-                    {imageArray[0].images[1] ? (<img src={imageArray[0].images[1].largeImageURL} className={classes.thumbnail} />) : (<img src={placeholder} className={classes.thumbnail} />)}
-                    {imageArray[0].images[2] ? (<img src={imageArray[0].images[2].largeImageURL} className={classes.thumbnail} />) : (<img src={placeholder} className={classes.thumbnail} />)}
-
-                  </Grid>
-                  <Grid xs={4} item>
-                    {imageArray[0].images[3] ? (<img src={imageArray[0].images[3].largeImageURL} className={classes.image} />) : (<img src={placeholder} className={classes.image} />)}
-
-                  </Grid>
-                </>
-              ) : (
-                <>
-                  <Grid xs={2} item>
-                    <img src={placeholder} className={classes.thumbnail} />
-                    <img src={placeholder} className={classes.thumbnail} />
-                    <img src={placeholder} className={classes.thumbnail} />
-                  </Grid>
-                  <Grid xs={4} item>
-                    <img src={placeholder} className={classes.image} />
-                  </Grid>
-                </>
-              )}
-              <Grid xs={6} item container>
-                <Grid xs={12} item container>
-                  <Grid xs={12} item >
-                    <Typography gutterBottom variant="h4" component="h2">
-                      {imageArray[0].name}
-                    </Typography>
-                  </Grid>
-                  <Grid xs={12} item >
-                    <Divider
-                      variant="inset"
-                      component="li"
-                      className={classes.divider}
-                    />
-                  </Grid>
-                  <Grid xs={12} item >
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Price: {imageArray[0].price}
-                    </Typography>
-                  </Grid>
-
-                  <Grid xs={12} item >
-                    <Divider
-                      variant="inset"
-                      component="li"
-                      className={classes.divider}
-                    />
-                  </Grid>
-
-                  <Grid xs={12} item >
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Brand: {imageArray[0].brand}
-                    </Typography>
-                  </Grid>
-
-                  <Grid xs={12} item >
-                    <Divider
-                      variant="inset"
-                      component="li"
-                      className={classes.divider}
-                    />
-                  </Grid>
-
-                  <>
-                    <Grid xs={12} item >
-                      <Typography gutterBottom variant="body" component="h2">
-                        Select Number of Items
-                   </Typography>
-                      <Typography gutterBottom variant="body3" component="body">
-                        You need to have an account to be able to buy
-                   </Typography>
-
-                    </Grid>
-                    <Grid xs={12} item >
-                      <Select
-                        autoFocus
-                        className={`${classes.selectStore} ${classes.information}`}
-                        closeMenuOnSelect={true}
-                        options={items}
-                        value={{
-                          label: numberOfItems,
-                          value: numberOfItems,
-                        }}
-                        name="store_id_fk"
-                        onChange={(e) => {
-                          setNumberOfItems(e.value);
-                          console.log(e.value)
-                        }}
-                      />
-                    </Grid>
-                  </>
-                  <Grid container xs={12}>
-                    <Grid items xs={6}>
-                      <Button size="medium" variant="contained" color="primary" className={classes.botton}>
-                        Add to Cart
-                 </Button>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Button size="medium" variant="contained" color="primary" className={classes.botton}>
-                        Learn More
-                  </Button>
-                    </Grid>
+            {isLoading ? (
+              <>
+                <Grid
+                  container
+                  item
+                  justify="center"
+                  alignItems="center"
+                  direction="row">
+                  <Grid item md={12}>
+                    <LinearProgress color="secondary" />
                   </Grid>
                 </Grid>
+              </>
+            ) : (<>
 
+              {invoiceItems.length !== 0 ? (
+                <>
+                  <Typography gutterBottom variant="h4" component="h2" className={classes.botton}>
+                    CART
+                  </Typography>
+                  <Grid xs={12} item container>
+                    <Grid xs={3} item>
+                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
+                        Shipping Address:
+                      </Typography>
+                    </Grid>
+                    <Grid xs={9} item>
+                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                        {invoiceItems[0].first_name} {invoiceItems[0].last_name}
+                      </Typography>
+                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                        {invoiceItems[0].email}
+                      </Typography>
+                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                        {invoiceItems[0].street_number} {invoiceItems[0].street_name}, {invoiceItems[0].zip_code}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Divider
+                    variant="inset"
+                    component="li"
+                    className={classes.divider2}
+                  />
+                  <Grid xs={12} item container>
+                    <Grid xs={3} item>
+                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
+                        Payment Method
+                      </Typography>
+                    </Grid>
+                    <Grid xs={9} item>
+                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
+                        METHOD OF PAYMENT
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Divider
+                    variant="inset"
+                    component="li"
+                    className={classes.divider2}
+                  />
+                  <Grid xs={12} item container>
+                    <Grid xs={12} item>
+                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
+                        Review Items
+                      </Typography>
+                    </Grid>
+                    <Grid xs={12} item container justify="space-around">
+                      <Grid xs={6} item container >
+                        {invoiceItems.map((index, i) => {
+                          //console.log(index)
+                          return (
+                            <>
 
-
-              </Grid>
-            </Grid>
-          ) : (null)}
-
-
-          <Grid xs={12} item container className={classes.wrapper}>
-            <Typography gutterBottom variant="h4" component="h2" className={classes.botton}>
-              More articles in this category you may like
-          </Typography>
-            {imageArrayCategory.length !== 0 ? (
-              <Grid container justify="center" alignItems="center" >
-
-                {imageArrayCategory.map((index, i) => {
-                  return (<>
-                    <Grid xs={12} md={2}>
-
-
-                      <Card className={classes.rootCard}>
-                        <CardActionArea>
-                          <Carousel animation="fade" navButtonsAlwaysInvisible="true">
-
-
-                            {index.images.map((a, b) => {
-                              return (<>
-
-                                <CardMedia
-                                  component="img"
-                                  alt="Photo"
-                                  height="140"
-                                  image={a.largeImageURL}
-                                  title="Photo"
+                              <Grid xs={6} item>
+                                {imageArray[i] ? (
+                                  <>
+                                    {imageArray[i].images ? (<img src={imageArray[i].images.largeImageURL} className={classes.image} />) : (<img src={placeholder} className={classes.thumbnail} />)}
+                                  </>
+                                ) : (null)}
+                              </Grid>
+                              <Grid xs={6} item>
+                                <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
+                                  Item: {index.name}
+                                </Typography>
+                                <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
+                                  Brand: {index.brand}
+                                </Typography>
+                                <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
+                                  Price: ${index.selling_price}
+                                </Typography>
+                                <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
+                                  Quantity:
+                                  </Typography>
+                                <Select
+                                  autoFocus
+                                  closeMenuOnSelect={true}
+                                  options={items}
+                                  value={{
+                                    label: index.quantity,
+                                    value: index.quantity,
+                                  }}
+                                  name="store_id_fk"
+                                  onChange={(e) => {
+                                    setNumberOfItems(e.value);
+                                    index.quantity = e.value
+                                    console.log(index)
+                                  }}
                                 />
+                                <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
+                                  Subtotal: ${(index.quantity * index.selling_price).toFixed(2)}
+                                </Typography>
+                              </Grid>
+                              <Divider
+                                variant="inset"
+                                component="li"
+                                className={classes.divider}
+                              />
 
 
 
-                              </>
-                              )
-                            })
-                            }
+                            </>
+                          );
+                        })}
+                      </Grid>
+                      <Grid xs={5} item >
+                        <Paper elevation={3} style={{padding: "15px"}}>
+                          <Typography gutterBottom variant="h5" component="h2"  className={classes.botton}>
+                            Order Summary:
+                          </Typography>
+                          <Divider
+                            variant="inset"
+                            component="li"
+                            className={classes.divider}
+                          />
+                          <Typography gutterBottom component="body" className={classes.botton}>
+                            Number Of Items: {invoiceItems.length}
+                          </Typography>
+                          <Divider
+                            variant="inset"
+                            component="li"
+                            className={classes.divider}
+                          />
+                          {invoiceItems[0].is_discounted === 0 ? (<>
+                            <Typography gutterBottom component="body" className={classes.botton}>
+                              Is Discounted: Yes
+                                  </Typography>
+                            <Typography gutterBottom variant="caption" className={classes.botton}>
+                              Thank you for being a valuable member of our store!
+                                  </Typography></>) : (<>
+                            <Typography gutterBottom component="body" className={classes.botton}>
+                              Is Discounted: No
+                                  </Typography>
+                            <Typography gutterBottom variant="caption" className={classes.botton}>
+                              We give all of our store members a discount of 75% off the original price. Please consider becoming a member of our store
+                                  </Typography></>)}
+                          <Divider
+                            variant="inset"
+                            component="li"
+                            className={classes.divider}
+                          />
+                          <Typography gutterBottom component="body" className={classes.botton}>
+                           Total Before Tax: ${invoiceItems.map((index) => {
+                             return parseFloat(index.selling_price*index.quantity);
+                           }).reduce((total, num) => {
+                             return total + num
+                           })}
+                          </Typography>
+                          <Typography gutterBottom component="body" className={classes.botton}>
+                           Tax on this invoice: ${invoiceItems.map((index) => {
+                             return 0.0825*parseFloat(index.selling_price*index.quantity);
+                           }).reduce((total, num) => {
+                             return total + num
+                           }).toFixed(2)}
+                          </Typography>
+                          <Typography gutterBottom component="body" className={classes.botton}>
+                           Total Cost: ${(invoiceItems.map((index) => {
+                             return 0.0825*parseFloat(index.selling_price*index.quantity);
+                           }).reduce((total, num) => {
+                             return total + num
+                           }) + invoiceItems.map((index) => {
+                            return parseFloat(index.selling_price*index.quantity);
+                          }).reduce((total, num) => {
+                            return parseFloat(total + num)
+                          })).toFixed(2)}
+                          </Typography>
 
-                          </Carousel>
-
-                          <CardContent>
-                            <Typography gutterBottom variant="h5" component="h2">
-                              {index.name}
-                            </Typography>
-                            <Chip
-                              label={index.price} />
-                          </CardContent>
-                        </CardActionArea>
-                        <Link
-                          style={{ textDecoration: "none", color: "black" }}
-                          to={{
-                            pathname: `/item/${index.item_id}`,
-                          }}>
-                          <CardActions>
-                            <Grid item xs={12} className={classes.nameOfItem} >
-                              <Button size="small" variant="contained" color="primary">
-                                Learn More
-                              </Button>
-                            </Grid>
-                          </CardActions>
-                        </Link>
-
-                      </Card>
-
-
-
-
-
-
+                        </Paper>
+                      </Grid>
 
                     </Grid>
+                  </Grid>
 
-                  </>
-                  )
-
-
-
-                })
+                </>
+              ) : (<>No items</>)}
 
 
-                }
-              </Grid>
 
-            ) : null}
+            </>)}
 
 
 

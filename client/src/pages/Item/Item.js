@@ -303,33 +303,15 @@ function Item({ match }) {
             .catch((err) => {
               console.log(err);
             });
-
-
-
-
-
-
-
-
-
-
-
-
-
           })
           .catch((err) => {
             console.log(err);
           });
-
-
-
       })
       .catch((err) => {
         console.log(err);
       });
-
   }, [match.params.project]);
-
 
   theme.typography.h3 = {
     fontSize: "1.4rem",
@@ -359,9 +341,6 @@ function Item({ match }) {
 
           </Grid>
           <Navbarnavigation />
-
-
-
 
 
           {imageArray.length !== 0 ? (
