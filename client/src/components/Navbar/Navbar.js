@@ -83,7 +83,7 @@ export default function Navbar({user}) {
     if (localStorage.getItem("token")) {
       console.log("token exists");
       axios
-        .post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
         //  console.log("res", res);
@@ -99,7 +99,7 @@ export default function Navbar({user}) {
             console.log("is_employee")
 
             axios
-               .get("http://localhost:4000/api/employee/"+localStorage.getItem("user_id"))
+               .get("/api/employee/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -116,7 +116,7 @@ export default function Navbar({user}) {
 
             console.log("custoemr")
             axios
-            .get("http://localhost:4000/api/customer/"+localStorage.getItem("user_id"))
+            .get("/api/customer/"+localStorage.getItem("user_id"))
             .then((res) => {
          
        
