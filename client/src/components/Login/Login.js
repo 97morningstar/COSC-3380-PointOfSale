@@ -84,7 +84,7 @@ function Login() {
     if (localStorage.getItem("token")) {
       console.log("token exists");
       axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -118,7 +118,7 @@ function Login() {
 
 
     axios
-      .post("/auth/login", loginInfo)
+      .post("http://localhost:4000/auth/login", loginInfo)
       .then((res) => {
 
       

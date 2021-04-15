@@ -20,5 +20,28 @@ app.get("/get_invoice_items/:customer",async (req, res) => {
     }
   });
 
+  app.post("/add_to_cart" , authorize ,async (req, res) => {
+    try {
+         console.log("information invoice item",req.body); 
+
+         const {invoice_id_fk} = req.body;
+         const {item_id_fk} = req.body;
+         const {quantity} = req.body;
+
+       // const invoice_items = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [invoice_id]);
+        const invoice_added = await pool.query("INSERT INTO invoice_item(quantity, item_id_fk, invoice_id_fk) VALUES (?,?,?)", [
+          quantity,
+          item_id_fk,
+          invoice_id_fk,
+        ]);
+
+            res.json("Purchased Done Succesfully");
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  });
+
 
 module.exports = app;

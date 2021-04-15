@@ -291,7 +291,7 @@ const [updateError, setUpdateErrors] = useState({});
 
     axios
     .put(
-      "/api/customer/" +
+      "http://localhost:4000/api/customer/" +
       localStorage.getItem("user_id") + "/" + data.store_id_fk,
       data
     )
@@ -338,7 +338,7 @@ const [updateError, setUpdateErrors] = useState({});
   console.log("data",data);
 
     axios
-    .post("/get_profile", data)
+    .post("http://localhost:4000/get_profile", data)
     .then((res) => {
       setIsLoading(false);
     console.log("e",res)
@@ -351,7 +351,7 @@ const [updateError, setUpdateErrors] = useState({});
     
 
       axios
-      .get("/api/view_all_stores")
+      .get("http://localhost:4000/api/view_all_stores")
       .then((res) => {
         const data = res.data.map((item, index) => {
           return {
@@ -368,7 +368,7 @@ const [updateError, setUpdateErrors] = useState({});
        console.log("id",res.data[0].store_id_fk)
 
        axios
-       .get("/api/store/" + res.data[0].store_id_fk)
+       .get("http://localhost:4000/api/store/" + res.data[0].store_id_fk)
        .then((res) => {
          setMyStore({
            label: res.data[0].store_name,

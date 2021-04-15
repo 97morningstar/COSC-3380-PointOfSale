@@ -11,6 +11,8 @@ import { Grid, Typography, Divider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Carousel from 'react-material-ui-carousel'
 
+
+
 import { Chip } from "@material-ui/core";
 import { Button, LinearProgress } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
@@ -18,6 +20,8 @@ import { useHistory } from "react-router-dom";
 import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -34,6 +38,11 @@ import back from "../../assets/background1.jpg";
 
 
 import Footer from "../../components/Footer/Footer";
+
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -151,7 +160,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: "10px",
 
   },
-  botton:{
+  botton: {
     width: "90%",
     margin: "10px"
   }
@@ -176,6 +185,15 @@ function Item({ match }) {
 
   const [numberOfItems, setNumberOfItems] = useState(0);
 
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updateFailed, setUpdateFailed] = useState(false);
+
+  const handleCloseUpdateSucess = () => {
+    setUpdateSuccess(false);
+  };
+  const handleCloseUpdateFailed = () => {
+    setUpdateFailed(false);
+  };
 
   const items = [
     {
@@ -220,13 +238,70 @@ function Item({ match }) {
     },
   ]
 
+  const [invoice, setInvoice] = useState([]);
+
   const [imageArrayCategory, setimageArrayCategory] = useState([]);
+
+
+ 
+
+ 
+
+  const handleAddCart = () => {
+
+    const cart_data = {
+      quantity: numberOfItems,
+      item_id_fk: imageArray[0].item_id,
+      invoice_id_fk: invoice.invoice_id,
+      jwtToken: localStorage.getItem("token"),
+      user_id: localStorage.getItem("user_id"),
+      is_employee: localStorage.getItem("is_employee")
+    }
+
+    if(numberOfItems !== 0){
+
+  
+    axios
+      .post("http://localhost:4000/add_to_cart", cart_data)
+      .then((res) => {
+        setUpdateSuccess(true);
+       })
+      .catch((err) => {
+        console.log(err);
+        history.push("/login");
+      });
+    }else{
+      setUpdateFailed(true);
+    }
+
+
+  }
 
 
   useEffect(() => {
 
+    const data2 = {
+      jwtToken: localStorage.getItem("token"),
+      user_id: localStorage.getItem("user_id"),
+      is_employee: localStorage.getItem("is_employee")
+    }
+
+
     axios
-      .get("/api/item/" + match.params.name)
+      .post("http://localhost:4000/get_cart", data2)
+      .then((res) => {
+        setInvoice(res.data[0]);
+        console.log("res.data",res.data)
+      })
+      .catch((err) => {
+        console.log(err.response);
+        history.push("/login")
+      });
+
+
+
+    axios
+      .get("http://localhost:4000/api/item/" + match.params.name)
       .then((res) => {
 
         console.log("item", res.data);
@@ -248,9 +323,10 @@ function Item({ match }) {
             const image = {
               images: response.data.hits,
               name: res.data[0].name.replace("+", " "),
-              price: "$" + res.data[0].selling_price,
+              price: res.data[0].selling_price,
               category: res.data[0].category,
-              brand: res.data[0].brand
+              brand: res.data[0].brand,
+              item_id: res.data[0].item_id
             }
 
             console.log(image);
@@ -262,47 +338,47 @@ function Item({ match }) {
             /* SHOP ITEMS IN THE SAME CATEGORY */
 
             axios
-            .get("/api/item/category/" + res.data[0].category)
-            .then((res) => {
-      
-              console.log(res.data);
-      
-              res.data.map((index) => {
-                index.name = index.name.replace(" ", "+");
-                axios
-                  .get(
-                    `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
-                    ,
-                    { crossdomain: true }
-                  )
-                  .then((response) => {
-      
-                    console.log(response.data.hits);
-      
-      
-                    const image = {
-                      images: response.data.hits,
-                      name: index.name.replace("+", " "),
-                      price: "$" + index.selling_price,
-                      item_id: index.item_id
-                    }
-      
-                    console.log(image);
-      
-      
-                    setimageArrayCategory(imageArrayCategory => [...imageArrayCategory, image]);
-      
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
+              .get("http://localhost:4000/api/item/category/" + res.data[0].category)
+              .then((res) => {
+
+                console.log(res.data);
+
+                res.data.map((index) => {
+                  index.name = index.name.replace(" ", "+");
+                  axios
+                    .get(
+                      `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
+                      ,
+                      { crossdomain: true }
+                    )
+                    .then((response) => {
+
+                      console.log(response.data.hits);
+
+
+                      const image = {
+                        images: response.data.hits,
+                        name: index.name.replace("+", " "),
+                        price: index.selling_price,
+                        item_id: index.item_id
+                      }
+
+                      console.log(image);
+
+
+                      setimageArrayCategory(imageArrayCategory => [...imageArrayCategory, image]);
+
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                });
+
+
+              })
+              .catch((err) => {
+                console.log(err);
               });
-      
-      
-            })
-            .catch((err) => {
-              console.log(err);
-            });
           })
           .catch((err) => {
             console.log(err);
@@ -348,13 +424,13 @@ function Item({ match }) {
               {imageArray[0].images.length !== 0 ? (
                 <>
                   <Grid xs={2} item>
-                  {imageArray[0].images[0] ? ( <img src={imageArray[0].images[0].largeImageURL} className={classes.thumbnail} /> ) : (<img src={placeholder} className={classes.thumbnail} />)}
-                  {imageArray[0].images[1] ? ( <img src={imageArray[0].images[1].largeImageURL} className={classes.thumbnail} /> ) : (<img src={placeholder} className={classes.thumbnail} />)}
-                  {imageArray[0].images[2] ? ( <img src={imageArray[0].images[2].largeImageURL} className={classes.thumbnail} /> ) : (<img src={placeholder} className={classes.thumbnail} />)}
+                    {imageArray[0].images[0] ? (<img src={imageArray[0].images[0].largeImageURL} className={classes.thumbnail} />) : (<img src={placeholder} className={classes.thumbnail} />)}
+                    {imageArray[0].images[1] ? (<img src={imageArray[0].images[1].largeImageURL} className={classes.thumbnail} />) : (<img src={placeholder} className={classes.thumbnail} />)}
+                    {imageArray[0].images[2] ? (<img src={imageArray[0].images[2].largeImageURL} className={classes.thumbnail} />) : (<img src={placeholder} className={classes.thumbnail} />)}
 
                   </Grid>
                   <Grid xs={4} item>
-                  {imageArray[0].images[3] ? ( <img src={imageArray[0].images[3].largeImageURL} className={classes.image} /> ) : (<img src={placeholder} className={classes.image} />)}
+                    {imageArray[0].images[3] ? (<img src={imageArray[0].images[3].largeImageURL} className={classes.image} />) : (<img src={placeholder} className={classes.image} />)}
 
                   </Grid>
                 </>
@@ -386,7 +462,7 @@ function Item({ match }) {
                   </Grid>
                   <Grid xs={12} item >
                     <Typography gutterBottom variant="h5" component="h2">
-                      Price: {imageArray[0].price}
+                      Price: ${imageArray[0].price}
                     </Typography>
                   </Grid>
 
@@ -413,43 +489,53 @@ function Item({ match }) {
                   </Grid>
 
                   <>
-                  <Grid xs={12} item >
-                    <Typography gutterBottom variant="body" component="h2">
-                      Select Number of Items
+                    <Grid xs={12} item >
+                      <Typography gutterBottom variant="body" component="h2">
+                        Select Number of Items
                    </Typography>
-                   <Typography gutterBottom variant="body3" component="body">
-                   You need to have an account to be able to buy
+                      <Typography gutterBottom variant="body3" component="body">
+                        You need to have an account to be able to buy
                    </Typography>
+
                   
-                   </Grid>
-                   <Grid xs={12} item >
-                    <Select
-                      autoFocus
-                      className={`${classes.selectStore} ${classes.information}`}
-                      closeMenuOnSelect={true}
-                      options={items}
-                      value={{
-                        label: numberOfItems,
-                        value: numberOfItems,
-                      }}
-                      name="store_id_fk"
-                      onChange={(e) => {
-                        setNumberOfItems(e.value);
-                        console.log(e.value)
-                      }}
+                    <Grid xs={12} item >
+                      <Select
+                        autoFocus
+                        className={`${classes.selectStore} ${classes.information}`}
+                        closeMenuOnSelect={true}
+                        options={items}
+                        value={{
+                          label: numberOfItems,
+                          value: numberOfItems,
+                        }}
+                        name="store_id_fk"
+                        onChange={(e) => {
+                          setNumberOfItems(e.value);
+                          console.log(e.value)
+                        }}
+                      />
+                    </Grid>
+                    </Grid>
+                    <Divider
+                      variant="inset"
+                      component="li"
+                      className={classes.divider}
                     />
+                    <Grid xs={12} item >
+                      <Typography gutterBottom variant="h5" component="h2">
+                        Total Cost: ${parseFloat(imageArray[0].price) * numberOfItems}
+                      </Typography>
+                      <Typography gutterBottom variant="body3" component="body">
+                        Taxes will be calculated during checkout
+                   </Typography>
+
                     </Grid>
                   </>
                   <Grid container xs={12}>
-                    <Grid items xs={6}>
-                      <Button size="medium" variant="contained" color="primary" className={classes.botton}>
+                    <Grid items xs={12}>
+                      <Button onClick={handleAddCart} size="medium" variant="contained" color="primary" className={classes.botton}>
                         Add to Cart
-                 </Button>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Button size="medium" variant="contained" color="primary" className={classes.botton}>
-                        Learn More
-                  </Button>
+                      </Button>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -462,8 +548,8 @@ function Item({ match }) {
 
 
           <Grid xs={12} item container className={classes.wrapper}>
-          <Typography gutterBottom variant="h4" component="h2" className={classes.botton}>
-             More articles in this category you may like
+            <Typography gutterBottom variant="h4" component="h2" className={classes.botton}>
+              More articles in this category you may like
           </Typography>
             {imageArrayCategory.length !== 0 ? (
               <Grid container justify="center" alignItems="center" >
@@ -507,18 +593,18 @@ function Item({ match }) {
                           </CardContent>
                         </CardActionArea>
                         <Link
-                            style={{ textDecoration: "none", color: "black" }}
-                            to={{
-                              pathname: `/item/${index.item_id}`,
-                            }}>
-                        <CardActions>
-                          <Grid item xs={12} className={classes.nameOfItem} >
-                            <Button size="small" variant="contained" color="primary">
-                              Learn More
+                          style={{ textDecoration: "none", color: "black" }}
+                          to={{
+                            pathname: `/item/${index.item_id}`,
+                          }}>
+                          <CardActions>
+                            <Grid item xs={12} className={classes.nameOfItem} >
+                              <Button size="small" variant="contained" color="primary">
+                                Learn More
                               </Button>
-                          </Grid>
-                        </CardActions>
-                        </Link> 
+                            </Grid>
+                          </CardActions>
+                        </Link>
 
                       </Card>
 
@@ -550,6 +636,22 @@ function Item({ match }) {
 
           <Footer />
         </Grid>
+        <Snackbar
+        open={updateSuccess}
+        autoHideDuration={6000}
+        onClose={handleCloseUpdateSucess}>
+        <Alert onClose={handleCloseUpdateSucess} severity="success">
+          Item was added to cart!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={updateFailed}
+        autoHideDuration={6000}
+        onClose={handleCloseUpdateFailed}>
+        <Alert onClose={handleCloseUpdateFailed} severity="error">
+          There was a problem when adding this item to your cart. Please check that you have set at least one item or if you are logged in into the site
+        </Alert>
+      </Snackbar>
       </React.Fragment>
     </div>
   );

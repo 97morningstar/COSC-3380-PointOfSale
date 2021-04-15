@@ -35,6 +35,9 @@ import back from "../../assets/background1.jpg";
 
 import Footer from "../../components/Footer/Footer";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     textAlign: "center",
@@ -170,6 +173,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 
 function Item({ match }) {
   const classes = useStyles();
@@ -191,8 +198,6 @@ function Item({ match }) {
 
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [invoiceItemsName, setInvoiceItemsName] = useState([]);
-
-
 
   const items = [
     {
@@ -237,9 +242,45 @@ function Item({ match }) {
     },
   ]
 
+  
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updateFailed, setUpdateFailed] = useState(false);
+
+  const handleCloseUpdateSucess = () => {
+    setUpdateSuccess(false);
+  };
+  const handleCloseUpdateFailed = () => {
+    setUpdateFailed(false);
+  };
+
+
   const [imageArray, setimageArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState([]);
+
+  const handleChangeOfNumberOfItems = (number, e) => {
+    
+    
+    /* Update Item Quantity */
+    const update = {
+      quantity: e,
+      invoice_item_id: parseInt(number),
+      jwtToken: localStorage.getItem("token"),
+      user_id: localStorage.getItem("user_id"),
+      is_employee: localStorage.getItem("is_employee")
+    }
+
+    console.log("invoice_item_id", parseInt(number) ,"quantity", e)
+
+    axios.put("http://localhost:4000/get_cart/update_quantity", update)
+    .then((res) => {
+      console.log(res.data)
+      setUpdateSuccess(true);
+    }).catch((err) => {
+      console.log(err.response);
+      setUpdateFailed(true);
+    })
+  }
 
   useEffect(() => {
 
@@ -256,14 +297,14 @@ function Item({ match }) {
 
     /* VERIFY USER IS LOGGED IN */
     axios
-      .post("/get_cart", data)
+      .post("http://localhost:4000/get_cart", data)
       .then((res) => {
         setIsLoading(false);
 
         setInvoice(res.data[0]);
         /* GET INVOICE ITEMS */
         axios
-          .get("/get_invoice_items/" + data.user_id)
+          .get("http://localhost:4000/get_invoice_items/" + data.user_id)
           .then((response) => {
             setIsLoading(false);
             console.log("invoice items", response.data);
@@ -432,7 +473,10 @@ function Item({ match }) {
                                   }}
                                   name="store_id_fk"
                                   onChange={(e) => {
-                                    setNumberOfItems(e.value);
+                                    setNumberOfItems(() => {
+                                      handleChangeOfNumberOfItems(index.invoice_item_id, e.value);
+                                      return e.value;
+                                    });
                                     index.quantity = e.value
                                     console.log(index)
                                   }}
@@ -490,11 +534,11 @@ function Item({ match }) {
                             className={classes.divider}
                           />
                           <Typography gutterBottom component="body" className={classes.botton}>
-                           Total Before Tax: ${invoiceItems.map((index) => {
+                           Total Before Tax: ${(invoiceItems.map((index) => {
                              return parseFloat(index.selling_price*index.quantity);
                            }).reduce((total, num) => {
                              return total + num
-                           })}
+                           })).toFixed(2)}
                           </Typography>
                           <Typography gutterBottom component="body" className={classes.botton}>
                            Tax on this invoice: ${invoiceItems.map((index) => {
@@ -535,6 +579,22 @@ function Item({ match }) {
 
           <Footer />
         </Grid>
+        <Snackbar
+        open={updateSuccess}
+        autoHideDuration={6000}
+        onClose={handleCloseUpdateSucess}>
+        <Alert onClose={handleCloseUpdateSucess} severity="success">
+          Item was updated!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={updateFailed}
+        autoHideDuration={6000}
+        onClose={handleCloseUpdateFailed}>
+        <Alert onClose={handleCloseUpdateFailed} severity="error">
+          There was a problem when updating this item
+        </Alert>
+      </Snackbar>
       </React.Fragment>
     </div>
   );

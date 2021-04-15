@@ -83,11 +83,11 @@ export default function Navbar({user}) {
     if (localStorage.getItem("token")) {
       console.log("token exists");
       axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
-          console.log("res", res);
-          console.log("jwt", localStorage.getItem("is_employee"));
+        //  console.log("res", res);
+        //  console.log("jwt", localStorage.getItem("is_employee"));
          // localStorage.setItem("token", res.data.jwtToken);
          // setTimeout(isLoggedIn, 17900 * 1000);
 
@@ -99,7 +99,7 @@ export default function Navbar({user}) {
             console.log("is_employee")
 
             axios
-               .get("/api/employee/"+localStorage.getItem("user_id"))
+               .get("http://localhost:4000/api/employee/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -116,7 +116,7 @@ export default function Navbar({user}) {
 
             console.log("custoemr")
             axios
-            .get("/api/customer/"+localStorage.getItem("user_id"))
+            .get("http://localhost:4000/api/customer/"+localStorage.getItem("user_id"))
             .then((res) => {
          
        
@@ -137,7 +137,7 @@ export default function Navbar({user}) {
         })
         .catch((err) => {
           console.log("error");
-          console.log(err.response.data);
+          console.log(err);
          
           console.log(err.response);
           localStorage.removeItem("token");
