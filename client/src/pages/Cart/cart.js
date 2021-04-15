@@ -256,14 +256,14 @@ function Item({ match }) {
 
     /* VERIFY USER IS LOGGED IN */
     axios
-      .post("http://localhost:4000/get_cart", data)
+      .post("/get_cart", data)
       .then((res) => {
         setIsLoading(false);
 
         setInvoice(res.data[0]);
         /* GET INVOICE ITEMS */
         axios
-          .get("http://localhost:4000/get_invoice_items/" + data.user_id)
+          .get("/get_invoice_items/" + data.user_id)
           .then((response) => {
             setIsLoading(false);
             console.log("invoice items", response.data);
