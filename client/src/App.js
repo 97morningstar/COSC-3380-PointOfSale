@@ -22,6 +22,9 @@ import Dash from "./pages/Dashboard/empDash";
 import empTables from "./pages/Dashboard/EmployeeTable"
 
 import Profile from "./pages/CustomerProfile/CustomerProfile";
+import Item from "./pages/Item/Item";
+import Cart from "./pages/Cart/cart";
+
 
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
@@ -48,6 +51,10 @@ const App = () => {
         <Route path="/search" component={Search} />
         <Route path="/dash" component={Dash} />
         <Route path="/employeeTable" component={empTables} />
+
+        <Route path="/item/:name" render={(props) => <Item {...props} key={Date.now()}/>} />
+        <Route path="/cart" component={Cart} />
+        
 
 
 

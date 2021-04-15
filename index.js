@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 const cors = require("cors");
 const pool = require("./services/db")
 const path = require("path");
@@ -30,11 +30,16 @@ if (process.env.NODE_ENV === 'production') {
 app.use("/auth", require("./client/src/routes/jwtAuth"));
 app.use("/api", require("./routes/customer")); 
 app.use("/api", require("./routes/item"));
+app.use("/api", require("./routes/store"));
 app.use("/api", require("./routes/search"));
 app.use("/api", require("./routes/employee"));
-
-
+/* Register Protect routes */
 app.use("/get_profile", require("./routes/profile"));
+app.use("/get_cart", require("./routes/cart"));
+app.use("/", require("./routes/invoice_item_cart"));
+
+
+
 
 /* Do not move from here */
 app.get('*', (request, response) => {

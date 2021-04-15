@@ -14,6 +14,16 @@ import {
   Redirect 
 } from "react-router-dom";
 
+//Icons
+
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
 const useStyles = makeStyles((theme) => ({
   logo: {
     objectFit: "contain",
@@ -37,16 +47,36 @@ const useStyles = makeStyles((theme) => ({
   },
   icon:{
     margin: "10px"
+  },
+  menu:{
+    color: "#fff"
   }
 }));
 
 export default function Navbar({user}) {
   const classes = useStyles();
   const history = useHistory();
-
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState(null);
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    setAnchorEl(null);
+    history.push("/profile");
+  }
+
+  const handleCart = () => {
+    setAnchorEl(null);
+    history.push("/cart");
+  }
  
   //Check if token exists
   const isLoggedIn = () => {
@@ -62,6 +92,7 @@ export default function Navbar({user}) {
          // setTimeout(isLoggedIn, 17900 * 1000);
 
           setIsAuthenticated(true);
+
           if (localStorage.is_employee == false){
             axios
             .get("/api/customer/"+localStorage.getItem("user_id"))
@@ -99,7 +130,13 @@ export default function Navbar({user}) {
         .catch((err) => {
           console.log("error");
           console.log(err.response.data);
-         history.push("/login");
+         
+          console.log(err.response);
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("is_employee");
+          history.push("/login");
+         // history.push("/login");
         });
     }else{
       console.log("no token x");
@@ -130,14 +167,15 @@ export default function Navbar({user}) {
                 
               </Link>
             </Grid>
-            <Grid item className={classes.icon}>
-              <AccountCircleIcon />
-            </Grid>
+
            
 
 
             {!isAuthenticated ? (  
            <>
+            <Grid item className={classes.icon}>
+              <AccountCircleIcon />
+            </Grid>
            <Grid item>
               <Button
                 size="small"
@@ -162,23 +200,30 @@ export default function Navbar({user}) {
               
               ) :
               (
-                <>
-                <Grid item>
-                  <Button
-                    size="small"
-                    color="inherit"
-                    onClick={logoutButton}
-                    className={classes.Logout}
-                  >
-                logout
-                </Button>
-                </Grid>
-                <Grid item>
-               Welcome {userName ? (userName) : (null)}
-               </Grid>
-                </>
-            
+               <> Welcome {userName ? (userName) : (null)} 
                
+               <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menu}>
+        Menu <KeyboardArrowDownIcon/>
+      </Button>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
+        <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
+
+        <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
+
+        {/* Check if the user is an employee, if yes, show employee dashboard */}        
+
+        <MenuItem onClick={logoutButton}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
+
+      </Menu>
+               
+               </>
               )}
              
 
