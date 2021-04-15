@@ -6,6 +6,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import Link from "@material-ui/core/Link";
+
 import {
   BrowserRouter as Router,
   Route,
@@ -31,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
   SignUp: {
     objectFit: "contain",
   },
+  Logout: {
+    objectFit: "contain",
+  },
   icon:{
     margin: "10px"
   }
@@ -49,17 +53,33 @@ export default function Navbar({user}) {
     if (localStorage.getItem("token")) {
       console.log("token exists");
       axios
-        .post("http://localhost:3000/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
           console.log("res", res);
+          console.log("jwt", localStorage.is_employee);
          // localStorage.setItem("token", res.data.jwtToken);
          // setTimeout(isLoggedIn, 17900 * 1000);
 
           setIsAuthenticated(true);
-
-                axios
-               .get("http://localhost:3000/api/customer/"+localStorage.getItem("user_id"))
+          if (localStorage.is_employee == false){
+            axios
+            .get("/api/customer/"+localStorage.getItem("user_id"))
+            .then((res) => {
+         
+       
+               setUserName(res.data[0].first_name)
+       
+               console.log(res.data[0].first_name);
+       
+             })
+            .catch((err) => {
+               console.log(err);
+             });
+          }
+          else {
+            axios
+               .get("/api/employee/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -71,13 +91,15 @@ export default function Navbar({user}) {
                .catch((err) => {
                   console.log(err);
                 });
+          }
+                
          
       
         })
         .catch((err) => {
           console.log("error");
           console.log(err.response.data);
-         // history.push("/login");
+         history.push("/login");
         });
     }else{
       console.log("no token x");
@@ -86,10 +108,14 @@ export default function Navbar({user}) {
   };
 
   const routeChange = () =>{ 
+    console.log("login attempt");
     let path = `/login`; 
     history.push(path);
   }
-
+  const logoutButton = () =>{
+    localStorage.clear();
+    history.go(0);
+  } 
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -136,7 +162,23 @@ export default function Navbar({user}) {
               
               ) :
               (
-               <> Welcome {userName ? (userName) : (null)} </>
+                <>
+                <Grid item>
+                  <Button
+                    size="small"
+                    color="inherit"
+                    onClick={logoutButton}
+                    className={classes.Logout}
+                  >
+                logout
+                </Button>
+                </Grid>
+                <Grid item>
+               Welcome {userName ? (userName) : (null)}
+               </Grid>
+                </>
+            
+               
               )}
              
 

@@ -17,19 +17,15 @@ import { Button, LinearProgress } from "@material-ui/core";
 /* Images */
 import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
-import {useLocation} from "react-router-dom";
-
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-
-
+/* Categories Images */
+import Electronics from "../../assets/Electronics.png";
+import Pets from "../../assets/Pets.png";
+import ToysAndGames from "../../assets/ToysAndGames.png";
+import Clothing from "../../assets/MensClothing.png";
+import Miscellaneous from "../../assets/Miscellaneous.png";
+import Groceries from "../../assets/Groceries.png";
 
 import back from "../../assets/background1.jpg";
-
-
 import Footer from "../../components/Footer/Footer";
 
 const useStyles = makeStyles((theme) => ({
@@ -38,8 +34,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    flex: "1 0 auto",
-    
+    flex: "1 0 auto"
   },
   text: {
     position: "relative",
@@ -112,16 +107,13 @@ Text1:{
   marginTop: "70px",
   marginBottom: "70px"
 },
-wrapper:{
+categoryItem:{
  marginBottom: "100px"
-},
-rootCard: {
-  margin: "20px"
-},
+}
 }));
 
 
-function Home({match}) {
+function Home() {
   const classes = useStyles();
   const theme = createMuiTheme();
 
@@ -133,58 +125,12 @@ function Home({match}) {
     apiK: '20983112-12d43bcb17250999b789e998a',
     images: []
 }
+
+const arrayImages = ['Dog','Peach','Apple', 'Cup', 'Laptop'];
   
+
+
 const [imageArray, setimageArray] = useState([]);
-
-const location  = useLocation();
-
-  useEffect(() => {
-console.log("location.state.name", match.params.name);
-console.log("location.state",location.state)
-
-        axios
-        .get("/api/item/search/" + match.params.name)
-        .then((res) => {
-
-          console.log(res.data);
-
-           res.data.map((index) => {
-             index.name = index.name.replace(" ","+");
-                axios
-                .get(
-                  `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
-                  , 
-                  { crossdomain: true }
-                )
-                .then((response) => {
-                  
-                 console.log(response.data.hits);
-        
-        
-                  const image = {
-                    images: response.data.hits,
-                    name: index.name.replace("+"," "), 
-                    price: "$"+index.selling_price
-                  }
-        
-                    console.log(image);
-
-        
-                  setimageArray(imageArray => [...imageArray, image]);
-        
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-       });
-
-
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-  },[location]);
 
 
   theme.typography.h3 = {
@@ -220,91 +166,65 @@ console.log("location.state",location.state)
        <Grid  container  xs={12}  spacing={5}   direction="column"   alignItems="center"  justify="center">
             <Grid xs={12} item className={classes.text} >
                 <Typography variant="h3" className={classes.Text1} >
-                      Search
+                      Employee Dashboard
                 </Typography>
             </Grid>
         </Grid>
 
-        <Grid xs={12} item className={classes.wrapper}>
-
-      
-        
-{imageArray.length !== 0 ? (
-     <Grid container justify="center" alignItems="center" > 
-     
-       {imageArray.map((index, i) => {
-        return( <>
-       <Grid xs={12} md={2}>
-
-
-       <Card className={classes.rootCard}>
-       <CardActionArea>
-          <Carousel animation= "fade" navButtonsAlwaysInvisible="true"> 
-
-
-         { index.images.map((a,b) => {
-           return ( <>
-
-        <CardMedia
-          component="img"
-          alt="Photo"
-          height="140"
-          image={a.largeImageURL}
-          title="Photo"
-        />
-       
-           
-           
-            </>
-           )
-        })
-        }
-
-          </Carousel>
-
-<CardContent>
-<Typography gutterBottom variant="h5" component="h2">
-{index.name} 
-</Typography>
-<Chip 
-label={index.price} />
-</CardContent>
-</CardActionArea>
-<CardActions>
-<Button size="small" color="primary">
-Share
-</Button>
-<Button size="small" color="primary">
-Learn More
-</Button>
-</CardActions>
-
-          </Card>
-
-
-   
-
-
-
-
-          </Grid>
-          
-           </>
-        )
-
-      
-       
-      }) 
-       
-        
-    }
-      </Grid>
-            
-      ) : null} 
-
-
-
-</Grid>
+        <Grid xs={12}    container justify="center" alignItems="center"  spacing={1} className={classes.categories} >
+            <Grid xs={12} container justify="center" alignItems="center"  >
+                <Grid item xs={4} className={classes.categoryItem}>
+                  <Link href="/employeeTable" className={classes.link}>
+                      <img alt="category" className={classes.category1} src={Groceries} />
+                      <Typography variant="h5" className={classes.Text} >
+                      Employees
+                     </Typography>
+                  </Link>
+                </Grid>
+                <Grid item xs={4} className={classes.categoryItem}>
+                  <Link href="/electronics" className={classes.link} > 
+                      <img alt="category" className={classes.category1} src={Electronics} />
+                      <Typography variant="h5" className={classes.Text} >
+                      Inventory
+                     </Typography>
+                  </Link>
+                </Grid>
+                <Grid item xs={4} className={classes.categoryItem}>
+                    <Link href="/clothing" className={classes.link}>
+                        <img alt="category" className={classes.category1} src={Clothing} />
+                       <Typography variant="h5" className={classes.Text} >
+                        Customers
+                     </Typography>
+                    </Link>
+                </Grid>
+            </Grid>
+            <Grid xs={12} container justify="center" alignItems="center" >
+                <Grid item xs={4} className={classes.categoryItem}>
+                    <Link href="/miscellaneous" className={classes.link}>
+                        <img alt="category" className={classes.category1} src={Miscellaneous} />
+                        <Typography variant="h5" className={classes.Text} >
+                        Customer Transactions
+                     </Typography>
+                    </Link>
+                </Grid>
+                <Grid item xs={4} className={classes.categoryItem}>
+                    <Link href="/toys-and-games" className={classes.link}>
+                        <img alt="category" className={classes.category1} src={ToysAndGames} />
+                        <Typography variant="h5" className={classes.Text} >
+                        Support Ticket
+                     </Typography>
+                    </Link>
+                </Grid>
+                <Grid item xs={4} className={classes.categoryItem}>
+                    <Link href="/pets" className={classes.link}>
+                        <img alt="category" className={classes.category1} src={Pets} />
+                        <Typography variant="h5" className={classes.Text} >
+                          Something Else
+                     </Typography>
+                    </Link>
+                </Grid>
+            </Grid>
+        </Grid>
        
       
           <Footer />

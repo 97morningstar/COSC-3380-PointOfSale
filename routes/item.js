@@ -65,16 +65,29 @@ app.put("/item/:item_id", async (req, res) => {
     try {
       const {item_id} = req.params;
       const data  = req.body;
-      console.log("item_id");
-      const updateItem = await pool.query("UPDATE item SET name = ?, manufacture_cost = ?, selling_price = ?, category = ?, selling_price = ? WHERE item_id = ?" , 
+      console.log(item_id);
+      const updateItem = await pool.query("UPDATE item SET name = ?, manufacture_cost = ?, selling_price = ?, category = ?, brand = ?, discount = ? WHERE item_id = ?" , 
       [ data.name,
         data.manufacture_cost,
         data.selling_price,
         data.category,
-        data.selling_price,
+        data.brand,
+        data.discount,
         item_id
+        
       ]);
-      
+      console.log(updateItem);
+      var invoiceIdCarts = await pool.query("SELECT invoice_id FROM invoice WHERE order_status = 'cart'");
+      //console.log(invoiceIdCarts.length);
+      //console.log(invoiceIdCarts[0].invoice_id);
+      for (i = 0; i < invoiceIdCarts.length; i++){
+        var updateCorrespondingInvoiceItems = await pool.query("UPDATE invoice_item SET total_cost = 0 WHERE item_id_fk = ? AND invoice_id_fk = ? ",
+        [item_id,
+        invoiceIdCarts[i].invoice_id
+      ]);
+      }
+      //this makes sure that all the carts have their cost's modified if their item was affected
+      console.log("Item was updated successfully!");
       res.json("Item was updated successfully!");
     }catch (err) {
       console.log(err.message);

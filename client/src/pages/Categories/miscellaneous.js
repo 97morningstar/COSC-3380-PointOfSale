@@ -167,6 +167,7 @@ useEffect(() => {
           .then((response) => {
             
            console.log(response.data.hits);
+           console.log(data.amount);
   
   
             const image = {

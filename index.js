@@ -30,7 +30,8 @@ if (process.env.NODE_ENV === 'production') {
 app.use("/auth", require("./client/src/routes/jwtAuth"));
 app.use("/api", require("./routes/customer")); 
 app.use("/api", require("./routes/item"));
-app.use("/api", require("./routes/search"))
+app.use("/api", require("./routes/search"));
+app.use("/api", require("./routes/employee"));
 
 
 app.use("/get_profile", require("./routes/profile"));
