@@ -40,7 +40,7 @@ app.get("/invoice_item_hi/:id", async (req, res) => {
 app.delete("/api/invoice_item/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const updateQuantity = await pool.query("UPDATE invoice_item SET quantity = 0");
+    const updateQuantity = await pool.query("UPDATE invoice_item SET quantity = 0 WHERE invoice_item_id = ?", [id]);
     const deleteInvoiceitem = await pool.query("DELETE FROM invoice_item WHERE invoice_item_id = ?", [id]);
     res.json("item was deleted successfully");
   } catch (err) {

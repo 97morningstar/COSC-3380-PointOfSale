@@ -10,7 +10,7 @@ app.get("/get_invoice_items/:customer",async (req, res) => {
          const {customer} = req.params;
         
        // const invoice_items = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [invoice_id]);
-        const invoice_items = await pool.query("SELECT * FROM invoice INNER JOIN invoice_item ON invoice.invoice_id = invoice_item.invoice_id_fk INNER JOIN customer ON invoice.customer_id_fk = customer.customer_id INNER JOIN item ON invoice_item.item_id_fk = item.item_id WHERE invoice.customer_id_fk = ?", [customer]);
+        const invoice_items = await pool.query("SELECT * FROM invoice INNER JOIN invoice_item ON invoice.invoice_id = invoice_item.invoice_id_fk INNER JOIN customer ON invoice.customer_id_fk = customer.customer_id INNER JOIN item ON invoice_item.item_id_fk = item.item_id WHERE invoice.customer_id_fk = ? AND invoice.order_status = 'cart'", [customer]);
 
             res.json(invoice_items);
 

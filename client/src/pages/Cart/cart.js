@@ -4,10 +4,10 @@ import { getConfig } from "../../authConfig";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
-
+import ShopIcon from '@material-ui/icons/Shop';
 import { Link, useRouteMatch, router } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Divider, Paper } from "@material-ui/core";
+import { Grid, Typography, Divider, Paper, IconButton } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Carousel from 'react-material-ui-carousel'
 
@@ -32,6 +32,7 @@ import Select from "react-select";
 
 import back from "../../assets/background1.jpg";
 
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import Footer from "../../components/Footer/Footer";
 
@@ -242,7 +243,7 @@ function Item({ match }) {
     },
   ]
 
-  
+
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updateFailed, setUpdateFailed] = useState(false);
 
@@ -258,9 +259,62 @@ function Item({ match }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState([]);
 
+  const handleBuy = () => {
+    let total = (invoiceItems.map((index) => {
+      return 0.0825 * parseFloat(index.selling_price * index.quantity);
+    }).reduce((total, num) => {
+      return total + num
+    }) + invoiceItems.map((index) => {
+      return parseFloat(index.selling_price * index.quantity);
+    }).reduce((total, num) => {
+      return parseFloat(total + num)
+    })).toFixed(2)
+
+    const data = {
+      payment_id_fk: 4,
+      total_cost_after_tax: total,
+      invoice_id: invoice.invoice_id,
+      customer_id_fk: invoiceItems[0].customer_id_fk,
+      store_id_fk: invoiceItems[0].store_id_fk
+    }
+
+    console.log(data)
+
+    setInvoiceItems([]);
+
+
+    axios.put("http://localhost:4000/api/purchase", data)
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.log(err.response.data)
+        setUpdateFailed(true);
+      })
+
+  }
+
+  const handleDelete = (number) => {
+    console.log(number)
+    setInvoiceItems((invoiceItems) =>
+      invoiceItems.filter(
+        (invoiceItems) => invoiceItems.invoice_item_id !== number
+      )
+    );
+    axios.delete("http://localhost:4000/api/api/invoice_item/" + parseInt(number))
+      .then((res) => {
+        console.log(res.data)
+        setUpdateSuccess(true);
+      })
+      .catch((err) => {
+        setUpdateFailed(true);
+      })
+  }
+
   const handleChangeOfNumberOfItems = (number, e) => {
-    
-    
+
+
+
     /* Update Item Quantity */
     const update = {
       quantity: e,
@@ -270,16 +324,16 @@ function Item({ match }) {
       is_employee: localStorage.getItem("is_employee")
     }
 
-    console.log("invoice_item_id", parseInt(number) ,"quantity", e)
+    console.log("invoice_item_id", parseInt(number), "quantity", e)
 
     axios.put("http://localhost:4000/get_cart/update_quantity", update)
-    .then((res) => {
-      console.log(res.data)
-      setUpdateSuccess(true);
-    }).catch((err) => {
-      console.log(err.response);
-      setUpdateFailed(true);
-    })
+      .then((res) => {
+        console.log(res.data)
+        setUpdateSuccess(true);
+      }).catch((err) => {
+        console.log(err.response);
+        setUpdateFailed(true);
+      })
   }
 
   useEffect(() => {
@@ -302,6 +356,7 @@ function Item({ match }) {
         setIsLoading(false);
 
         setInvoice(res.data[0]);
+        
         /* GET INVOICE ITEMS */
         axios
           .get("http://localhost:4000/get_invoice_items/" + data.user_id)
@@ -309,6 +364,8 @@ function Item({ match }) {
             setIsLoading(false);
             console.log("invoice items", response.data);
             setInvoiceItems(response.data);
+
+        
 
             /* GET IMAGES */
             response.data.map((index) => {
@@ -484,22 +541,31 @@ function Item({ match }) {
                                 <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
                                   Subtotal: ${(index.quantity * index.selling_price).toFixed(2)}
                                 </Typography>
+
+                                <Button
+                                  variant="contained"
+                                  color="secondary"
+                                  className={classes.button}
+                                  startIcon={<DeleteIcon />}
+                                  onClick={() => {
+                                    return handleDelete(index.invoice_item_id)
+                                  }}
+                                >
+                                  Delete
+                                </Button>
                               </Grid>
                               <Divider
                                 variant="inset"
                                 component="li"
                                 className={classes.divider}
                               />
-
-
-
                             </>
                           );
                         })}
                       </Grid>
                       <Grid xs={5} item >
-                        <Paper elevation={3} style={{padding: "15px"}}>
-                          <Typography gutterBottom variant="h5" component="h2"  className={classes.botton}>
+                        <Paper elevation={3} style={{ padding: "15px" }}>
+                          <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
                             Order Summary:
                           </Typography>
                           <Divider
@@ -534,31 +600,40 @@ function Item({ match }) {
                             className={classes.divider}
                           />
                           <Typography gutterBottom component="body" className={classes.botton}>
-                           Total Before Tax: ${(invoiceItems.map((index) => {
-                             return parseFloat(index.selling_price*index.quantity);
-                           }).reduce((total, num) => {
-                             return total + num
-                           })).toFixed(2)}
+                            Total Before Tax: ${(invoiceItems.map((index) => {
+                            return parseFloat(index.selling_price * index.quantity);
+                          }).reduce((total, num) => {
+                            return total + num
+                          })).toFixed(2)}
                           </Typography>
                           <Typography gutterBottom component="body" className={classes.botton}>
-                           Tax on this invoice: ${invoiceItems.map((index) => {
-                             return 0.0825*parseFloat(index.selling_price*index.quantity);
-                           }).reduce((total, num) => {
-                             return total + num
-                           }).toFixed(2)}
+                            Tax on this invoice: ${invoiceItems.map((index) => {
+                            return 0.0825 * parseFloat(index.selling_price * index.quantity);
+                          }).reduce((total, num) => {
+                            return total + num
+                          }).toFixed(2)}
                           </Typography>
                           <Typography gutterBottom component="body" className={classes.botton}>
-                           Total Cost: ${(invoiceItems.map((index) => {
-                             return 0.0825*parseFloat(index.selling_price*index.quantity);
-                           }).reduce((total, num) => {
-                             return total + num
-                           }) + invoiceItems.map((index) => {
-                            return parseFloat(index.selling_price*index.quantity);
+                            Total Cost: ${(invoiceItems.map((index) => {
+                            return 0.0825 * parseFloat(index.selling_price * index.quantity);
+                          }).reduce((total, num) => {
+                            return total + num
+                          }) + invoiceItems.map((index) => {
+                            return parseFloat(index.selling_price * index.quantity);
                           }).reduce((total, num) => {
                             return parseFloat(total + num)
                           })).toFixed(2)}
                           </Typography>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            className={classes.button}
+                            startIcon={<ShopIcon />}
+                            onClick={handleBuy}
 
+                          >
+                            Buy
+                                </Button>
                         </Paper>
                       </Grid>
 
@@ -566,7 +641,9 @@ function Item({ match }) {
                   </Grid>
 
                 </>
-              ) : (<>No items</>)}
+              ) : (<><Typography gutterBottom component="body" className={classes.botton}>
+                You cart is empty
+            </Typography></>)}
 
 
 
@@ -580,21 +657,21 @@ function Item({ match }) {
           <Footer />
         </Grid>
         <Snackbar
-        open={updateSuccess}
-        autoHideDuration={6000}
-        onClose={handleCloseUpdateSucess}>
-        <Alert onClose={handleCloseUpdateSucess} severity="success">
-          Item was updated!
+          open={updateSuccess}
+          autoHideDuration={6000}
+          onClose={handleCloseUpdateSucess}>
+          <Alert onClose={handleCloseUpdateSucess} severity="success">
+            Cart was updated!
         </Alert>
-      </Snackbar>
-      <Snackbar
-        open={updateFailed}
-        autoHideDuration={6000}
-        onClose={handleCloseUpdateFailed}>
-        <Alert onClose={handleCloseUpdateFailed} severity="error">
-          There was a problem when updating this item
+        </Snackbar>
+        <Snackbar
+          open={updateFailed}
+          autoHideDuration={6000}
+          onClose={handleCloseUpdateFailed}>
+          <Alert onClose={handleCloseUpdateFailed} severity="error">
+            There was a problem when updating this cart
         </Alert>
-      </Snackbar>
+        </Snackbar>
       </React.Fragment>
     </div>
   );

@@ -139,11 +139,12 @@ app.put("/arrived/:id", async (req, res) => {
 });
 
 // Purchased 
-app.put("/purchase/:id", async (req, res) => {
+app.put("/purchase", async (req, res) => {
     try {
-        const { id } = req.params;
-        const data = await pool.query("SELECT * FROM invoice WHERE invoice_id = ?", [id]);
+       
         const body = req.body;
+      /* const data = await pool.query("SELECT * FROM invoice WHERE invoice_id = ?", [id]);
+       
         console.log(data[0].order_status);
 
         if (data[0].order_status != "cart") {
@@ -153,24 +154,33 @@ app.put("/purchase/:id", async (req, res) => {
             res.status(400).send(error);
         }
 
-        const invoiceItems = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
+       /* const invoiceItems = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
         for (var i = 0; i < invoiceItems.length; i++) {
             if (invoiceItems[i].quantity == 0) {
 
                 var deleteInvoiceitem = await pool.query("DELETE FROM invoice_item WHERE invoice_item_id = ?", [invoiceItems[i].invoice_item_id]);
             }
 
-        }
+        }*/
+
+        /* NEW - TESTING */
+
+       
+
+
+
         var now = new Date();
         var d = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
         console.log(d);
-        const updateInvoiceitem = await pool.query("UPDATE invoice SET order_status = 'purchased', time_of_transaction = ?, payment_id_fk = ? WHERE invoice_id = ? ",
+        // We also need total_cost_after_tax
+        const updateInvoiceitem = await pool.query("UPDATE invoice SET order_status = 'purchased', time_of_transaction = ?, payment_id_fk = ?, total_cost_after_tax = ? WHERE invoice_id = ? ",
             [
                 d,
                 body.payment_id_fk,
-                id
+                body.total_cost_after_tax,
+                body.invoice_id
             ]);
-        const createNewinvoice = await pool.query("INSERT INTO invoice (customer_id_fk, store_id_fk) VALUES (?,?)", [data[0].customer_id_fk, data[0].store_id_fk])
+        const createNewinvoice = await pool.query("INSERT INTO invoice (customer_id_fk, store_id_fk) VALUES (?,?)", [body.customer_id_fk, body.store_id_fk])
         res.json("The transaction was successfully purchased!");
     } catch (err) {
         console.log(err.message);

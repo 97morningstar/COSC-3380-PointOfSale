@@ -7,7 +7,7 @@ app.post("/", authorize, async (req, res) => {
     try {
         console.log("info",req.body);
         
-        const invoice = await pool.query("SELECT * FROM invoice WHERE customer_id_fk = ?", [req.body.user_id]);
+        const invoice = await pool.query("SELECT * FROM invoice WHERE customer_id_fk = ? AND order_status = 'cart'", [req.body.user_id]);
 
       res.json(invoice);
     } catch (err) {hqf

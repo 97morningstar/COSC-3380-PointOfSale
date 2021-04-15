@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild": "npm run build --prefix client"
-    //"nodemon": "nodmon"*/
   },
   "keywords": [],
   "author": "",
