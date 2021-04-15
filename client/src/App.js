@@ -17,6 +17,14 @@ import Clothing from "./pages/Categories/clothing";
 import Electronics from "./pages/Categories/electronics";
 import Pets from "./pages/Categories/pets";
 import Groceries from "./pages/Categories/groceries";
+import Search from "./pages/Categories/search";
+import Dash from "./pages/Dashboard/empDash";
+import empTables from "./pages/Dashboard/EmployeeTable"
+
+import Profile from "./pages/CustomerProfile/CustomerProfile";
+import Item from "./pages/Item/Item";
+import Cart from "./pages/Cart/cart";
+
 
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
@@ -39,6 +47,14 @@ const App = () => {
         <Route path="/electronics" component={Electronics} />
         <Route path="/pets" component={Pets} />
         <Route path="/groceries" component={Groceries} />
+        <Route path="/profile" component={Profile} />
+        <Route path="/search" component={Search} />
+        <Route path="/dash" component={Dash} />
+        <Route path="/employeeTable" component={empTables} />
+
+        <Route path="/item/:name" render={(props) => <Item {...props} key={Date.now()}/>} />
+        <Route path="/cart" component={Cart} />
+        
 
 
 

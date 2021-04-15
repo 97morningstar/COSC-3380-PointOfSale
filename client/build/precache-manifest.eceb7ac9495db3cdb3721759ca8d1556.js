@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "bb0629e831658b6c7570ea2e420bd14e",
+    "revision": "a2a41a7bba7b456092a8da8598eb5412",
     "url": "/index.html"
   },
   {
-    "revision": "46f368f371203b19888e",
-    "url": "/static/css/2.72c09316.chunk.css"
+    "revision": "cef49aef917f3ef35d13",
+    "url": "/static/css/2.181c4ea7.chunk.css"
   },
   {
-    "revision": "cb8e749e22cd5ca0de0b",
-    "url": "/static/css/main.86752d04.chunk.css"
+    "revision": "33b83aac5c2e8ac42a01",
+    "url": "/static/css/main.de3c8d95.chunk.css"
   },
   {
-    "revision": "46f368f371203b19888e",
-    "url": "/static/js/2.70df8f9c.chunk.js"
+    "revision": "cef49aef917f3ef35d13",
+    "url": "/static/js/2.84fcd53a.chunk.js"
   },
   {
     "revision": "c4c3a267234135485b5c29bd0f4e4948",
-    "url": "/static/js/2.70df8f9c.chunk.js.LICENSE.txt"
+    "url": "/static/js/2.84fcd53a.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "cb8e749e22cd5ca0de0b",
-    "url": "/static/js/main.3f4ae6a0.chunk.js"
+    "revision": "33b83aac5c2e8ac42a01",
+    "url": "/static/js/main.f3193000.chunk.js"
   },
   {
     "revision": "ce52a3f297470fd68ccd",
@@ -80,8 +80,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/WomensClothing.5f7770b3.png"
   },
   {
-    "revision": "21d497dde6bb3914f6702e4682e0768e",
-    "url": "/static/media/_Logo.21d497dd.gif"
+    "revision": "23d169d506f10be2f325f476dc787d19",
+    "url": "/static/media/_Logo (1).23d169d5.png"
+  },
+  {
+    "revision": "c2169ed61d2fffdf34784a0c7be483e5",
+    "url": "/static/media/background1.c2169ed6.jpg"
   },
   {
     "revision": "45d8ea9396b4e50a93fa956d77980f7e",
@@ -90,5 +94,9 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "882dccfdd40965f4ca12447fde1df8ae",
     "url": "/static/media/image.882dccfd.jpg"
+  },
+  {
+    "revision": "6a9d678d39afb26b74bfaf58fb169c10",
+    "url": "/static/media/placeholder.6a9d678d.png"
   }
 ]);

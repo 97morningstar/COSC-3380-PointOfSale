@@ -5,7 +5,7 @@ import { getConfig } from "../../authConfig";
 import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
 
-import Link from "@material-ui/core/Link";
+import { Link, useRouteMatch } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -15,7 +15,7 @@ import { Chip } from "@material-ui/core";
 import { Button, LinearProgress } from "@material-ui/core";
 
 /* Images */
-import slogan from "../../assets/_Logo.gif";
+import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 /* Categories Images */
 import Electronics from "../../assets/Electronics.png";
@@ -36,6 +36,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 
 
 
+import back from "../../assets/background1.jpg";
 
 import Footer from "../../components/Footer/Footer";
 
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     flex: "1 0 auto",
-    
+
   },
   text: {
     position: "relative",
@@ -67,61 +68,64 @@ const useStyles = makeStyles((theme) => ({
     color: "white"
   },
   design: {
+    backgroundImage: `url(${back})`,
     backgroundColor: "#007EB4",
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
     height: "150px !important",
-    paddingTop: "80px"
+    paddingTop: "60px"
   },
   logo: {
     width: "170px",
     height: "170px",
   },
-  logoContainer:{
-      textAlign: "left"
+  logoContainer: {
+    textAlign: "left"
   },
-   food: {
+  food: {
     width: "270px",
     height: "170px",
   },
-  foodContainer:{
+  foodContainer: {
     //textAlign: "center"
   },
-  text:{
-    display: "flex", 
-    justifyContent: "flex-start" ,
+  text: {
+    display: "flex",
+    justifyContent: "flex-start",
     padding: "10px",
   },
-  carousel:{
-      width: "250px",
-      height: "150px",
-      margin: "10px"
-  },
-  nameOfItem:{
+  carousel: {
+    width: "250px",
+    height: "150px",
     margin: "10px"
   },
-  category1:{
+  nameOfItem: {
+    margin: "10px"
+  },
+  category1: {
     width: "250px",
     height: "250px",
   },
-  link:{
+  link: {
     color: "#000",
     "&:hover": {
-    textDecoration: "none",
-    color: "#007EB4"
+      textDecoration: "none",
+      color: "#007EB4"
     }
   },
-  categories:{
+  categories: {
     marginBottom: "40px",
   },
-Text1:{
-  marginTop: "70px",
-  marginBottom: "70px"
-},
-wrapper:{
- marginBottom: "100px"
-},
-rootCard: {
-  margin: "20px"
-},
+  Text1: {
+    marginTop: "70px",
+    marginBottom: "70px"
+  },
+  wrapper: {
+    marginBottom: "100px"
+  },
+  rootCard: {
+    margin: "20px"
+  },
 }));
 
 
@@ -136,45 +140,60 @@ function Home() {
     apiUrl: 'https://pixabay.com/api',
     apiK: '20983112-12d43bcb17250999b789e998a',
     images: []
-}
+  }
 
-const arrayImages = ['man+jacket','man+shoes','man+suit', 'tie'];
-  
+  const arrayImages = ['man+jacket', 'man+shoes', 'man+suit', 'tie'];
 
 
-const [imageArray, setimageArray] = useState([]);
+
+  const [imageArray, setimageArray] = useState([]);
 
   useEffect(() => {
 
-    arrayImages.map((index) => {
+    axios
+      .get("/api/item/category/Pets")
+      .then((res) => {
 
-      axios
-        .get(
-          `${data.apiUrl}/?key=${data.apiK}&q=${index}&image_type=photo&per_page=${data.amount}&safesearch=true`
-          , 
-          { crossdomain: true }
-        )
-        .then((res) => {
-          
-        //  console.log(res.data.hits);
+        console.log(res.data);
+
+        res.data.map((index) => {
+          index.name = index.name.replace(" ", "+");
+          axios
+            .get(
+              `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
+              ,
+              { crossdomain: true }
+            )
+            .then((response) => {
+
+              console.log(response.data.hits);
 
 
-          const image = {
-            images: res.data.hits,
-            name: index, // The name of the article
-            price: '$24.99'
-          }
+              const image = {
+                images: response.data.hits,
+                name: index.name.replace("+", " "),
+                price: "$" + index.selling_price,
+                item_id: index.item_id
+              }
+
+              console.log(image);
 
 
-          setimageArray(imageArray => [...imageArray, image]);
+              setimageArray(imageArray => [...imageArray, image]);
 
-        })
-        .catch((err) => {
-          console.log(err);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         });
-    });
 
-  },[]);
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  }, []);
 
 
   theme.typography.h3 = {
@@ -197,115 +216,120 @@ const [imageArray, setimageArray] = useState([]);
           <Navbar />
           <Grid container xs={12} className={classes.design}>
             <Grid container xs={6} className={classes.logoContainer} justify="center">
-                  <img alt="uh logo" className={classes.logo} src={slogan} />
+              <Link href="/" className={classes.logoContainer} justify="center">
+                <img alt="uh logo" className={classes.logo} src={slogan} />
+              </Link>
             </Grid>
-            <Grid container xs={6} className={classes.foodContainer} justify="flex-end">
-                  <img alt="uh logo" className={classes.food} src={food} />
-            </Grid>
-       
+
+
           </Grid>
           <Navbarnavigation />
 
-         
-       
-     
-       <Grid  container  xs={12}  spacing={5}   direction="column"   alignItems="center"  justify="center">
+
+
+
+          <Grid container xs={12} spacing={5} direction="column" alignItems="center" justify="center">
             <Grid xs={12} item className={classes.text} >
-                <Typography variant="h3" className={classes.Text1} >
-                      Men's Clothing
+              <Typography variant="h3" className={classes.Text1} >
+                Pets
                 </Typography>
             </Grid>
-        </Grid>
+          </Grid>
 
-        <Grid xs={12} item className={classes.wrapper}>
-
-      
-        
-{imageArray.length !== 0 ? (
-     <Grid container justify="center" alignItems="center" > 
-     
-       {imageArray.map((index, i) => {
-        return( <>
-       <Grid xs={12} md={2}>
+          <Grid xs={12} item className={classes.wrapper}>
 
 
-       <Card className={classes.rootCard}>
-       <CardActionArea>
-          <Carousel animation= "fade" navButtonsAlwaysInvisible="true"> 
+
+            {imageArray.length !== 0 ? (
+              <Grid container justify="center" alignItems="center" >
+
+                {imageArray.map((index, i) => {
+                  return (<>
+                    <Grid xs={12} md={2}>
 
 
-         { index.images.map((a,b) => {
-           return ( <>
+                      <Card className={classes.rootCard}>
+                        <CardActionArea>
+                          <Carousel animation="fade" navButtonsAlwaysInvisible="true">
 
 
-       
-         
-           
-
-          
-      
-        <CardMedia
-          component="img"
-          alt="Photo"
-          height="140"
-          image={a.largeImageURL}
-          title="Photo"
-        />
-       
-           
-           
-            </>
-           )
-        })
-        }
-
-          </Carousel>
-
-<CardContent>
-<Typography gutterBottom variant="h5" component="h2">
-{index.name} 
-</Typography>
-<Chip 
-label={index.price} />
-</CardContent>
-</CardActionArea>
-<CardActions>
-<Button size="small" color="primary">
-Share
-</Button>
-<Button size="small" color="primary">
-Learn More
-</Button>
-</CardActions>
-
-          </Card>
+                            {index.images.map((a, b) => {
+                              return (<>
 
 
-   
 
+
+
+
+
+
+                                <CardMedia
+                                  component="img"
+                                  alt="Photo"
+                                  height="140"
+                                  image={a.largeImageURL}
+                                  title="Photo"
+                                />
+
+
+
+                              </>
+                              )
+                            })
+                            }
+
+                          </Carousel>
+
+                          <CardContent>
+                            <Typography gutterBottom variant="h5" component="h2">
+                              {index.name}
+                            </Typography>
+                            <Chip
+                              label={index.price} />
+                          </CardContent>
+                        </CardActionArea>
+                        <Link
+                          style={{ textDecoration: "none", color: "black" }}
+                          to={{
+                            pathname: `/item/${index.item_id}`,
+                          }}>
+                          <CardActions>
+                            <Grid item xs={12} className={classes.nameOfItem} >
+                              <Button size="small" variant="contained" color="primary">
+                                Learn More
+                              </Button>
+                            </Grid>
+                          </CardActions>
+                        </Link>
+
+                      </Card>
+
+
+
+
+
+
+
+                    </Grid>
+
+                  </>
+                  )
+
+
+
+                })
+
+
+                }
+              </Grid>
+
+            ) : null}
 
 
 
           </Grid>
-          
-           </>
-        )
-
-      
-       
-      }) 
-       
-        
-    }
-      </Grid>
-            
-      ) : null} 
 
 
-
-</Grid>
-       
-      
           <Footer />
         </Grid>
       </React.Fragment>

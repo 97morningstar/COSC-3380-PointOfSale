@@ -4,8 +4,7 @@ import { getConfig } from "../../authConfig";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
-
-import Link from "@material-ui/core/Link";
+import { Link, useRouteMatch } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -15,7 +14,7 @@ import { Chip } from "@material-ui/core";
 import { Button, LinearProgress } from "@material-ui/core";
 
 /* Images */
-import slogan from "../../assets/_Logo.gif";
+import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 /* Categories Images */
 /* Categories Images */
@@ -27,6 +26,9 @@ import Miscellaneous from "../../assets/Miscellaneous.png";
 import Groceries from "../../assets/Groceries.png";
 
 import Footer from "../../components/Footer/Footer";
+
+import back from "../../assets/background1.jpg";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,9 +57,13 @@ const useStyles = makeStyles((theme) => ({
     color: "white"
   },
   design: {
+
+    backgroundImage: `url(${back})`,
     backgroundColor: "#007EB4",
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
     height: "150px !important",
-    paddingTop: "80px"
+    paddingTop: "60px"
   },
   logo: {
     width: "170px",
@@ -92,6 +98,7 @@ const useStyles = makeStyles((theme) => ({
   },
   link:{
     color: "#000",
+    textDecoration: "none",
     "&:hover": {
     textDecoration: "none",
     color: "#007EB4"
@@ -129,7 +136,7 @@ const [images, setimages] = useState([]);
 
   useEffect(() => {
 
-    arrayImages.map((index) => {
+  /*  arrayImages.map((index) => {
 
       axios
         .get(
@@ -156,7 +163,7 @@ const [images, setimages] = useState([]);
           console.log(err);
         });
     });
-
+*/
 
 
     axios
@@ -164,8 +171,52 @@ const [images, setimages] = useState([]);
     .then((res) => {
     
     
-      setimages(res);
+      setimages([
+        res.data[0],
+        res.data[1],
+        res.data[2],
+        res.data[3],
+        res.data[4],
+      ]);
+
+      console.log(res)
     
+      for(let i = 0; i < 5; i++){
+
+    let name = res.data[i].name.replace(" ", "+");
+
+    console.log("name", name)
+
+        axios
+          .get(
+            `${data.apiUrl}/?key=${data.apiK}&q=${name}&image_type=photo&per_page=${data.amount}&safesearch=true`
+            , 
+            { crossdomain: true }
+          )
+          .then((response) => {
+            
+      
+            console.log("response",response)
+  
+            const image = {
+              images: response.data.hits,
+              name: res.data[i].name, // The name of the article
+              price: "$" + res.data[i].selling_price,
+              item_id: res.data[i].item_id
+            }
+  
+  
+            setimageArray(imageArray => [...imageArray, image]);
+  
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      
+    }
+
+
+
     
     
     })
@@ -200,12 +251,13 @@ const [images, setimages] = useState([]);
           component="main">
           <Navbar />
           <Grid container xs={12} className={classes.design}>
-            <Grid container xs={6} className={classes.logoContainer} justify="center">
-                  <img alt="uh logo" className={classes.logo} src={slogan} />
-            </Grid>
-            <Grid container xs={6} className={classes.foodContainer} justify="flex-end">
-                  <img alt="uh logo" className={classes.food} src={food} />
-            </Grid>
+          
+              <Grid container xs={6} className={classes.logoContainer} justify="center">
+                  <Link href="/" className={classes.logoContainer} justify="center">
+                      <img alt="uh logo" className={classes.logo} src={slogan} />
+                    </Link>
+              </Grid>
+            
        
           </Grid>
           <Navbarnavigation />
@@ -218,19 +270,19 @@ const [images, setimages] = useState([]);
               </Typography>
           </Grid>
        </Grid>
-       <Grid xs={12} item className={classes.text}>
+       <Grid xs={12} item className={classes.text} >
 
     
 
       
         
         {imageArray.length !== 0 ? (
-             <Grid container justify="center" alignItems="center" > 
+             <Grid container justify="center" alignItems="center" {...console.log("index", imageArray)}> 
              
                {imageArray.map((index, i) => {
                 return( <>
                <Grid xs={2}>
-                  <Carousel animation= "fade"> 
+                  <Carousel animation= "fade" > 
 
 
                  { index.images.map((a,b) => {
@@ -257,7 +309,18 @@ const [images, setimages] = useState([]);
                       label={index.price}
                       />
                       <Grid item xs={12} className={classes.nameOfItem} >
-                        <Button  variant="contained" color="primary">Learn More</Button>
+                      <Link
+                          style={{ textDecoration: "none", color: "black" }}
+                          to={{
+                            pathname: `/item/${index.item_id}`,
+                          }}>
+                         
+                              <Button size="small" variant="contained" color="primary">
+                                Learn More
+                              </Button>
+                           
+                        </Link>
+                      
                       </Grid>
                       
                     </Grid>
@@ -290,54 +353,54 @@ const [images, setimages] = useState([]);
         <Grid xs={12} container justify="center" alignItems="center"  spacing={1} className={classes.categories} >
             <Grid xs={12} container justify="center" alignItems="center"  >
                 <Grid item xs={4}>
-                  <Link href="/groceries" className={classes.link}>
+                  <a href="/groceries" className={classes.link}>
                       <img alt="category" className={classes.category1} src={Groceries} />
                       <Typography variant="h5" className={classes.Text} >
                       Groceries
                      </Typography>
-                  </Link>
+                  </a>
                 </Grid>
                 <Grid item xs={4}>
-                  <Link href="/electronics" className={classes.link} > 
+                  <a href="/electronics" className={classes.link} > 
                       <img alt="category" className={classes.category1} src={Electronics} />
                       <Typography variant="h5" className={classes.Text} >
                       Electronics
                      </Typography>
-                  </Link>
+                  </a>
                 </Grid>
                 <Grid item xs={4}>
-                    <Link href="/clothing" className={classes.link}>
+                    <a href="/clothing" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Clothing} />
                         <Typography variant="h5" className={classes.Text} >
                         Clothing
                      </Typography>
-                    </Link>
+                    </a>
                 </Grid>
             </Grid>
             <Grid xs={12} container justify="center" alignItems="center" >
                 <Grid item xs={4}>
-                    <Link href="/toys-and-games" className={classes.link}>
+                    <a href="/toys-and-games" className={classes.link}>
                         <img alt="category" className={classes.category1} src={ToysAndGames} />
                         <Typography variant="h5" className={classes.Text} >
                         Toys and Games
                      </Typography>
-                    </Link>
+                    </a>
                 </Grid>
                 <Grid item xs={4}>
-                    <Link href="/pets" className={classes.link}>
+                    <a href="/pets" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Pets} />
                         <Typography variant="h5" className={classes.Text} >
                         Pets
                      </Typography>
-                    </Link>
+                    </a>
                 </Grid>
                 <Grid item xs={4}>
-                    <Link href="/miscellaneous" className={classes.link}>
+                    <a href="/miscellaneous" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Miscellaneous} />
                         <Typography variant="h5" className={classes.Text} >
                         Miscellaneous
                      </Typography>
-                    </Link>
+                    </a>
                 </Grid>
             </Grid>
         </Grid>

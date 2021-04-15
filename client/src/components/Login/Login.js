@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -80,15 +80,63 @@ function Login() {
     });
   };
 
+  const isLoggedIn = () => {
+    if (localStorage.getItem("token")) {
+      console.log("token exists");
+      axios
+        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .then((res) => {
+          //Got new access token.
+          console.log("res", res);
+          console.log("jwt", localStorage.getItem("is_employee"));
+          history.push("/");
+
+        })
+        .catch((err) => {
+          console.log("error");
+          console.log(err.response.data);
+         
+          console.log(err.response);
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("is_employee");
+          history.push("/login");
+         // history.push("/login");
+        });
+    }else{
+      console.log("no token x");
+
+    }
+  };
+
+  useEffect(() => {
+    isLoggedIn();
+  }, []);
+
   const login = (e) => {
     e.preventDefault();
 
 
     axios
-      .post("/api/login", loginInfo)
+      .post("/auth/login", loginInfo)
       .then((res) => {
 
-        localStorage.setItem("email", res.data.email);
+      
+        localStorage.setItem("token", res.data.token);
+
+        console.log("Testing:",res.data.is_employee);
+
+        if (res.data.is_employee === true){
+          localStorage.setItem("user_id", res.data.user.employee_id);
+          localStorage.setItem("is_employee", true);
+
+        }
+        else{
+          localStorage.setItem("user_id", res.data.user.customer_id);
+          localStorage.setItem("is_employee", false);
+        }
+        
+
  
           console.log("Inside Login: ", res);
         

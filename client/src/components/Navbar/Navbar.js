@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { AppBar, Toolbar, Button, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import UHLogo from "../../assets/UHLogo.png";
@@ -6,6 +6,23 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import Link from "@material-ui/core/Link";
+
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect 
+} from "react-router-dom";
+
+//Icons
+
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -15,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     height: "50px",
   },
   AppBar: {
-    background: "rgba(66,166,245,1)",
+    background: "#112232",
     display: "flex",
     width: "100%"
   },
@@ -25,32 +42,128 @@ const useStyles = makeStyles((theme) => ({
   SignUp: {
     objectFit: "contain",
   },
+  Logout: {
+    objectFit: "contain",
+  },
+  icon:{
+    margin: "10px"
+  },
+  menu:{
+    color: "#fff"
+  }
 }));
 
-export default function Navbar() {
+export default function Navbar({user}) {
   const classes = useStyles();
   const history = useHistory();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState(null);
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    setAnchorEl(null);
+    history.push("/profile");
+  }
+
+  const handleCart = () => {
+    setAnchorEl(null);
+    history.push("/cart");
+  }
+ 
   //Check if token exists
   const isLoggedIn = () => {
-    if (localStorage.getItem("token") && localStorage.getItem("slug")) {
+    if (localStorage.getItem("token")) {
+      console.log("token exists");
       axios
-        .post("http://18.213.74.196:8000/api/token/refresh/", {
-          refresh: localStorage.getItem("refresh"),
-        })
+        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
-          localStorage.setItem("token", res.data.access);
-          setTimeout(isLoggedIn, 17900 * 1000);
-          history.push("/dashboard");
+          console.log("res", res);
+          console.log("jwt", localStorage.getItem("is_employee"));
+         // localStorage.setItem("token", res.data.jwtToken);
+         // setTimeout(isLoggedIn, 17900 * 1000);
+
+          setIsAuthenticated(true);
+
+          const employee = localStorage.getItem("is_employee");
+
+          if (employee === "true"){
+            console.log("is_employee")
+
+            axios
+               .get("/api/employee/"+localStorage.getItem("user_id"))
+               .then((res) => {
+            
+          
+                  setUserName(res.data[0].first_name)
+          
+                  console.log(res.data[0].first_name);
+          
+                })
+               .catch((err) => {
+                  console.log(err);
+                });
+          }
+          else if(employee === "false"){
+
+            console.log("custoemr")
+            axios
+            .get("/api/customer/"+localStorage.getItem("user_id"))
+            .then((res) => {
+         
+       
+               setUserName(res.data[0].first_name)
+       
+               console.log(res.data[0].first_name);
+       
+             })
+            .catch((err) => {
+               console.log(err);
+             });
+
+           
+          }
+                
+         
+      
         })
         .catch((err) => {
+          console.log("error");
+          console.log(err.response.data);
+         
+          console.log(err.response);
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("is_employee");
           history.push("/login");
+         // history.push("/login");
         });
-    } else {
-      history.push("/login");
+    }else{
+      console.log("no token x");
+
     }
   };
+
+  const routeChange = () =>{ 
+    console.log("login attempt");
+    let path = `/login`; 
+    history.push(path);
+  }
+  const logoutButton = () =>{
+    localStorage.clear();
+    history.go(0);
+  } 
+  useEffect(() => {
+    isLoggedIn();
+  }, []);
 
   return (
     <div>
@@ -62,29 +175,70 @@ export default function Navbar() {
                 
               </Link>
             </Grid>
-            <Grid item>
+
+           
+
+
+            {!isAuthenticated ? (  
+           <>
+            <Grid item className={classes.icon}>
               <AccountCircleIcon />
             </Grid>
-            <Grid item>
+           <Grid item>
               <Button
                 size="small"
                 color="inherit"
-                onClick={isLoggedIn}
+                onClick={routeChange}
                 className={classes.Login}
               >
                 Login
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                size="small"
-                color="inherit"
-                className={classes.SignUp}
-                href="/signup"
-              >
-                Sign Up
-              </Button>
-            </Grid>
+              </Button> 
+              </Grid>
+               <Grid item>
+               <Button
+                 size="small"
+                 color="inherit"
+                 className={classes.SignUp}
+                 href="/signup"
+               >
+                 Sign Up
+               </Button>
+             </Grid>
+              </>
+              
+              ) :
+              (
+               <> Welcome {userName ? (userName) : (null)} 
+               
+               <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menu}>
+        Menu <KeyboardArrowDownIcon/>
+      </Button>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
+        <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
+
+        <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
+
+        {/* Check if the user is an employee, if yes, show employee dashboard */}        
+
+        <MenuItem onClick={logoutButton}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
+
+      </Menu>
+               
+               </>
+              )}
+             
+
+
+
+            
+           
           </Toolbar>
         </AppBar>
       </React.Fragment>

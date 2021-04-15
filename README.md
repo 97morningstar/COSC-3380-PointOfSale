@@ -7,7 +7,7 @@ Team 4 - Point of Sale System
 1. Create a folder in your computer
 2. Type in the command line:
 
-`git init` [inside that folder to initialize a got repository]
+`git init` [inside that folder to initialize a git repository]
 
 `git clone https://github.com/97morningstar/COSC-3380-PointOfSale.git` [To copy the remote repository into your own computer]
 
@@ -63,8 +63,9 @@ index.js
 ## To pull from master
 
 > Always pull before starting to work for the day, or first verify that you have the latest code
+> Make sure to know your origin
 
-1. `git pull origin master`
+1. `git pull origin heroku-deploy`
 
 ## How to open a pull request
 
@@ -85,4 +86,18 @@ mysql :key:
 
 heroku :rocket:
 
+## To test your queries
 
+To test the queries:
+
+1. Install Postman
+2. Create collection (once)
+3. Click the 3 dots and create a new request by clicking Add request
+4. Select the right method (get, put, post, delete)
+5. Run the server
+6. Copy the localhot address and go to the link on the request (example: http://localhost:3000/api/create_item)
+
+get: just send
+post/put: 
+1. Go to Body > raw > select JSON
+2. Copy the object, and send

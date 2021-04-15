@@ -15,7 +15,7 @@ import { Chip } from "@material-ui/core";
 import { Button, LinearProgress } from "@material-ui/core";
 
 /* Images */
-import slogan from "../../assets/_Logo.gif";
+import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 /* Categories Images */
 import Electronics from "../../assets/Electronics.png";
@@ -25,7 +25,7 @@ import Clothing from "../../assets/MensClothing.png";
 import Miscellaneous from "../../assets/Miscellaneous.png";
 import Groceries from "../../assets/Groceries.png";
 
-
+import back from "../../assets/background1.jpg";
 import Footer from "../../components/Footer/Footer";
 
 const useStyles = makeStyles((theme) => ({
@@ -55,9 +55,12 @@ const useStyles = makeStyles((theme) => ({
     color: "white"
   },
   design: {
+    backgroundImage: `url(${back})`,
     backgroundColor: "#007EB4",
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
     height: "150px !important",
-    paddingTop: "80px"
+    paddingTop: "60px"
   },
   logo: {
     width: "170px",
@@ -149,12 +152,12 @@ const [imageArray, setimageArray] = useState([]);
           component="main">
           <Navbar />
           <Grid container xs={12} className={classes.design}>
-            <Grid container xs={6} className={classes.logoContainer} justify="center">
-                  <img alt="uh logo" className={classes.logo} src={slogan} />
-            </Grid>
-            <Grid container xs={6} className={classes.foodContainer} justify="flex-end">
-                  <img alt="uh logo" className={classes.food} src={food} />
-            </Grid>
+          <Grid container xs={6} className={classes.logoContainer} justify="center">
+                  <Link href="/" className={classes.logoContainer} justify="center">
+                      <img alt="uh logo" className={classes.logo} src={slogan} />
+                    </Link>
+              </Grid>
+          
        
           </Grid>
           <Navbarnavigation />

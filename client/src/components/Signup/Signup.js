@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -24,6 +24,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import Select from "react-select";
 
 import { getConfig } from "../../authConfig";
 
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   alert: {
     marginTop: theme.spacing(2),
   },
-  grid:{
+  grid: {
     width: "50%"
   },
   form: {
@@ -76,6 +77,8 @@ export default function SignUp() {
     password2: "",
   });
 
+  const [myStore, setMyStore] = useState("");
+
   const [error, setError] = useState("");
   const [errorsFirst, setErrorsFirst] = useState({});
   const [valueDateOfBirth, setDateOfBirth] = useState(new Date());
@@ -89,7 +92,8 @@ export default function SignUp() {
     street_number: "",
     street_name: "",
     zip_code: "",
-    is_member: "0"
+    is_member: "0",
+    store_id_fk: null
   });
 
   const handleChange = (e) => {
@@ -98,7 +102,7 @@ export default function SignUp() {
 
   let history = useHistory();
 
-  
+
   const handleChangeFirst = (e) => {
     setStudentFirst({
       ...studentFirst,
@@ -106,8 +110,63 @@ export default function SignUp() {
     });
   };
 
+  const [store, setStore] = useState({});
+  useEffect(() => {
+
+    axios
+      .get("/api/view_all_stores")
+      .then((res) => {
+        const data = res.data.map((item, index) => {
+          return {
+            label: item.store_name,
+            value: item.store_id,
+          };
+        });
+        setStore(data)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+  }, []);
+
+  const isLoggedIn = () => {
+    if (localStorage.getItem("token")) {
+      console.log("token exists");
+      axios
+        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .then((res) => {
+          //Got new access token.
+          console.log("res", res);
+          console.log("jwt", localStorage.getItem("is_employee"));
+          history.push("/");
+
+        })
+        .catch((err) => {
+          console.log("error");
+          console.log(err.response.data);
+         
+          console.log(err.response);
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("is_employee");
+          history.push("/login");
+         // history.push("/login");
+        });
+    }else{
+      console.log("no token x");
+
+    }
+  };
+
+  useEffect(() => {
+    isLoggedIn();
+  }, []);
+ 
+
   const signUp = (e) => {
-    const len = studentFirst.email.length;
+    /*const len = studentFirst.email.length;
     const domain = studentFirst.email.substring(len - 13); //must be @uh.edu
 
     if (studentFirst.role_id === "") {
@@ -115,29 +174,59 @@ export default function SignUp() {
     } else if (studentFirst.role_id === "1" && domain !== "theoutlet.com") {
       setError('You must use a "username@theoutlet.com email" for a employee account');
     } else {
-      setError("");
+      setError("");*/
 
-  
-      studentFirst.date_of_birth = valueDateOfBirth.toJSON()
+
+    studentFirst.date_of_birth = valueDateOfBirth.toJSON()
       .substring(0, 10);;
-console.log(studentFirst);
+  
+    studentFirst.store_id_fk = myStore.value;
+    console.log(studentFirst);
+    /* axios
+       .post("http://18.213.74.196:8000/api/user_accounts/signup", signUpInfo)
+       .then((res) => {
+         if (res.data.error) {
+           setError(res.data.error);
+         } else {
 
+
+           //authenticate again after the user is created
+           const email = signUpInfo.email;
+           const password = signUpInfo.password1;
+           axios
+             .post("http://18.213.74.196:8000/api/token/", { email, password })
+             .then((res) => {
+             // localStorage.setItem("token", res.data.access);
+               localStorage.setItem("email_id", res.data.email);
+               history.push("/accountInfo");
+             });
+
+
+
+         }
+       })
+       .catch((err) => console.log(err));
+   }*/
 
     axios
-    .post("/api/create_customer", studentFirst, getConfig())
-    .then((res) => {
-      console.log("SUCCESS");
-      if (res.data.error) {
-        setError(res.data.error);
-      } else {
-        history.push("/");
-      }
-    })
-    .catch((err) => console.log(err));
+      .post("/auth/create_customer", studentFirst, getConfig())
+      .then((res) => {
+        console.log("SUCCESS");
+        console.log(res);
 
-  
 
-    }
+
+        if (res.data.error) {
+          setError(res.data.error);
+        } else {
+          history.push("/");
+        }
+      })
+      .catch((err) => console.log(err));
+
+
+
+
 
     e.preventDefault();
   };
@@ -188,206 +277,225 @@ console.log(studentFirst);
             </Grid>
 
           </Grid>
-          <Grid container  spacing={2}  xs={12}>
+          <Grid container spacing={2} xs={12}>
             <Grid item xs={12} >
-                  <TextField
-                      error={
-                        errorsFirst.first_name && studentFirst.first_name === ""
-                      }
-                      variant="outlined"
-                      id="first_name"
-                      label="First Name"
-                      name="first_name"
-                      onChange={handleChangeFirst}
-                      fullWidth
-                      value={studentFirst.first_name}
-                      required={true}
-                      inputProps={{ maxLength: 25 }}
-                    />
-                    {errorsFirst.first_name &&
-                    studentFirst.first_name === "" ? (
-                      <FormHelperText
-                        error={
-                          errorsFirst.first_name &&
-                          studentFirst.first_name === ""
-                        }
-                      >
-                        {errorsFirst.first_name}
-                      </FormHelperText>
-                    ) : null}
-            </Grid>
-            <Grid item xs={12}>
-                    <TextField
-                      error={
-                        errorsFirst.middle_initial && studentFirst.middle_initial === ""
-                      }
-                      variant="outlined"
-                      id="middle_initial"
-                      label="Middle Initial"
-                      name="middle_initial"
-                      onChange={handleChangeFirst}
-                      value={studentFirst.middle_initial}
-                      fullWidth
-                      required={true}
-                      inputProps={{ maxLength: 24 }}
-                    />
-                    {errorsFirst.middle_initial && studentFirst.middle_initial === "" ? (
-                      <FormHelperText
-                        error={
-                          errorsFirst.middle_initial && studentFirst.middle_initial === ""
-                        }
-                      >
-                        {errorsFirst.middle_initial}
-                      </FormHelperText>
-                    ) : null}
-            </Grid>
-            <Grid item xs={12}>
-                    <TextField
-                      error={
-                        errorsFirst.last_name && studentFirst.last_name === ""
-                      }
-                      variant="outlined"
-                      id="last_name"
-                      label="Last Name"
-                      name="last_name"
-                      onChange={handleChangeFirst}
-                      value={studentFirst.last_name}
-                      fullWidth
-                      required={true}
-                      inputProps={{ maxLength: 24 }}
-                    />
-                    {errorsFirst.last_name && studentFirst.last_name === "" ? (
-                      <FormHelperText
-                        error={
-                          errorsFirst.last_name && studentFirst.last_name === ""
-                        }
-                      >
-                        {errorsFirst.last_name}
-                      </FormHelperText>
-                    ) : null}
-             </Grid>
-             <Grid item xs={12}>
-                    <TextField
-                      error={
-                        errorsFirst.street_number && studentFirst.street_number === ""
-                      }
-                      variant="outlined"
-                      id="street_number"
-                      label="Street Number"
-                      name="street_number"
-                      onChange={handleChangeFirst}
-                      value={studentFirst.street_number}
-                      fullWidth
-                      required={true}
-                      inputProps={{ maxLength: 24 }}
-                    />
-                    {errorsFirst.street_number && studentFirst.street_number === "" ? (
-                      <FormHelperText
-                        error={
-                          errorsFirst.street_number && studentFirst.street_number === ""
-                        }
-                      >
-                        {errorsFirst.street_number}
-                      </FormHelperText>
-                    ) : null}
-             </Grid>
-             <Grid item xs={12}>
-                    <TextField
-                      error={
-                        errorsFirst.street_name && studentFirst.street_name === ""
-                      }
-                      variant="outlined"
-                      id="street_number"
-                      label="Street Name"
-                      name="street_name"
-                      onChange={handleChangeFirst}
-                      value={studentFirst.street_name}
-                      fullWidth
-                      required={true}
-                      inputProps={{ maxLength: 24 }}
-                    />
-                    {errorsFirst.street_name && studentFirst.street_name === "" ? (
-                      <FormHelperText
-                        error={
-                          errorsFirst.street_name && studentFirst.street_name === ""
-                        }
-                      >
-                        {errorsFirst.street_name}
-                      </FormHelperText>
-                    ) : null}
-             </Grid>
-             <Grid item xs={12}>
-                    <TextField
-                      error={
-                        errorsFirst.zip_code && studentFirst.zip_code === ""
-                      }
-                      variant="outlined"
-                      id="street_number"
-                      label="Zip Code"
-                      name="zip_code"
-                      onChange={handleChangeFirst}
-                      value={studentFirst.zip_code}
-                      fullWidth
-                      required={true}
-                      inputProps={{ maxLength: 24 }}
-                    />
-                    {errorsFirst.zip_code && studentFirst.zip_code === "" ? (
-                      <FormHelperText
-                        error={
-                          errorsFirst.zip_code && studentFirst.zip_code === ""
-                        }
-                      >
-                        {errorsFirst.zip_code}
-                      </FormHelperText>
-                    ) : null}
-             </Grid>
-             <Grid item xs={12}>
-             <Typography component="p">Date Of Birth</Typography>
-                    <DatePicker
-                      calendarAriaLabel="Toggle calendar"
-                      clearAriaLabel="Clear value"
-                      dayAriaLabel="Day"
-                      monthAriaLabel="Month"
-                      nativeInputAriaLabel="Date"
-                      onChange={(valueDateOfBirth) => {
-                        setDateOfBirth(valueDateOfBirth);
-                      }}
-                      value={valueDateOfBirth}
-                      yearAriaLabel="Year"
-                      defaultValue={valueDateOfBirth}
-                    />
-             </Grid>
-             <Grid item xs={12}>
-             <FormControl
-            component="fieldset"
-            style={{
-              width: "100%",
-              paddingRight: "10px",
-              paddingLeft: "10px",
-            }}>
-            <FormGroup aria-label="position" row>
-              <FormControlLabel
-                value="end"
-                control={
-                  <Checkbox
-                    style={{ color: "#C8102E" }}
-                    onChange={(e) => {
-                      setStudentFirst({
-                        ...studentFirst,
-                        is_member: e.target.checked,
-                      });
-                    }}
-                  />
+              <TextField
+                error={
+                  errorsFirst.first_name && studentFirst.first_name === ""
                 }
-                label={
-                  <Typography style={{ fontSize: 15 }}>
-                    Check if you want to become a member of "The OUTLET"
-                  </Typography>
-                }
+                variant="outlined"
+                id="first_name"
+                label="First Name"
+                name="first_name"
+                onChange={handleChangeFirst}
+                fullWidth
+                value={studentFirst.first_name}
+                required={true}
+                inputProps={{ maxLength: 25 }}
               />
-            </FormGroup>
-          </FormControl>
-          </Grid>
+              {errorsFirst.first_name &&
+                studentFirst.first_name === "" ? (
+                <FormHelperText
+                  error={
+                    errorsFirst.first_name &&
+                    studentFirst.first_name === ""
+                  }
+                >
+                  {errorsFirst.first_name}
+                </FormHelperText>
+              ) : null}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={
+                  errorsFirst.middle_initial && studentFirst.middle_initial === ""
+                }
+                variant="outlined"
+                id="middle_initial"
+                label="Middle Initial"
+                name="middle_initial"
+                onChange={handleChangeFirst}
+                value={studentFirst.middle_initial}
+                fullWidth
+                required={true}
+                inputProps={{ maxLength: 24 }}
+              />
+              {errorsFirst.middle_initial && studentFirst.middle_initial === "" ? (
+                <FormHelperText
+                  error={
+                    errorsFirst.middle_initial && studentFirst.middle_initial === ""
+                  }
+                >
+                  {errorsFirst.middle_initial}
+                </FormHelperText>
+              ) : null}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={
+                  errorsFirst.last_name && studentFirst.last_name === ""
+                }
+                variant="outlined"
+                id="last_name"
+                label="Last Name"
+                name="last_name"
+                onChange={handleChangeFirst}
+                value={studentFirst.last_name}
+                fullWidth
+                required={true}
+                inputProps={{ maxLength: 24 }}
+              />
+              {errorsFirst.last_name && studentFirst.last_name === "" ? (
+                <FormHelperText
+                  error={
+                    errorsFirst.last_name && studentFirst.last_name === ""
+                  }
+                >
+                  {errorsFirst.last_name}
+                </FormHelperText>
+              ) : null}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={
+                  errorsFirst.street_number && studentFirst.street_number === ""
+                }
+                variant="outlined"
+                id="street_number"
+                label="Street Number"
+                name="street_number"
+                onChange={handleChangeFirst}
+                value={studentFirst.street_number}
+                fullWidth
+                required={true}
+                inputProps={{ maxLength: 24 }}
+              />
+              {errorsFirst.street_number && studentFirst.street_number === "" ? (
+                <FormHelperText
+                  error={
+                    errorsFirst.street_number && studentFirst.street_number === ""
+                  }
+                >
+                  {errorsFirst.street_number}
+                </FormHelperText>
+              ) : null}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={
+                  errorsFirst.street_name && studentFirst.street_name === ""
+                }
+                variant="outlined"
+                id="street_number"
+                label="Street Name"
+                name="street_name"
+                onChange={handleChangeFirst}
+                value={studentFirst.street_name}
+                fullWidth
+                required={true}
+                inputProps={{ maxLength: 24 }}
+              />
+              {errorsFirst.street_name && studentFirst.street_name === "" ? (
+                <FormHelperText
+                  error={
+                    errorsFirst.street_name && studentFirst.street_name === ""
+                  }
+                >
+                  {errorsFirst.street_name}
+                </FormHelperText>
+              ) : null}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={
+                  errorsFirst.zip_code && studentFirst.zip_code === ""
+                }
+                variant="outlined"
+                id="street_number"
+                label="Zip Code"
+                name="zip_code"
+                onChange={handleChangeFirst}
+                value={studentFirst.zip_code}
+                fullWidth
+                required={true}
+                inputProps={{ maxLength: 24 }}
+              />
+              {errorsFirst.zip_code && studentFirst.zip_code === "" ? (
+                <FormHelperText
+                  error={
+                    errorsFirst.zip_code && studentFirst.zip_code === ""
+                  }
+                >
+                  {errorsFirst.zip_code}
+                </FormHelperText>
+              ) : null}
+            </Grid>
+            <Grid item xs={12}>
+              <Typography component="p">Date Of Birth</Typography>
+              <DatePicker
+                calendarAriaLabel="Toggle calendar"
+                clearAriaLabel="Clear value"
+                dayAriaLabel="Day"
+                monthAriaLabel="Month"
+                nativeInputAriaLabel="Date"
+                onChange={(valueDateOfBirth) => {
+                  setDateOfBirth(valueDateOfBirth);
+                }}
+                value={valueDateOfBirth}
+                yearAriaLabel="Year"
+                defaultValue={valueDateOfBirth}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                component="fieldset"
+                style={{
+                  width: "100%",
+                  paddingRight: "10px",
+                  paddingLeft: "10px",
+                }}>
+                <FormGroup aria-label="position" row>
+                  <FormControlLabel
+                    value="end"
+                    control={
+                      <Checkbox
+                        style={{ color: "#C8102E" }}
+                        onChange={(e) => {
+                          setStudentFirst({
+                            ...studentFirst,
+                            is_member: e.target.checked,
+                          });
+                        }}
+                      />
+                    }
+                    label={
+                      <Typography style={{ fontSize: 15 }}>
+                        Check if you want to become a member of "The OUTLET"
+                  </Typography>
+                    }
+                  />
+                </FormGroup>
+              </FormControl>
+              <Select
+                autoFocus
+                className={`${classes.selectStore} ${classes.information}`}
+                closeMenuOnSelect={true}
+                options={store}
+                value={{
+                  label: myStore.label,
+                  value: myStore.value,
+                }}
+                name="store_id_fk"
+                onChange={(e) => {
+                  setMyStore(
+                    {
+                   label: e.label,
+                  value: e.value
+                  });
+                  console.log(e.value)
+                }}
+              />
+            </Grid>
 
 
 

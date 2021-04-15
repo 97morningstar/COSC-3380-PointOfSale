@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { AppBar, Toolbar, Button, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import UHLogo from "../../assets/UHLogo.png";
@@ -9,6 +9,7 @@ import Link from "@material-ui/core/Link";
 import SearchIcon from "@material-ui/icons/Search";
 
 import SearchBar from "material-ui-search-bar";
+//import { use } from "../../../../routes/jwtAuth";
 
 const useStyles = makeStyles((theme) => ({
   
@@ -62,16 +63,31 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Navbar() {
   const classes = useStyles();
+  const [newValue, setValue] = useState(null);
+  const setNewValue = (e) => {
 
- 
+    setValue({
 
+      ...newValue,
+
+      [e.target.name]: e.target.value,
+
+    });
+
+
+  };
+ // "/search/item/" + newValue
+  let history = useHistory();
+  const searchValue = (value) =>{
+      history.push("/search/" + newValue)
+  }
   return (
     <div>
       <React.Fragment>
        
           <Toolbar className={classes.bar}>
         
-          <Grid container xs={12}  direction="row"   alignItems="center"  justify="center"> 
+          <Grid container direction="row"   alignItems="center"  justify="center"> 
                 <Grid item xs={1}  className={classes.aligns} >
                 <Link href="/" className={classes.words}>
                   Home
@@ -99,9 +115,9 @@ export default function Navbar() {
                   borderRadius: "2px",
                   background: "#ffffff"
                 }}
-                    /*  value={this.state.value}*/
-                    /* onChange={(newValue) => this.setState({ value: newValue })}*/
-                    /* onRequestSearch={() => doSomethingWith(this.state.value)}*/
+                    value={newValue}
+                    onChange={setNewValue}
+                    onRequestSearch={() => searchValue(newValue)}
                     />
                 </Grid>
             </Grid>
