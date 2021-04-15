@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 4000;
@@ -33,6 +34,8 @@ app.use("/api", require("./routes/item"));
 app.use("/api", require("./routes/store"));
 app.use("/api", require("./routes/search"));
 app.use("/api", require("./routes/employee"));
+app.use("/api", require("./routes/invoice"));
+app.use("/api", require("./routes/invoice_item"));
 /* Register Protect routes */
 app.use("/get_profile", require("./routes/profile"));
 app.use("/get_cart", require("./routes/cart"));
@@ -61,3 +64,4 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
+

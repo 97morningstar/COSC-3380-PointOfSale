@@ -296,6 +296,7 @@ const [updateError, setUpdateErrors] = useState({});
       data
     )
     .then((res) => {
+      console.log("No")
       setUpdateErrors({});
       showCustomerEdit({
         ...customerEdit,
