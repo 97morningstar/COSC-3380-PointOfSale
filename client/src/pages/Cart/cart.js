@@ -166,11 +166,18 @@ const useStyles = makeStyles((theme) => ({
     width: "90%",
     margin: "10px"
   },
+  botton2: {
+    width: "200px",
+    margin: "10px"
+  },
   selectStore: {
     zIndex: "1000"
   },
   information: {
     zIndex: "1000"
+  },
+  space:{
+    margin: "35px"
   }
 }));
 
@@ -245,6 +252,7 @@ function Item({ match }) {
 
 
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [buySuccess, setBuySuccess] = useState(false);
   const [updateFailed, setUpdateFailed] = useState(false);
 
   const handleCloseUpdateSucess = () => {
@@ -253,11 +261,16 @@ function Item({ match }) {
   const handleCloseUpdateFailed = () => {
     setUpdateFailed(false);
   };
+  const handleCloseBuySuccess = () => {
+    setBuySuccess(false);
+  };
 
 
   const [imageArray, setimageArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [userInfo, setUserInfo] = useState([]);
+  const [paymentMethodList, setPaymentMethodList] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState([]);
+
 
   const handleBuy = () => {
     let total = (invoiceItems.map((index) => {
@@ -270,27 +283,37 @@ function Item({ match }) {
       return parseFloat(total + num)
     })).toFixed(2)
 
-    const data = {
-      payment_id_fk: 4,
-      total_cost_after_tax: total,
-      invoice_id: invoice.invoice_id,
-      customer_id_fk: invoiceItems[0].customer_id_fk,
-      store_id_fk: invoiceItems[0].store_id_fk
+    console.log(paymentMethod.value);
+
+    if (paymentMethod.value) {
+      const data = {
+        payment_id_fk: paymentMethod.value,
+        total_cost_after_tax: total,
+        invoice_id: invoice.invoice_id,
+        customer_id_fk: invoiceItems[0].customer_id_fk,
+        store_id_fk: invoiceItems[0].store_id_fk
+      }
+
+      if (paymentMethod.length !== 0) {
+        setInvoiceItems([]);
+      }
+
+
+      axios.put("/api/purchase", data)
+        .then((res) => {
+          console.log(res.data)
+          setBuySuccess(true)
+        })
+        .catch((err) => {
+          console.log(err.response.data)
+          setUpdateFailed(true);
+        })
+    } else {
+      setUpdateFailed(true);
     }
 
-    console.log(data)
-
-    setInvoiceItems([]);
 
 
-    axios.put("/api/purchase", data)
-      .then((res) => {
-        console.log(res.data)
-      })
-      .catch((err) => {
-        console.log(err.response.data)
-        setUpdateFailed(true);
-      })
 
   }
 
@@ -340,7 +363,6 @@ function Item({ match }) {
 
     /* WE NEED A PROTECTED ROUTE TO ACCESS THE CART */
     /* EMPLOYEE CAN'T BUY */
-
     setIsLoading(true);
 
     const data = {
@@ -353,19 +375,42 @@ function Item({ match }) {
     axios
       .post("/get_cart", data)
       .then((res) => {
-        setIsLoading(false);
+    
 
         setInvoice(res.data[0]);
-        
+
+        /* GET PAYMENT METHOD IF ANY */
+
+        axios
+          .get("/get_payment/" + data.user_id)
+          .then((response) => {
+
+            const payment = response.data.map((item, i) => {
+              return {
+                label: "Number:   " + item.card_number + " | Expiration Date:   " + item.expiration_month + "/" + item.expiration_year + " | Security Code:    " + item.security_code,
+                value: item.payment_id,
+              };
+            });
+            setPaymentMethodList(payment)
+
+           
+
+            console.log("payment methos is", payment)
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+
+
         /* GET INVOICE ITEMS */
         axios
           .get("/get_invoice_items/" + data.user_id)
           .then((response) => {
-            setIsLoading(false);
+            
             console.log("invoice items", response.data);
             setInvoiceItems(response.data);
 
-        
+            setIsLoading(false);
 
             /* GET IMAGES */
             response.data.map((index) => {
@@ -377,8 +422,8 @@ function Item({ match }) {
                   { crossdomain: true }
                 )
                 .then((response) => {
-
-                  console.log(response.data.hits);
+                 
+                 
                   index.name = index.name.replace("+", " ");
 
                   const image = {
@@ -444,23 +489,26 @@ function Item({ match }) {
 
               {invoiceItems.length !== 0 ? (
                 <>
-                  <Typography gutterBottom variant="h4" component="h2" className={classes.botton}>
+ 
+                  <Grid xs={12} item container>
+                  <Grid xs={12} item>
+                  <Typography gutterBottom variant="h4" component="h2" className={classes.space}>
                     CART
                   </Typography>
-                  <Grid xs={12} item container>
+                  </Grid>
                     <Grid xs={3} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
+                      <Typography gutterBottom variant="h5" component="h2" >
                         Shipping Address:
                       </Typography>
                     </Grid>
                     <Grid xs={9} item>
-                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                      <Typography gutterBottom variant="h6" component="body" >
                         {invoiceItems[0].first_name} {invoiceItems[0].last_name}
                       </Typography>
-                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                      <Typography gutterBottom variant="h6" component="body" >
                         {invoiceItems[0].email}
                       </Typography>
-                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                      <Typography gutterBottom variant="h6" component="body" >
                         {invoiceItems[0].street_number} {invoiceItems[0].street_name}, {invoiceItems[0].zip_code}
                       </Typography>
                     </Grid>
@@ -472,14 +520,30 @@ function Item({ match }) {
                   />
                   <Grid xs={12} item container>
                     <Grid xs={3} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
-                        Payment Method
+                      <Typography gutterBottom variant="h5" component="h2">
+                        Payment Method:
                       </Typography>
                     </Grid>
                     <Grid xs={9} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
-                        METHOD OF PAYMENT
-                      </Typography>
+                      <Select
+                        autoFocus
+                        className={`${classes.selectStore} ${classes.information}`}
+                        closeMenuOnSelect={true}
+                        options={paymentMethodList}
+                        value={{
+                          label: paymentMethod.label,
+                          value: paymentMethod.value,
+                        }}
+                        name="store_id_fk"
+                        onChange={(e) => {
+                          setPaymentMethod(
+                            {
+                              label: e.label,
+                              value: e.value
+                            });
+                          console.log(e.value)
+                        }}
+                      />
                     </Grid>
                   </Grid>
                   <Divider
@@ -489,11 +553,11 @@ function Item({ match }) {
                   />
                   <Grid xs={12} item container>
                     <Grid xs={12} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
-                        Review Items
+                      <Typography gutterBottom variant="h4" component="h2" className={classes.space}>
+                        Review Items:
                       </Typography>
                     </Grid>
-                    <Grid xs={12} item container justify="space-around">
+                    <Grid xs={12} item container justify="space-around" alignItems="flex-start">
                       <Grid xs={6} item container >
                         {invoiceItems.map((index, i) => {
                           //console.log(index)
@@ -521,6 +585,7 @@ function Item({ match }) {
                                   Quantity:
                                   </Typography>
                                 <Select
+                                className={classes.space}
                                   autoFocus
                                   closeMenuOnSelect={true}
                                   options={items}
@@ -535,7 +600,7 @@ function Item({ match }) {
                                       return e.value;
                                     });
                                     index.quantity = e.value
-                                    console.log(index)
+                                    
                                   }}
                                 />
                                 <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
@@ -641,9 +706,30 @@ function Item({ match }) {
                   </Grid>
 
                 </>
-              ) : (<><Typography gutterBottom component="body" className={classes.botton}>
-                You cart is empty
-            </Typography></>)}
+              ) : (<>
+                <Grid xs={12} item container >
+                  <Grid xs={12} item >
+                    <Typography gutterBottom variant="h3">
+                      Your cart is empty
+                  </Typography>
+                  </Grid>
+                  <Grid xs={12} item >
+                    <Typography gutterBottom component="body2" >
+                      Check our collection of amazing articles. Best in the market.
+                  </Typography>
+                  </Grid>
+                  <Grid xs={12} item >
+                    <Typography gutterBottom component="body2" >
+                      You can start by going to categories. We hope you enjoy your stay at our online store.
+                  </Typography>
+                  </Grid>
+                  <Grid xs={12} item >
+                    <Button href="/categories" variant="contained" className={classes.botton2} color="secondary">
+                      Categories
+                  </Button>
+                  </Grid>
+                </Grid>
+              </>)}
 
 
 
@@ -669,9 +755,18 @@ function Item({ match }) {
           autoHideDuration={6000}
           onClose={handleCloseUpdateFailed}>
           <Alert onClose={handleCloseUpdateFailed} severity="error">
-            There was a problem when updating this cart
+            There was a problem when updating this cart. Please provide a payment method.
         </Alert>
         </Snackbar>
+        <Snackbar
+          open={buySuccess}
+          autoHideDuration={10000}
+          onClose={handleCloseBuySuccess}>
+          <Alert onClose={handleCloseBuySuccess} severity="success">
+            Your purchase was succesful. Please go to Menu {'>'} Order History to review this purchase. Thank you so much!
+        </Alert>
+        </Snackbar>
+
       </React.Fragment>
     </div>
   );

@@ -348,8 +348,6 @@ const [updateError, setUpdateErrors] = useState({});
       setUserInfo(res.data[0]);
       setUserInput(res.data[0]);
 
-    
-
       axios
       .get("/api/view_all_stores")
       .then((res) => {

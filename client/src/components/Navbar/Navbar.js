@@ -20,6 +20,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import HistoryIcon from '@material-ui/icons/History';
 
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -67,6 +68,11 @@ export default function Navbar({user}) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleOrderHistory = () => {
+    setAnchorEl(null);
+    history.push("/order-history");
+  }
 
   const handleProfile = () => {
     setAnchorEl(null);
@@ -230,7 +236,10 @@ export default function Navbar({user}) {
 
         <MenuItem onClick={handleDashboard}> <ShoppingCartIcon className={classes.icon}/> Dashboard</MenuItem>
 
-        {/* Check if the user is an employee, if yes, show employee dashboard */}        
+        {/* Check if the user is an employee, if yes, show employee dashboard */}  
+        <MenuItem onClick={handleOrderHistory}> <HistoryIcon className={classes.icon}/> Order History</MenuItem>
+
+         
 
         <MenuItem onClick={logoutButton}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
 

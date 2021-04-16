@@ -143,15 +143,15 @@ app.put("/purchase", async (req, res) => {
     try {
        
         const body = req.body;
-      /* const data = await pool.query("SELECT * FROM invoice WHERE invoice_id = ?", [id]);
+       const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ?", [body.customer_id_fk]);
        
-        console.log(data[0].order_status);
+        console.log(payment);
 
-        if (data[0].order_status != "cart") {
+       if (payment.length === 0) {
             const error = {
-                ERROR: "Return cannot be done!"
+                ERROR: "You need to provide at leat one payment method"
             }
-            res.status(400).send(error);
+           return res.status(400).send(error);
         }
 
        /* const invoiceItems = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
@@ -170,7 +170,7 @@ app.put("/purchase", async (req, res) => {
 
 
         var now = new Date();
-        var d = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+        var d = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes();
         console.log(d);
         // We also need total_cost_after_tax
         const updateInvoiceitem = await pool.query("UPDATE invoice SET order_status = 'purchased', time_of_transaction = ?, payment_id_fk = ?, total_cost_after_tax = ? WHERE invoice_id = ? ",

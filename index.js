@@ -40,6 +40,8 @@ app.use("/api", require("./routes/invoice_item"));
 app.use("/get_profile", require("./routes/profile"));
 app.use("/get_cart", require("./routes/cart"));
 app.use("/", require("./routes/invoice_item_cart"));
+app.use("/", require("./routes/order_history"));
+
 
 
 
