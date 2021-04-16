@@ -261,8 +261,7 @@ function Item({ match }) {
     if(numberOfItems !== 0){
 
   
-    axios
-      .post("/add_to_cart", cart_data)
+    axios.post("http://localhost:4000/add_to_cart", cart_data)
       .then((res) => {
         setUpdateSuccess(true);
        })
@@ -287,8 +286,7 @@ function Item({ match }) {
     }
 
 
-    axios
-      .post("/get_cart", data2)
+    axios.post("http://localhost:4000/get_cart", data2)
       .then((res) => {
         setInvoice(res.data[0]);
         console.log("res.data",res.data)
@@ -300,8 +298,7 @@ function Item({ match }) {
 
 
 
-    axios
-      .get("/api/item/" + match.params.name)
+    axios.get("http://localhost:4000/api/item/" + match.params.name)
       .then((res) => {
 
         console.log("item", res.data);
@@ -309,8 +306,7 @@ function Item({ match }) {
 
         res.data[0].name = res.data[0].name.replace(" ", "+");
 
-        axios
-          .get(
+        axios    .get(
             `${data.apiUrl}/?key=${data.apiK}&q=${res.data[0].name}&image_type=photo&per_page=${data.amount}&safesearch=true`
             ,
             { crossdomain: true }
@@ -337,16 +333,14 @@ function Item({ match }) {
 
             /* SHOP ITEMS IN THE SAME CATEGORY */
 
-            axios
-              .get("/api/item/category/" + res.data[0].category)
+            axios        .get("/api/item/category/" + res.data[0].category)
               .then((res) => {
 
                 console.log(res.data);
 
                 res.data.map((index) => {
                   index.name = index.name.replace(" ", "+");
-                  axios
-                    .get(
+                  axios              .get(
                       `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
                       ,
                       { crossdomain: true }

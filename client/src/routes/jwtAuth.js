@@ -95,13 +95,16 @@ router.post("/create_customer", validInfo, async (req, res) => {
         data.is_member,
         data.store_id_fk
       ] );
-      const token = jwtGenerator(newCustomer.customer_id,false);
+      console.log("data",data);
+      const cust = await pool.query("SELECT * FROM customer WHERE email = ?",[data.email]);
+      console.log("customer",cust);
+      const token = jwtGenerator(cust[0].customer_id,false);
       const newInvoice = await pool.query("INSERT INTO invoice(customer_id_fk,store_id_fk) VALUES (?,?)",
       [
-        newCustomer.customer_id,
-        newCustomer.store_id_fk
+        cust[0].customer_id,
+        cust[0].store_id_fk
       ]);
-      res.send(newCustomer);
+      res.send(cust);
         
     }catch (err){
       console.log(err.message);

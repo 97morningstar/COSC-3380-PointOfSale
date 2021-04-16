@@ -141,16 +141,14 @@ function Home({ match }) {
   useEffect(() => {
     console.log("location.state.name", match.params.name);
 
-    axios
-      .get("/api/item/search/" + match.params.name)
+    axios.get("http://localhost:4000/api/item/search/" + match.params.name)
       .then((res) => {
 
         console.log(res.data);
 
         res.data.map((index) => {
           index.name = index.name.replace(" ", "+");
-          axios
-            .get(
+          axios      .get(
               `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
               ,
               { crossdomain: true }

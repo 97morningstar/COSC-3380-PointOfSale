@@ -255,8 +255,7 @@ let history = useHistory();
 var myRows = [];
   useEffect(() => {
     if (data.is_employee === "true"){
-      axios
-      .post("/api/view_all_inventories",data)
+      axios.post("http://localhost:4000/api/view_all_inventories",data)
       .then((res) => {
       
       console.log("RESDATA",res.data[0].name)
