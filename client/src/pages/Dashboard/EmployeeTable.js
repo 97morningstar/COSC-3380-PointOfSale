@@ -195,8 +195,7 @@ function createData(employee_id,first_name,middle_initial,last_name,employment_d
 
   useEffect(() => {
     
-    axios
-    .get("/api/view_all_employee")
+    axios.get("http://localhost:4000/api/view_all_employee")
     .then((res) => {
     
     console.log("RESDATA",res.data[0].employee_id)
@@ -237,8 +236,7 @@ function createData(employee_id,first_name,middle_initial,last_name,employment_d
 
   console.log("data",data);
 
-    axios
-    .post("/get_profile", data)
+    axios.post("http://localhost:4000/get_profile", data)
     .then((res) => {
     
     console.log("e",res)

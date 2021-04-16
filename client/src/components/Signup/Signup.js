@@ -113,8 +113,7 @@ export default function SignUp() {
   const [store, setStore] = useState({});
   useEffect(() => {
 
-    axios
-      .get("/api/view_all_stores")
+    axios.get("http://localhost:4000/api/view_all_stores")
       .then((res) => {
         const data = res.data.map((item, index) => {
           return {
@@ -134,8 +133,7 @@ export default function SignUp() {
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
-      axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+      axios.post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -182,8 +180,7 @@ export default function SignUp() {
   
     studentFirst.store_id_fk = myStore.value;
     console.log(studentFirst);
-    /* axios
-       .post("http://18.213.74.196:8000/api/user_accounts/signup", signUpInfo)
+    /* axios .post("http://18.213.74.196:8000/api/user_accounts/signup", signUpInfo)
        .then((res) => {
          if (res.data.error) {
            setError(res.data.error);
@@ -193,8 +190,7 @@ export default function SignUp() {
            //authenticate again after the user is created
            const email = signUpInfo.email;
            const password = signUpInfo.password1;
-           axios
-             .post("http://18.213.74.196:8000/api/token/", { email, password })
+           axios     .post("http://18.213.74.196:8000/api/token/", { email, password })
              .then((res) => {
              // localStorage.setItem("token", res.data.access);
                localStorage.setItem("email_id", res.data.email);
@@ -208,8 +204,7 @@ export default function SignUp() {
        .catch((err) => console.log(err));
    }*/
 
-    axios
-      .post("/auth/create_customer", studentFirst, getConfig())
+    axios.post("http://localhost:4000/auth/create_customer", studentFirst, getConfig())
       .then((res) => {
         console.log("SUCCESS");
         console.log(res);

@@ -21,6 +21,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import HistoryIcon from '@material-ui/icons/History';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -83,13 +84,19 @@ export default function Navbar({user}) {
     setAnchorEl(null);
     history.push("/cart");
   }
+
+  const handleDashboard = () => {
+    setAnchorEl(null);
+    history.push("/dash");
+  }
+
+  const [userType, setUserType] = useState(null);
  
   //Check if token exists
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
-      axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+      axios.post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
         //  console.log("res", res);
@@ -101,11 +108,13 @@ export default function Navbar({user}) {
 
           const employee = localStorage.getItem("is_employee");
 
+         
+
           if (employee === "true"){
+            setUserType(true);
             console.log("is_employee")
 
-            axios
-               .get("/api/employee/"+localStorage.getItem("user_id"))
+            axios.get("http://localhost:4000/api/employee/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -119,10 +128,9 @@ export default function Navbar({user}) {
                 });
           }
           else if(employee === "false"){
-
+            setUserType(false);
             console.log("custoemr")
-            axios
-            .get("/api/customer/"+localStorage.getItem("user_id"))
+            axios.get("http://localhost:4000/api/customer/"+localStorage.getItem("user_id"))
             .then((res) => {
          
        
@@ -229,7 +237,15 @@ export default function Navbar({user}) {
         <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
         <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
 
-        <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
+{userType ? (<>
+  <MenuItem onClick={handleDashboard}> <DashboardIcon className={classes.icon}/> Dashboard</MenuItem>
+  </>) : (
+  <>
+  <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
+  </>
+  )
+}
+        
 
         {/* Check if the user is an employee, if yes, show employee dashboard */}  
         <MenuItem onClick={handleOrderHistory}> <HistoryIcon className={classes.icon}/> Order History</MenuItem>

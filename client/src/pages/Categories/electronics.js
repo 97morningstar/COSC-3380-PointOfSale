@@ -150,16 +150,14 @@ function Home() {
 
   useEffect(() => {
 
-    axios
-      .get("/api/item/category/Electronics")
+    axios.get("http://localhost:4000/api/item/category/Electronics")
       .then((res) => {
 
         console.log(res.data);
 
         res.data.map((index) => {
           index.name = index.name.replace(" ", "+");
-          axios
-            .get(
+          axios.get(
               `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
               ,
               { crossdomain: true }

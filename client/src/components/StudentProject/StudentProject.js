@@ -191,8 +191,7 @@ function StudentProject({ projects, setProjects, skills }) {
   };
 
   const handleDelete = (id) => {
-    axios
-      .delete(
+    axios.delete(
         "http://18.213.74.196:8000/api/student_project/" + id + "/delete",
 
         getConfig()
@@ -252,8 +251,7 @@ function StudentProject({ projects, setProjects, skills }) {
       skillsSeparatedByCommas += currentProject.project_tech.map((tech) => { return tech.label; });
       skillsSeparatedByCommas = (skillsSeparatedByCommas.length > 0) ? skillsSeparatedByCommas.substring(0, skillsSeparatedByCommas.length) : "";
 
-      axios
-        .put(
+      axios.put(
           `http://18.213.74.196:8000/api/student_project/${project_id}/update`,
           {
             student_id: profile.student_id,

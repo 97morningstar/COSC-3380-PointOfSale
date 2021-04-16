@@ -299,7 +299,7 @@ function Item({ match }) {
       }
 
 
-      axios.put("/api/purchase", data)
+      axios.put("http://localhost:4000/api/purchase", data)
         .then((res) => {
           console.log(res.data)
           setBuySuccess(true)
@@ -349,7 +349,7 @@ function Item({ match }) {
 
     console.log("invoice_item_id", parseInt(number), "quantity", e)
 
-    axios.put("/get_cart/update_quantity", update)
+    axios.put("http://localhost:4000/get_cart/update_quantity", update)
       .then((res) => {
         console.log(res.data)
         setUpdateSuccess(true);
@@ -372,8 +372,7 @@ function Item({ match }) {
     }
 
     /* VERIFY USER IS LOGGED IN */
-    axios
-      .post("/get_cart", data)
+    axios.post("http://localhost:4000/get_cart", data)
       .then((res) => {
     
 
@@ -381,8 +380,7 @@ function Item({ match }) {
 
         /* GET PAYMENT METHOD IF ANY */
 
-        axios
-          .get("/get_payment/" + data.user_id)
+        axios.get("http://localhost:4000/get_payment/" + data.user_id)
           .then((response) => {
 
             const payment = response.data.map((item, i) => {
@@ -403,8 +401,7 @@ function Item({ match }) {
 
 
         /* GET INVOICE ITEMS */
-        axios
-          .get("/get_invoice_items/" + data.user_id)
+        axios.get("http://localhost:4000/get_invoice_items/" + data.user_id)
           .then((response) => {
             
             console.log("invoice items", response.data);
@@ -415,8 +412,7 @@ function Item({ match }) {
             /* GET IMAGES */
             response.data.map((index) => {
               index.name = index.name.replace(" ", "+");
-              axios
-                .get(
+              axios.get(
                   `${pixel.apiUrl}/?key=${pixel.apiK}&q=${index.name}&image_type=photo&per_page=${pixel.amount}&safesearch=true`
                   ,
                   { crossdomain: true }
