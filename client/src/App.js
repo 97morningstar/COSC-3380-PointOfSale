@@ -5,7 +5,6 @@ import Home from "./pages/Home/Home";
 import Login from "./components/Login/Login";
 import ResetPage from "./components/ResetPassword/ResetPage";
 import Signup from "./components/Signup/Signup";
-import AccountInfo from "./components/AccountInfo/AccountInfo";
 import NotFound from "./pages/NotFound/NotFound";
 import ReportBug from "./pages/ReportBug/ReportBug";
 /* Categories Routes */
@@ -43,7 +42,6 @@ const App = () => {
         <Route path="/login" component={Login} />
         <Route path="/lost-password" component={ResetPage} />
         <Route path="/signup" component={Signup} />
-        <Route path="/accountInfo" component={AccountInfo} />
         <Route path="/report-bug" component={ReportBug} />
 
         <Route path="/categories" component={Categories} />

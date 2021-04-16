@@ -66,8 +66,7 @@ function Login() {
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
-      axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+      axios.post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -100,8 +99,7 @@ function Login() {
     e.preventDefault();
 
 
-    axios
-      .post("/auth/login", loginInfo)
+    axios.post("http://localhost:4000/auth/login", loginInfo)
       .then((res) => {
 
       

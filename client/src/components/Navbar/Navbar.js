@@ -93,8 +93,7 @@ export default function Navbar({user}) {
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
-      axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+      axios.post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -109,8 +108,7 @@ export default function Navbar({user}) {
           if (employee === "true"){
             console.log("is_employee")
 
-            axios
-               .get("/api/employee/"+localStorage.getItem("user_id"))
+            axios.get("http://localhost:4000/api/employee/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -126,8 +124,7 @@ export default function Navbar({user}) {
           else if(employee === "false"){
 
             console.log("custoemr")
-            axios
-            .get("/api/customer/"+localStorage.getItem("user_id"))
+            axios.get("http://localhost:4000/api/customer/"+localStorage.getItem("user_id"))
             .then((res) => {
          
        
@@ -233,7 +230,7 @@ export default function Navbar({user}) {
       >
         <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
         <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
-
+                
         <MenuItem onClick={handleDashboard}> <ShoppingCartIcon className={classes.icon}/> Dashboard</MenuItem>
 
         {/* Check if the user is an employee, if yes, show employee dashboard */}  
