@@ -142,7 +142,7 @@ function Home({ match }) {
     console.log("location.state.name", match.params.name);
 
     axios
-      .get("http://localhost:4000/api/item/search/" + match.params.name)
+      .get("/api/item/search/" + match.params.name)
       .then((res) => {
 
         console.log(res.data);

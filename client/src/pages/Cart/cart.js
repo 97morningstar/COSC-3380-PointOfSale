@@ -299,7 +299,7 @@ function Item({ match }) {
       }
 
 
-      axios.put("http://localhost:4000/api/purchase", data)
+      axios.put("/api/purchase", data)
         .then((res) => {
           console.log(res.data)
           setBuySuccess(true)
@@ -324,7 +324,7 @@ function Item({ match }) {
         (invoiceItems) => invoiceItems.invoice_item_id !== number
       )
     );
-    axios.delete("http://localhost:4000/api/api/invoice_item/" + parseInt(number))
+    axios.delete("/api/api/invoice_item/" + parseInt(number))
       .then((res) => {
         console.log(res.data)
         setUpdateSuccess(true);
@@ -349,7 +349,7 @@ function Item({ match }) {
 
     console.log("invoice_item_id", parseInt(number), "quantity", e)
 
-    axios.put("http://localhost:4000/get_cart/update_quantity", update)
+    axios.put("/get_cart/update_quantity", update)
       .then((res) => {
         console.log(res.data)
         setUpdateSuccess(true);
@@ -373,7 +373,7 @@ function Item({ match }) {
 
     /* VERIFY USER IS LOGGED IN */
     axios
-      .post("http://localhost:4000/get_cart", data)
+      .post("/get_cart", data)
       .then((res) => {
     
 
@@ -382,7 +382,7 @@ function Item({ match }) {
         /* GET PAYMENT METHOD IF ANY */
 
         axios
-          .get("http://localhost:4000/get_payment/" + data.user_id)
+          .get("/get_payment/" + data.user_id)
           .then((response) => {
 
             const payment = response.data.map((item, i) => {
@@ -404,7 +404,7 @@ function Item({ match }) {
 
         /* GET INVOICE ITEMS */
         axios
-          .get("http://localhost:4000/get_invoice_items/" + data.user_id)
+          .get("/get_invoice_items/" + data.user_id)
           .then((response) => {
             
             console.log("invoice items", response.data);
