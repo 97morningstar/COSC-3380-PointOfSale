@@ -142,16 +142,12 @@ function Home() {
     images: []
   }
 
-  const arrayImages = ['man+jacket', 'man+shoes', 'man+suit', 'tie'];
-
-
-
   const [imageArray, setimageArray] = useState([]);
 
   useEffect(() => {
 
     axios
-      .get("/api/item/category/Pets")
+      .get("http://localhost:4000/api/item/category/Pets")
       .then((res) => {
 
         console.log(res.data);

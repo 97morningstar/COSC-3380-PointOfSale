@@ -20,9 +20,25 @@ app.get("/get_invoice_items/:customer",async (req, res) => {
     }
   });
 
+  app.get("/get_payment/:customer_id",async (req, res) => {
+    try {
+
+         const {customer_id} = req.params;
+         console.log(customer_id)
+        
+        const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ?", [customer_id]);
+
+            res.json(payment);
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  });
+
   app.post("/add_to_cart" , authorize ,async (req, res) => {
     try {
-         console.log("information invoice item",req.body); 
+       
 
          const {invoice_id_fk} = req.body;
          const {item_id_fk} = req.body;

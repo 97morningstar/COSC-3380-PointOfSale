@@ -5,7 +5,7 @@ import { getConfig } from "../../authConfig";
 import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
 
-import Link from "@material-ui/core/Link";
+import { Link, useRouteMatch, router } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -17,7 +17,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 /* Images */
 import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     flex: "1 0 auto",
-    
+
   },
   text: {
     position: "relative",
@@ -71,57 +71,57 @@ const useStyles = makeStyles((theme) => ({
     width: "170px",
     height: "170px",
   },
-  logoContainer:{
-      textAlign: "left"
+  logoContainer: {
+    textAlign: "left"
   },
-   food: {
+  food: {
     width: "270px",
     height: "170px",
   },
-  foodContainer:{
+  foodContainer: {
     //textAlign: "center"
   },
-  text:{
-    display: "flex", 
-    justifyContent: "flex-start" ,
+  text: {
+    display: "flex",
+    justifyContent: "flex-start",
     padding: "10px",
   },
-  carousel:{
-      width: "250px",
-      height: "150px",
-      margin: "10px"
-  },
-  nameOfItem:{
+  carousel: {
+    width: "250px",
+    height: "150px",
     margin: "10px"
   },
-  category1:{
+  nameOfItem: {
+    margin: "10px"
+  },
+  category1: {
     width: "250px",
     height: "250px",
   },
-  link:{
+  link: {
     color: "#000",
     "&:hover": {
-    textDecoration: "none",
-    color: "#007EB4"
+      textDecoration: "none",
+      color: "#007EB4"
     }
   },
-  categories:{
+  categories: {
     marginBottom: "40px",
   },
-Text1:{
-  marginTop: "70px",
-  marginBottom: "70px"
-},
-wrapper:{
- marginBottom: "100px"
-},
-rootCard: {
-  margin: "20px"
-},
+  Text1: {
+    marginTop: "70px",
+    marginBottom: "70px"
+  },
+  wrapper: {
+    marginBottom: "100px"
+  },
+  rootCard: {
+    margin: "20px"
+  },
 }));
 
 
-function Home({match}) {
+function Home({ match }) {
   const classes = useStyles();
   const theme = createMuiTheme();
 
@@ -132,59 +132,59 @@ function Home({match}) {
     apiUrl: 'https://pixabay.com/api',
     apiK: '20983112-12d43bcb17250999b789e998a',
     images: []
-}
-  
-const [imageArray, setimageArray] = useState([]);
+  }
 
-const location  = useLocation();
+  const [imageArray, setimageArray] = useState([]);
+
+  const location = useLocation();
 
   useEffect(() => {
-console.log("location.state.name", match.params.name);
-console.log("location.state",location.state)
+    console.log("location.state.name", match.params.name);
 
-        axios
-        .get("/api/item/search/" + match.params.name)
-        .then((res) => {
+    axios
+      .get("http://localhost:4000/api/item/search/" + match.params.name)
+      .then((res) => {
 
-          console.log(res.data);
+        console.log(res.data);
 
-           res.data.map((index) => {
-             index.name = index.name.replace(" ","+");
-                axios
-                .get(
-                  `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
-                  , 
-                  { crossdomain: true }
-                )
-                .then((response) => {
-                  
-                 console.log(response.data.hits);
-        
-        
-                  const image = {
-                    images: response.data.hits,
-                    name: index.name.replace("+"," "), 
-                    price: "$"+index.selling_price
-                  }
-        
-                    console.log(image);
+        res.data.map((index) => {
+          index.name = index.name.replace(" ", "+");
+          axios
+            .get(
+              `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
+              ,
+              { crossdomain: true }
+            )
+            .then((response) => {
 
-        
-                  setimageArray(imageArray => [...imageArray, image]);
-        
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-       });
+              console.log(response.data.hits);
 
 
-        })
-        .catch((err) => {
-          console.log(err);
+              const image = {
+                images: response.data.hits,
+                name: index.name.replace("+", " "),
+                price: "$" + index.selling_price,
+                item_id: index.item_id
+              }
+
+              console.log(image);
+
+
+              setimageArray(imageArray => [...imageArray, image]);
+
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         });
 
-  },[location]);
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  }, [location]);
 
 
   theme.typography.h3 = {
@@ -207,106 +207,112 @@ console.log("location.state",location.state)
           <Navbar />
           <Grid container xs={12} className={classes.design}>
             <Grid container xs={6} className={classes.logoContainer} justify="center">
-                  <img alt="uh logo" className={classes.logo} src={slogan} />
+              <img alt="uh logo" className={classes.logo} src={slogan} />
             </Grid>
-          
-       
+
+
           </Grid>
           <Navbarnavigation />
 
-         
-       
-     
-       <Grid  container  xs={12}  spacing={5}   direction="column"   alignItems="center"  justify="center">
+
+
+
+          <Grid container xs={12} spacing={5} direction="column" alignItems="center" justify="center">
             <Grid xs={12} item className={classes.text} >
-                <Typography variant="h3" className={classes.Text1} >
-                      Search
+              <Typography variant="h3" className={classes.Text1} >
+                Search
                 </Typography>
             </Grid>
-        </Grid>
+          </Grid>
 
-        <Grid xs={12} item className={classes.wrapper}>
-
-      
-        
-{imageArray.length !== 0 ? (
-     <Grid container justify="center" alignItems="center" > 
-     
-       {imageArray.map((index, i) => {
-        return( <>
-       <Grid xs={12} md={2}>
+          <Grid xs={12} item className={classes.wrapper}>
 
 
-       <Card className={classes.rootCard}>
-       <CardActionArea>
-          <Carousel animation= "fade" navButtonsAlwaysInvisible="true"> 
+
+            {imageArray.length !== 0 ? (
+              <Grid container justify="center" alignItems="center" >
+
+                {imageArray.map((index, i) => {
+                  return (<>
+                    <Grid xs={12} md={2}>
 
 
-         { index.images.map((a,b) => {
-           return ( <>
-
-        <CardMedia
-          component="img"
-          alt="Photo"
-          height="140"
-          image={a.largeImageURL}
-          title="Photo"
-        />
-       
-           
-           
-            </>
-           )
-        })
-        }
-
-          </Carousel>
-
-<CardContent>
-<Typography gutterBottom variant="h5" component="h2">
-{index.name} 
-</Typography>
-<Chip 
-label={index.price} />
-</CardContent>
-</CardActionArea>
-<CardActions>
-<Button size="small" color="primary">
-Share
-</Button>
-<Button size="small" color="primary">
-Learn More
-</Button>
-</CardActions>
-
-          </Card>
+                      <Card className={classes.rootCard}>
+                        <CardActionArea>
+                          <Carousel animation="fade" navButtonsAlwaysInvisible="true">
 
 
-   
+                            {index.images.map((a, b) => {
+                              return (<>
 
+                                <CardMedia
+                                  component="img"
+                                  alt="Photo"
+                                  height="140"
+                                  image={a.largeImageURL}
+                                  title="Photo"
+                                />
+
+
+
+                              </>
+                              )
+                            })
+                            }
+
+                          </Carousel>
+
+                          <CardContent>
+                            <Typography gutterBottom variant="h5" component="h2">
+                              {index.name}
+                            </Typography>
+                            <Chip
+                              label={index.price} />
+                          </CardContent>
+                        </CardActionArea>
+
+                        <Link
+                          style={{ textDecoration: "none", color: "black" }}
+                          to={{
+                            pathname: `/item/${index.item_id}`,
+                          }}>
+                          <CardActions>
+                            <Grid item xs={12} className={classes.nameOfItem} >
+                              <Button size="small" variant="contained" color="primary">
+                                Learn More
+                              </Button>
+                            </Grid>
+                          </CardActions>
+                        </Link>
+
+                      </Card>
+
+
+
+
+
+
+
+                    </Grid>
+
+                  </>
+                  )
+
+
+
+                })
+
+
+                }
+              </Grid>
+
+            ) : null}
 
 
 
           </Grid>
-          
-           </>
-        )
-
-      
-       
-      }) 
-       
-        
-    }
-      </Grid>
-            
-      ) : null} 
 
 
-
-</Grid>
-       
-      
           <Footer />
         </Grid>
       </React.Fragment>

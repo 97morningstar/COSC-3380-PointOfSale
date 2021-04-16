@@ -20,6 +20,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import HistoryIcon from '@material-ui/icons/History';
 
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -68,6 +69,11 @@ export default function Navbar({user}) {
     setAnchorEl(null);
   };
 
+  const handleOrderHistory = () => {
+    setAnchorEl(null);
+    history.push("/order-history");
+  }
+
   const handleProfile = () => {
     setAnchorEl(null);
     history.push("/profile");
@@ -83,7 +89,7 @@ export default function Navbar({user}) {
     if (localStorage.getItem("token")) {
       console.log("token exists");
       axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+        .post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
         //  console.log("res", res);
@@ -99,7 +105,7 @@ export default function Navbar({user}) {
             console.log("is_employee")
 
             axios
-               .get("/api/employee/"+localStorage.getItem("user_id"))
+               .get("http://localhost:4000/api/employee/"+localStorage.getItem("user_id"))
                .then((res) => {
             
           
@@ -116,7 +122,7 @@ export default function Navbar({user}) {
 
             console.log("custoemr")
             axios
-            .get("/api/customer/"+localStorage.getItem("user_id"))
+            .get("http://localhost:4000/api/customer/"+localStorage.getItem("user_id"))
             .then((res) => {
          
        
@@ -225,7 +231,10 @@ export default function Navbar({user}) {
 
         <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
 
-        {/* Check if the user is an employee, if yes, show employee dashboard */}        
+        {/* Check if the user is an employee, if yes, show employee dashboard */}  
+        <MenuItem onClick={handleOrderHistory}> <HistoryIcon className={classes.icon}/> Order History</MenuItem>
+
+         
 
         <MenuItem onClick={logoutButton}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
 

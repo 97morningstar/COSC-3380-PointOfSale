@@ -262,7 +262,7 @@ function Item({ match }) {
 
   
     axios
-      .post("/add_to_cart", cart_data)
+      .post("http://localhost:4000/add_to_cart", cart_data)
       .then((res) => {
         setUpdateSuccess(true);
        })
@@ -288,7 +288,7 @@ function Item({ match }) {
 
 
     axios
-      .post("/get_cart", data2)
+      .post("http://localhost:4000/get_cart", data2)
       .then((res) => {
         setInvoice(res.data[0]);
         console.log("res.data",res.data)
@@ -301,7 +301,7 @@ function Item({ match }) {
 
 
     axios
-      .get("/api/item/" + match.params.name)
+      .get("http://localhost:4000/api/item/" + match.params.name)
       .then((res) => {
 
         console.log("item", res.data);
@@ -338,7 +338,7 @@ function Item({ match }) {
             /* SHOP ITEMS IN THE SAME CATEGORY */
 
             axios
-              .get("/api/item/category/" + res.data[0].category)
+              .get("http://localhost:4000/api/item/category/" + res.data[0].category)
               .then((res) => {
 
                 console.log(res.data);
