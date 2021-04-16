@@ -96,9 +96,13 @@ router.post("/create_customer", validInfo, async (req, res) => {
         data.store_id_fk
       ] );
       const token = jwtGenerator(newCustomer.customer_id,false);
-
+      const newInvoice = await pool.query("INSERT INTO invoice(customer_id_fk,store_id_fk) VALUES (?,?)",
+      [
+        newCustomer.customer_id,
+        newCustomer.store_id_fk
+      ]);
       res.send(newCustomer);
-
+        
     }catch (err){
       console.log(err.message);
       res.status(500).send("Server Error");

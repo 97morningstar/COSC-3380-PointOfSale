@@ -83,6 +83,11 @@ export default function Navbar({user}) {
     setAnchorEl(null);
     history.push("/cart");
   }
+
+  const handleDashboard = () =>{
+    setAnchorEl(null);
+    history.push("/dash");
+  }
  
   //Check if token exists
   const isLoggedIn = () => {
@@ -92,8 +97,8 @@ export default function Navbar({user}) {
         .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
-        //  console.log("res", res);
-        //  console.log("jwt", localStorage.getItem("is_employee"));
+          console.log("res", res);
+          console.log("jwt", localStorage.getItem("is_employee"));
          // localStorage.setItem("token", res.data.jwtToken);
          // setTimeout(isLoggedIn, 17900 * 1000);
 
@@ -111,7 +116,7 @@ export default function Navbar({user}) {
           
                   setUserName(res.data[0].first_name)
           
-                  console.log(res.data[0].first_name);
+                  console.log("Employee Firstname:",res.data[0].first_name);
           
                 })
                .catch((err) => {
@@ -143,7 +148,7 @@ export default function Navbar({user}) {
         })
         .catch((err) => {
           console.log("error");
-          console.log(err);
+          console.log(err.response.data);
          
           console.log(err.response);
           localStorage.removeItem("token");
@@ -229,7 +234,7 @@ export default function Navbar({user}) {
         <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
         <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
 
-        <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
+        <MenuItem onClick={handleDashboard}> <ShoppingCartIcon className={classes.icon}/> Dashboard</MenuItem>
 
         {/* Check if the user is an employee, if yes, show employee dashboard */}  
         <MenuItem onClick={handleOrderHistory}> <HistoryIcon className={classes.icon}/> Order History</MenuItem>

@@ -1,8 +1,9 @@
 const app = require('express').Router();
-const pool = require("../services/db")
+const pool = require("../services/db");
+const authorize = require("../client/src/middleware/authorization");
 
   // get all customers
-app.get("/view_all_employee", async (req, res) => {
+app.post("/view_all_employee", authorize, async (req, res) => {
     try {
       const all_customers = await pool.query("SELECT * FROM employee");
       res.json(all_customers);
