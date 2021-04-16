@@ -142,10 +142,6 @@ function Home() {
     images: []
   }
 
-  const arrayImages = ['man+jacket', 'man+shoes', 'man+suit', 'tie'];
-
-
-
   const [imageArray, setimageArray] = useState([]);
 
   useEffect(() => {

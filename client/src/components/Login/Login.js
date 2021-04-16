@@ -46,23 +46,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const getNewToken = () => {
-  let token = localStorage.getItem("token");
-  if (token) {
-    axios
-      .post("http://18.213.74.196:8000/api/token/refresh/", {
-        refresh: localStorage.getItem("refresh"),
-      })
-      .then((res) => {
-        localStorage.setItem("token", res.data.access);
-        setTimeout(getNewToken, 17900 * 1000); //Get new token approxiamtey every 4 hrs and 58 min.
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-};
-
 function Login() {
   const classes = useStyles();
   let history = useHistory();

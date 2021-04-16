@@ -78,8 +78,9 @@ export default function Navbar() {
   };
  // "/search/item/" + newValue
   let history = useHistory();
-  const searchValue = (value) =>{
-      history.push("/search/" + newValue)
+  const searchValue = (e) =>{
+      history.push("/search/" + e);
+      history.go(0);
   }
   return (
     <div>
@@ -116,8 +117,14 @@ export default function Navbar() {
                   background: "#ffffff"
                 }}
                     value={newValue}
-                    onChange={setNewValue}
-                    onRequestSearch={() => searchValue(newValue)}
+                    onChange={(e) => { 
+                      console.log("value?",e)
+                      return setNewValue
+                    }}
+                    onRequestSearch={(e) => {
+                      
+                      return searchValue(e)
+                    }}
                     />
                 </Grid>
             </Grid>
