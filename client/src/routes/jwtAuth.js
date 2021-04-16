@@ -102,7 +102,7 @@ router.post("/create_customer", validInfo, async (req, res) => {
         newCustomer.store_id_fk
       ]);
       res.send(newCustomer);
-
+        
     }catch (err){
       console.log(err.message);
       res.status(500).send("Server Error");

@@ -1,52 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-<<<<<<< HEAD:client/build/precache-manifest.8258a6021ef5dff534c74c4271aeb5e9.js
-    "revision": "c5d2ed58d956ba28d19203a1edfe9884",
+    "revision": "abb5bc9c44be507a6831b4d02d0dc6d0",
     "url": "/index.html"
   },
   {
-    "revision": "518f4e370c0bef03c94d",
+    "revision": "7fbe5910bd3c43a3bfc1",
     "url": "/static/css/2.058fa3a9.chunk.css"
   },
   {
-    "revision": "304c2bf825fddb4eebc2",
+    "revision": "078d1b94a7be90c9b6ef",
     "url": "/static/css/main.89b00181.chunk.css"
   },
   {
-    "revision": "518f4e370c0bef03c94d",
-    "url": "/static/js/2.44320fef.chunk.js"
+    "revision": "7fbe5910bd3c43a3bfc1",
+    "url": "/static/js/2.b7f02d0f.chunk.js"
   },
   {
     "revision": "9efecc6e366a89e935d3722c67df4853",
-    "url": "/static/js/2.44320fef.chunk.js.LICENSE.txt"
+    "url": "/static/js/2.b7f02d0f.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "304c2bf825fddb4eebc2",
-    "url": "/static/js/main.5241bdc7.chunk.js"
-=======
-    "revision": "a2a41a7bba7b456092a8da8598eb5412",
-    "url": "/index.html"
-  },
-  {
-    "revision": "cef49aef917f3ef35d13",
-    "url": "/static/css/2.181c4ea7.chunk.css"
-  },
-  {
-    "revision": "33b83aac5c2e8ac42a01",
-    "url": "/static/css/main.de3c8d95.chunk.css"
-  },
-  {
-    "revision": "cef49aef917f3ef35d13",
-    "url": "/static/js/2.84fcd53a.chunk.js"
-  },
-  {
-    "revision": "c4c3a267234135485b5c29bd0f4e4948",
-    "url": "/static/js/2.84fcd53a.chunk.js.LICENSE.txt"
-  },
-  {
-    "revision": "33b83aac5c2e8ac42a01",
-    "url": "/static/js/main.f3193000.chunk.js"
->>>>>>> a15e5267af835c02cc2461415b878151445421e5:client/build/precache-manifest.eceb7ac9495db3cdb3721759ca8d1556.js
+    "revision": "078d1b94a7be90c9b6ef",
+    "url": "/static/js/main.fd8c1718.chunk.js"
   },
   {
     "revision": "ce52a3f297470fd68ccd",
@@ -109,13 +84,6 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/food.45d8ea93.png"
   },
   {
-<<<<<<< HEAD:client/build/precache-manifest.8258a6021ef5dff534c74c4271aeb5e9.js
-=======
-    "revision": "882dccfdd40965f4ca12447fde1df8ae",
-    "url": "/static/media/image.882dccfd.jpg"
-  },
-  {
->>>>>>> a15e5267af835c02cc2461415b878151445421e5:client/build/precache-manifest.eceb7ac9495db3cdb3721759ca8d1556.js
     "revision": "6a9d678d39afb26b74bfaf58fb169c10",
     "url": "/static/media/placeholder.6a9d678d.png"
   }

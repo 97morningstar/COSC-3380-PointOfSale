@@ -19,6 +19,11 @@ import Groceries from "./pages/Categories/groceries";
 import Search from "./pages/Categories/search";
 import Dash from "./pages/Dashboard/empDash";
 import empTables from "./pages/Dashboard/EmployeeTable"
+import inventoryDash from "./pages/Dashboard/inventory"
+import customerDash from "./pages/Dashboard/customer"
+import reportsDash from "./pages/Dashboard/reports"
+import supportDash from "./pages/Dashboard/support"
+import transactionDash from "./pages/Dashboard/transaction"
 
 import Profile from "./pages/CustomerProfile/CustomerProfile";
 import Item from "./pages/Item/Item";
@@ -50,6 +55,11 @@ const App = () => {
         <Route path="/search" component={Search} />
         <Route path="/dash" component={Dash} />
         <Route path="/employeeTable" component={empTables} />
+        <Route path="/customer" component={customerDash} />
+        <Route path="/inventory" component={inventoryDash} />
+        <Route path="/reports" component={reportsDash} />
+        <Route path="/transaction" component={transactionDash} />
+        <Route path="/support" component={supportDash} />
 
         <Route path="/item/:name" render={(props) => <Item {...props} key={Date.now()}/>} />
         <Route path="/cart" component={Cart} />

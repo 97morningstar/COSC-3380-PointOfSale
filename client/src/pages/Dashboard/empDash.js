@@ -182,7 +182,7 @@ const [imageArray, setimageArray] = useState([]);
                   </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                  <Link href="/electronics" className={classes.link} > 
+                  <Link href="/inventory" className={classes.link} > 
                       <img alt="category" className={classes.category1} src={Electronics} />
                       <Typography variant="h5" className={classes.Text} >
                       Inventory
@@ -190,7 +190,7 @@ const [imageArray, setimageArray] = useState([]);
                   </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/clothing" className={classes.link}>
+                    <Link href="/customer" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Clothing} />
                        <Typography variant="h5" className={classes.Text} >
                         Customers
@@ -200,7 +200,7 @@ const [imageArray, setimageArray] = useState([]);
             </Grid>
             <Grid xs={12} container justify="center" alignItems="center" >
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/miscellaneous" className={classes.link}>
+                    <Link href="/transaction" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Miscellaneous} />
                         <Typography variant="h5" className={classes.Text} >
                         Customer Transactions
@@ -208,7 +208,7 @@ const [imageArray, setimageArray] = useState([]);
                     </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/toys-and-games" className={classes.link}>
+                    <Link href="/support" className={classes.link}>
                         <img alt="category" className={classes.category1} src={ToysAndGames} />
                         <Typography variant="h5" className={classes.Text} >
                         Support Ticket
@@ -216,7 +216,7 @@ const [imageArray, setimageArray] = useState([]);
                     </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/pets" className={classes.link}>
+                    <Link href="/reports" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Pets} />
                         <Typography variant="h5" className={classes.Text} >
                           Reports

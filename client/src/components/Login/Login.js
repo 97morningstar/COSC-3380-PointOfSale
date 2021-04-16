@@ -136,7 +136,7 @@ function Login() {
           localStorage.setItem("is_employee", false);
         }
         
-
+        history.push("/");
  
           
        
