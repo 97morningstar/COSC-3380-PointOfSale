@@ -362,7 +362,7 @@ const [updateError, setUpdateErrors] = useState({});
 
        console.log("id",res.data[0].store_id_fk)
 
-       axios .get("/api/store/" + res.data[0].store_id_fk)
+       axios.get("http://localhost:4000/api/store/" + res.data[0].store_id_fk)
        .then((res) => {
          setMyStore({
            label: res.data[0].store_name,

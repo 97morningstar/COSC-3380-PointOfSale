@@ -380,7 +380,7 @@ function Item({ match }) {
 
         /* GET PAYMENT METHOD IF ANY */
 
-        axios    .get("/get_payment/" + data.user_id)
+        axios.get("http://localhost:4000/get_payment/" + data.user_id)
           .then((response) => {
 
             const payment = response.data.map((item, i) => {
@@ -401,7 +401,7 @@ function Item({ match }) {
 
 
         /* GET INVOICE ITEMS */
-        axios    .get("/get_invoice_items/" + data.user_id)
+        axios.get("http://localhost:4000/get_invoice_items/" + data.user_id)
           .then((response) => {
             
             console.log("invoice items", response.data);
@@ -412,7 +412,7 @@ function Item({ match }) {
             /* GET IMAGES */
             response.data.map((index) => {
               index.name = index.name.replace(" ", "+");
-              axios          .get(
+              axios.get(
                   `${pixel.apiUrl}/?key=${pixel.apiK}&q=${index.name}&image_type=photo&per_page=${pixel.amount}&safesearch=true`
                   ,
                   { crossdomain: true }

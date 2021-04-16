@@ -86,7 +86,7 @@ export default function ResetPasswordTwo() {
       };
 
       console.log(data);
-      axios  .patch(
+      axios.patch(
           "http://18.213.74.196:8000/api/user_accounts/password_reset_complete",
           data
         )

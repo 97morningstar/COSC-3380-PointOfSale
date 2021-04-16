@@ -190,7 +190,7 @@ export default function SignUp() {
            //authenticate again after the user is created
            const email = signUpInfo.email;
            const password = signUpInfo.password1;
-           axios       .post("http://18.213.74.196:8000/api/token/", { email, password })
+           axios     .post("http://18.213.74.196:8000/api/token/", { email, password })
              .then((res) => {
              // localStorage.setItem("token", res.data.access);
                localStorage.setItem("email_id", res.data.email);

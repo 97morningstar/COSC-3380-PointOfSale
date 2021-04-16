@@ -157,7 +157,7 @@ function Home() {
 
         res.data.map((index) => {
           index.name = index.name.replace(" ", "+");
-          axios      .get(
+          axios.get(
               `${data.apiUrl}/?key=${data.apiK}&q=${index.name}&image_type=photo&per_page=${data.amount}&safesearch=true`
               ,
               { crossdomain: true }

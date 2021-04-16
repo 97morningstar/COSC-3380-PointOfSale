@@ -27,6 +27,7 @@ import Groceries from "../../assets/Groceries.png";
 
 import back from "../../assets/background1.jpg";
 import Footer from "../../components/Footer/Footer";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -118,16 +119,29 @@ function Home() {
   const theme = createMuiTheme();
 
   /* Recommended Items 15 */
-  const data = {
-    searchText: 'dog',
-    amount: 3,
-    apiUrl: 'https://pixabay.com/api',
-    apiK: '20983112-12d43bcb17250999b789e998a',
-    images: []
-}
+  const history = useHistory();
+ 
 
 const arrayImages = ['Dog','Peach','Apple', 'Cup', 'Laptop'];
   
+
+useEffect(() => {
+
+  const data = {
+    jwtToken: localStorage.getItem("token"),
+    user_id: localStorage.getItem("user_id"),
+    is_employee: localStorage.getItem("is_employee")
+  }
+
+  /* VERIFY USER IS LOGGED IN */
+  axios.post("http://localhost:4000/get_dashboard", data)
+  .then((res) => {
+  })
+  .catch((err) => {
+    console.log(err);
+    history.push("/");
+  })
+},[]);
 
 
 const [imageArray, setimageArray] = useState([]);

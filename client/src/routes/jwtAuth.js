@@ -46,7 +46,7 @@ router.post("/create_employee", validInfo ,async (req, res) => {
         data.phone_number,
         data.store_store_id
       ] );
-      const token = jwtGenerator(newEmployee.employee_id,false);
+      const token = jwtGenerator(newEmployee.employee_id,true);
 
       res.json("A new employee was added. Success");
 
@@ -136,7 +136,7 @@ router.post("/create_customer", validInfo, async (req, res) => {
             is_employee = true;
         }
     }
-
+console.log("is_employee", is_employee);
     await bcrypt.compare(data.password,user[0].password,function(err,result){
         if (err){
             console.log(err);

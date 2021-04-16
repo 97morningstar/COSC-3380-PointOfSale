@@ -138,7 +138,7 @@ const [images, setimages] = useState([]);
 
   /*  arrayImages.map((index) => {
 
-      axios  .get(
+      axios.get(
           `${data.apiUrl}/?key=${data.apiK}&q=${index}&image_type=photo&per_page=${data.amount}&safesearch=true`
           , 
           { crossdomain: true }
@@ -185,7 +185,7 @@ const [images, setimages] = useState([]);
 
     console.log("name", name)
 
-        axios    .get(
+        axios.get(
             `${data.apiUrl}/?key=${data.apiK}&q=${name}&image_type=photo&per_page=${data.amount}&safesearch=true`
             , 
             { crossdomain: true }
