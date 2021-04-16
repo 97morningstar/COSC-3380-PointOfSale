@@ -99,8 +99,8 @@ export default function Navbar({user}) {
       axios.post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
-        //  console.log("res", res);
-        //  console.log("jwt", localStorage.getItem("is_employee"));
+          console.log("res", res);
+          console.log("jwt", localStorage.getItem("is_employee"));
          // localStorage.setItem("token", res.data.jwtToken);
          // setTimeout(isLoggedIn, 17900 * 1000);
 
@@ -120,7 +120,7 @@ export default function Navbar({user}) {
           
                   setUserName(res.data[0].first_name)
           
-                  console.log(res.data[0].first_name);
+                  console.log("Employee Firstname:",res.data[0].first_name);
           
                 })
                .catch((err) => {
@@ -151,7 +151,7 @@ export default function Navbar({user}) {
         })
         .catch((err) => {
           console.log("error");
-          console.log(err);
+          console.log(err.response.data);
          
           console.log(err.response);
           localStorage.removeItem("token");

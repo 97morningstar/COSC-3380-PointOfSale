@@ -1,6 +1,6 @@
 const app = require('express').Router();
 const pool = require("../services/db")
-
+const authorize = require("../client/src/middleware/authorization");
 // create an item
 app.post("/create_item", async (req, res) => {
     try {
@@ -30,7 +30,15 @@ app.get("/view_all_items", async (req, res) => {
       console.log(err.message);
     }
   })
+app.post("/view_all_inventories", authorize ,async (req,res) => {
+  try {
+    const all_items = await pool.query("SELECT item.item_id,item.name,item.category,item.brand,item.selling_price,item.manufacture_cost,item.discount,store.store_name,store_has_item.quantity as storeQuantity,warehouse.warehouse_name,warehouse_has_item.quantity as warehouseQuantity FROM item,store_has_item,warehouse_has_item,store,warehouse WHERE item.item_id = warehouse_has_item.item_id AND item.item_id = store_has_item.item_id AND store.store_id = store_has_item.store_id AND warehouse.warehouse_id = warehouse_has_item.warehouse_id AND warehouse.store_store_id = store.store_id ORDER BY item.item_id,store.store_name ASC");
 
+    res.json(all_items);
+  }catch (err) {
+    console.log(err.message);
+  }
+})
   // get item by id
 app.get("/item/:item_id", async (req, res) => {
     try {
@@ -74,7 +82,6 @@ app.put("/item/:item_id", async (req, res) => {
         data.brand,
         data.discount,
         item_id
-        
       ]);
       console.log(updateItem);
       var invoiceIdCarts = await pool.query("SELECT invoice_id FROM invoice WHERE order_status = 'cart'");

@@ -125,12 +125,9 @@ function Login() {
           localStorage.setItem("is_employee", false);
         }
         
-
+        history.push("/");
  
-          console.log("Inside Login: ", res);
-        
-        
-         history.push("/");
+          
        
       })
       .catch((err) => {
