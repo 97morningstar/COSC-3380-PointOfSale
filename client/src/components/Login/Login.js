@@ -46,23 +46,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const getNewToken = () => {
-  let token = localStorage.getItem("token");
-  if (token) {
-    axios
-      .post("http://18.213.74.196:8000/api/token/refresh/", {
-        refresh: localStorage.getItem("refresh"),
-      })
-      .then((res) => {
-        localStorage.setItem("token", res.data.access);
-        setTimeout(getNewToken, 17900 * 1000); //Get new token approxiamtey every 4 hrs and 58 min.
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-};
-
 function Login() {
   const classes = useStyles();
   let history = useHistory();
@@ -82,9 +65,16 @@ function Login() {
 
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
+
+      const data = {
+        jwtToken: localStorage.getItem("token"),
+        user_id: localStorage.getItem("user_id"),
+        is_employee: localStorage.getItem("is_employee")
+      }
+
+
       console.log("token exists");
-      axios
-        .post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+      axios.post("http://localhost:4000/auth/verify", data)
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -117,8 +107,7 @@ function Login() {
     e.preventDefault();
 
 
-    axios
-      .post("/auth/login", loginInfo)
+    axios.post("http://localhost:4000/auth/login", loginInfo)
       .then((res) => {
 
       
@@ -136,12 +125,9 @@ function Login() {
           localStorage.setItem("is_employee", false);
         }
         
-
+        history.push("/");
  
-          console.log("Inside Login: ", res);
-        
-        
-         history.push("/");
+          
        
       })
       .catch((err) => {

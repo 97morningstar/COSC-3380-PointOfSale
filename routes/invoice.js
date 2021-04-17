@@ -13,6 +13,15 @@ app.get("/view_all_invoice", async (req, res) => {
         console.log(err.message);
     }
 })
+app.get("/view_all_purchases", async (req, res) => {
+    try {
+        const all_invoice = await pool.query("SELECT * FROM invoice WHERE order_status <> 'cart'");
+        res.json(all_invoice);
+    } catch (err) {
+        console.log(err.message);
+    }
+})
+
 
 //get all items in order_status =  'cart'
 app.get("/cart/:id", async (req, res) => {
@@ -33,9 +42,10 @@ app.post("/create_invoice", async (req, res) => {
     try {
         const data = req.body;
         console.log(data);
+        var time_of_transaction = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes();
         const newInvoice = await pool.query("INSERT INTO invoice(total_cost, time_of_transaction, order_status, payment_id_fk, customer_id_fk, store_id_fk) VALUES ( ?, ?, ?, ?, ?, ?)",
             [data.total_cost,
-            data.time_of_transaction,
+            time_of_transaction,
             data.order_status,
             data.payment_id_fk,
             data.customer_id_fk,
@@ -139,38 +149,48 @@ app.put("/arrived/:id", async (req, res) => {
 });
 
 // Purchased 
-app.put("/purchase/:id", async (req, res) => {
+app.put("/purchase", async (req, res) => {
     try {
-        const { id } = req.params;
-        const data = await pool.query("SELECT * FROM invoice WHERE invoice_id = ?", [id]);
+       
         const body = req.body;
-        console.log(data[0].order_status);
+       const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ?", [body.customer_id_fk]);
+       
+        console.log(payment);
 
-        if (data[0].order_status != "cart") {
+       if (payment.length === 0) {
             const error = {
-                ERROR: "Return cannot be done!"
+                ERROR: "You need to provide at leat one payment method"
             }
-            res.status(400).send(error);
+           return res.status(400).send(error);
         }
 
-        const invoiceItems = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
+       /* const invoiceItems = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
         for (var i = 0; i < invoiceItems.length; i++) {
             if (invoiceItems[i].quantity == 0) {
 
                 var deleteInvoiceitem = await pool.query("DELETE FROM invoice_item WHERE invoice_item_id = ?", [invoiceItems[i].invoice_item_id]);
             }
 
-        }
+        }*/
+
+        /* NEW - TESTING */
+
+       
+
+
+
         var now = new Date();
-        var d = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+        var d = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes();
         console.log(d);
-        const updateInvoiceitem = await pool.query("UPDATE invoice SET order_status = 'purchased', time_of_transaction = ?, payment_id_fk = ? WHERE invoice_id = ? ",
+        // We also need total_cost_after_tax
+        const updateInvoiceitem = await pool.query("UPDATE invoice SET order_status = 'purchased', time_of_transaction = ?, payment_id_fk = ?, total_cost_after_tax = ? WHERE invoice_id = ? ",
             [
                 d,
                 body.payment_id_fk,
-                id
+                body.total_cost_after_tax,
+                body.invoice_id
             ]);
-        const createNewinvoice = await pool.query("INSERT INTO invoice (customer_id_fk, store_id_fk) VALUES (?,?)", [data[0].customer_id_fk, data[0].store_id_fk])
+        const createNewinvoice = await pool.query("INSERT INTO invoice (customer_id_fk, store_id_fk) VALUES (?,?)", [body.customer_id_fk, body.store_id_fk])
         res.json("The transaction was successfully purchased!");
     } catch (err) {
         console.log(err.message);

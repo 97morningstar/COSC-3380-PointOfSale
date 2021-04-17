@@ -39,7 +39,16 @@ app.use("/api", require("./routes/invoice_item"));
 /* Register Protect routes */
 app.use("/get_profile", require("./routes/profile"));
 app.use("/get_cart", require("./routes/cart"));
+app.use("/get_dashboard", require("./routes/dashboard"));
+
 app.use("/", require("./routes/invoice_item_cart"));
+app.use("/", require("./routes/order_history"));
+app.use("/", require("./routes/inventory"));
+app.use("/", require("./routes/account"));
+
+
+
+
 
 
 

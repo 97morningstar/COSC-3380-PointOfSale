@@ -46,7 +46,7 @@ router.post("/create_employee", validInfo ,async (req, res) => {
         data.phone_number,
         data.store_store_id
       ] );
-      const token = jwtGenerator(newEmployee.employee_id,false);
+      const token = jwtGenerator(newEmployee.employee_id,true);
 
       res.json("A new employee was added. Success");
 
@@ -95,10 +95,17 @@ router.post("/create_customer", validInfo, async (req, res) => {
         data.is_member,
         data.store_id_fk
       ] );
-      const token = jwtGenerator(newCustomer.customer_id,false);
-
-      res.send(newCustomer);
-
+      console.log("data",data);
+      const cust = await pool.query("SELECT * FROM customer WHERE email = ?",[data.email]);
+      console.log("customer",cust);
+      const token = jwtGenerator(cust[0].customer_id,false);
+      const newInvoice = await pool.query("INSERT INTO invoice(customer_id_fk,store_id_fk) VALUES (?,?)",
+      [
+        cust[0].customer_id,
+        cust[0].store_id_fk
+      ]);
+      res.send(cust);
+        
     }catch (err){
       console.log(err.message);
       res.status(500).send("Server Error");
@@ -129,7 +136,7 @@ router.post("/create_customer", validInfo, async (req, res) => {
             is_employee = true;
         }
     }
-
+console.log("is_employee", is_employee);
     await bcrypt.compare(data.password,user[0].password,function(err,result){
         if (err){
             console.log(err);

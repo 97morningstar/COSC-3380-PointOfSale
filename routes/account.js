@@ -3,16 +3,16 @@ const pool = require("../services/db");
 const authorize = require("../client/src/middleware/authorization");
 
 // Get customer if authorized
-app.post("/", authorize, async (req, res) => {
+app.post("/get_account", authorize, async (req, res) => {
     try {
     
       if(req.body.is_employee !== "false"){
         return res.status(400).send("You are not a customer");
      }
 
-        const invoice = await pool.query("SELECT * FROM invoice WHERE customer_id_fk = ? AND order_status = 'cart'", [req.body.user_id]);
+        const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ?", [req.body.user_id]);
 
-      res.json(invoice);
+      res.json(payment);
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");

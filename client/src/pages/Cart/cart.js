@@ -4,10 +4,10 @@ import { getConfig } from "../../authConfig";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
-
+import ShopIcon from '@material-ui/icons/Shop';
 import { Link, useRouteMatch, router } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Divider, Paper } from "@material-ui/core";
+import { Grid, Typography, Divider, Paper, IconButton } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Carousel from 'react-material-ui-carousel'
 
@@ -32,8 +32,12 @@ import Select from "react-select";
 
 import back from "../../assets/background1.jpg";
 
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import Footer from "../../components/Footer/Footer";
+
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -162,13 +166,24 @@ const useStyles = makeStyles((theme) => ({
     width: "90%",
     margin: "10px"
   },
+  botton2: {
+    width: "200px",
+    margin: "10px"
+  },
   selectStore: {
     zIndex: "1000"
   },
   information: {
     zIndex: "1000"
+  },
+  space:{
+    margin: "35px"
   }
 }));
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 
 function Item({ match }) {
@@ -191,8 +206,6 @@ function Item({ match }) {
 
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [invoiceItemsName, setInvoiceItemsName] = useState([]);
-
-
 
   const items = [
     {
@@ -237,15 +250,119 @@ function Item({ match }) {
     },
   ]
 
+
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [buySuccess, setBuySuccess] = useState(false);
+  const [updateFailed, setUpdateFailed] = useState(false);
+
+  const handleCloseUpdateSucess = () => {
+    setUpdateSuccess(false);
+  };
+  const handleCloseUpdateFailed = () => {
+    setUpdateFailed(false);
+  };
+  const handleCloseBuySuccess = () => {
+    setBuySuccess(false);
+  };
+
+
   const [imageArray, setimageArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [userInfo, setUserInfo] = useState([]);
+  const [paymentMethodList, setPaymentMethodList] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState([]);
+
+
+  const handleBuy = () => {
+    let total = (invoiceItems.map((index) => {
+      return 0.0825 * parseFloat(index.selling_price * index.quantity);
+    }).reduce((total, num) => {
+      return total + num
+    }) + invoiceItems.map((index) => {
+      return parseFloat(index.selling_price * index.quantity);
+    }).reduce((total, num) => {
+      return parseFloat(total + num)
+    })).toFixed(2)
+
+    console.log(paymentMethod.value);
+
+    if (paymentMethod.value) {
+      const data = {
+        payment_id_fk: paymentMethod.value,
+        total_cost_after_tax: total,
+        invoice_id: invoice.invoice_id,
+        customer_id_fk: invoiceItems[0].customer_id_fk,
+        store_id_fk: invoiceItems[0].store_id_fk
+      }
+
+      if (paymentMethod.length !== 0) {
+        setInvoiceItems([]);
+      }
+
+
+      axios.put("http://localhost:4000/api/purchase", data)
+        .then((res) => {
+          console.log(res.data)
+          setBuySuccess(true)
+        })
+        .catch((err) => {
+          console.log(err.response.data)
+          setUpdateFailed(true);
+        })
+    } else {
+      setUpdateFailed(true);
+    }
+
+
+
+
+  }
+
+  const handleDelete = (number) => {
+    console.log(number)
+    setInvoiceItems((invoiceItems) =>
+      invoiceItems.filter(
+        (invoiceItems) => invoiceItems.invoice_item_id !== parseInt(number)
+      )
+    );
+    axios.delete("http://localhost:4000/api/api/invoice_item/" + parseInt(number))
+      .then((res) => {
+        console.log(res.data)
+        setUpdateSuccess(true);
+      })
+      .catch((err) => {
+        setUpdateFailed(true);
+      })
+  }
+
+  const handleChangeOfNumberOfItems = (number, e) => {
+
+
+
+    /* Update Item Quantity */
+    const update = {
+      quantity: e,
+      invoice_item_id: parseInt(number),
+      jwtToken: localStorage.getItem("token"),
+      user_id: localStorage.getItem("user_id"),
+      is_employee: localStorage.getItem("is_employee")
+    }
+
+    console.log("invoice_item_id", parseInt(number), "quantity", e)
+
+    axios.put("http://localhost:4000/get_cart/update_quantity", update)
+      .then((res) => {
+        console.log(res.data)
+        setUpdateSuccess(true);
+      }).catch((err) => {
+        console.log(err.response);
+        setUpdateFailed(true);
+      })
+  }
 
   useEffect(() => {
 
     /* WE NEED A PROTECTED ROUTE TO ACCESS THE CART */
     /* EMPLOYEE CAN'T BUY */
-
     setIsLoading(true);
 
     const data = {
@@ -255,32 +372,54 @@ function Item({ match }) {
     }
 
     /* VERIFY USER IS LOGGED IN */
-    axios
-      .post("/get_cart", data)
+    axios.post("http://localhost:4000/get_cart", data)
       .then((res) => {
-        setIsLoading(false);
+    
 
         setInvoice(res.data[0]);
-        /* GET INVOICE ITEMS */
-        axios
-          .get("/get_invoice_items/" + data.user_id)
+
+        /* GET PAYMENT METHOD IF ANY */
+
+        axios.get("http://localhost:4000/get_payment/" + data.user_id)
           .then((response) => {
-            setIsLoading(false);
+
+            const payment = response.data.map((item, i) => {
+              return {
+                label: "Number:   " + item.card_number + " | Expiration Date:   " + item.expiration_month + "/" + item.expiration_year + " | Security Code:    " + item.security_code,
+                value: item.payment_id,
+              };
+            });
+            setPaymentMethodList(payment)
+
+           
+
+            console.log("payment methos is", payment)
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+
+
+        /* GET INVOICE ITEMS */
+        axios.get("http://localhost:4000/get_invoice_items/" + data.user_id)
+          .then((response) => {
+            
             console.log("invoice items", response.data);
             setInvoiceItems(response.data);
+
+            setIsLoading(false);
 
             /* GET IMAGES */
             response.data.map((index) => {
               index.name = index.name.replace(" ", "+");
-              axios
-                .get(
+              axios.get(
                   `${pixel.apiUrl}/?key=${pixel.apiK}&q=${index.name}&image_type=photo&per_page=${pixel.amount}&safesearch=true`
                   ,
                   { crossdomain: true }
                 )
                 .then((response) => {
-
-                  console.log(response.data.hits);
+                 
+                 
                   index.name = index.name.replace("+", " ");
 
                   const image = {
@@ -346,23 +485,26 @@ function Item({ match }) {
 
               {invoiceItems.length !== 0 ? (
                 <>
-                  <Typography gutterBottom variant="h4" component="h2" className={classes.botton}>
+ 
+                  <Grid xs={12} item container>
+                  <Grid xs={12} item>
+                  <Typography gutterBottom variant="h4" component="h2" className={classes.space}>
                     CART
                   </Typography>
-                  <Grid xs={12} item container>
+                  </Grid>
                     <Grid xs={3} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
+                      <Typography gutterBottom variant="h5" component="h2" >
                         Shipping Address:
                       </Typography>
                     </Grid>
                     <Grid xs={9} item>
-                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                      <Typography gutterBottom variant="h6" component="body" >
                         {invoiceItems[0].first_name} {invoiceItems[0].last_name}
                       </Typography>
-                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                      <Typography gutterBottom variant="h6" component="body" >
                         {invoiceItems[0].email}
                       </Typography>
-                      <Typography gutterBottom variant="h6" component="body" className={classes.botton}>
+                      <Typography gutterBottom variant="h6" component="body" >
                         {invoiceItems[0].street_number} {invoiceItems[0].street_name}, {invoiceItems[0].zip_code}
                       </Typography>
                     </Grid>
@@ -374,14 +516,30 @@ function Item({ match }) {
                   />
                   <Grid xs={12} item container>
                     <Grid xs={3} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
-                        Payment Method
+                      <Typography gutterBottom variant="h5" component="h2">
+                        Payment Method:
                       </Typography>
                     </Grid>
                     <Grid xs={9} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
-                        METHOD OF PAYMENT
-                      </Typography>
+                      <Select
+                        autoFocus
+                        className={`${classes.selectStore} ${classes.information}`}
+                        closeMenuOnSelect={true}
+                        options={paymentMethodList}
+                        value={{
+                          label: paymentMethod.label,
+                          value: paymentMethod.value,
+                        }}
+                        name="store_id_fk"
+                        onChange={(e) => {
+                          setPaymentMethod(
+                            {
+                              label: e.label,
+                              value: e.value
+                            });
+                          console.log(e.value)
+                        }}
+                      />
                     </Grid>
                   </Grid>
                   <Divider
@@ -391,11 +549,11 @@ function Item({ match }) {
                   />
                   <Grid xs={12} item container>
                     <Grid xs={12} item>
-                      <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
-                        Review Items
+                      <Typography gutterBottom variant="h4" component="h2" className={classes.space}>
+                        Review Items:
                       </Typography>
                     </Grid>
-                    <Grid xs={12} item container justify="space-around">
+                    <Grid xs={12} item container justify="space-around" alignItems="flex-start">
                       <Grid xs={6} item container >
                         {invoiceItems.map((index, i) => {
                           //console.log(index)
@@ -423,6 +581,7 @@ function Item({ match }) {
                                   Quantity:
                                   </Typography>
                                 <Select
+                                className={classes.space}
                                   autoFocus
                                   closeMenuOnSelect={true}
                                   options={items}
@@ -432,30 +591,42 @@ function Item({ match }) {
                                   }}
                                   name="store_id_fk"
                                   onChange={(e) => {
-                                    setNumberOfItems(e.value);
+                                    setNumberOfItems(() => {
+                                      handleChangeOfNumberOfItems(index.invoice_item_id, e.value);
+                                      return e.value;
+                                    });
                                     index.quantity = e.value
-                                    console.log(index)
+                                    
                                   }}
                                 />
                                 <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
                                   Subtotal: ${(index.quantity * index.selling_price).toFixed(2)}
                                 </Typography>
+
+                                <Button
+                                  variant="contained"
+                                  color="secondary"
+                                  className={classes.button}
+                                  startIcon={<DeleteIcon />}
+                                  onClick={() => {
+                                    return handleDelete(index.invoice_item_id)
+                                  }}
+                                >
+                                  Delete
+                                </Button>
                               </Grid>
                               <Divider
                                 variant="inset"
                                 component="li"
                                 className={classes.divider}
                               />
-
-
-
                             </>
                           );
                         })}
                       </Grid>
                       <Grid xs={5} item >
-                        <Paper elevation={3} style={{padding: "15px"}}>
-                          <Typography gutterBottom variant="h5" component="h2"  className={classes.botton}>
+                        <Paper elevation={3} style={{ padding: "15px" }}>
+                          <Typography gutterBottom variant="h5" component="h2" className={classes.botton}>
                             Order Summary:
                           </Typography>
                           <Divider
@@ -490,31 +661,40 @@ function Item({ match }) {
                             className={classes.divider}
                           />
                           <Typography gutterBottom component="body" className={classes.botton}>
-                           Total Before Tax: ${invoiceItems.map((index) => {
-                             return parseFloat(index.selling_price*index.quantity);
-                           }).reduce((total, num) => {
-                             return total + num
-                           })}
+                            Total Before Tax: ${(invoiceItems.map((index) => {
+                            return parseFloat(index.selling_price * index.quantity);
+                          }).reduce((total, num) => {
+                            return total + num
+                          })).toFixed(2)}
                           </Typography>
                           <Typography gutterBottom component="body" className={classes.botton}>
-                           Tax on this invoice: ${invoiceItems.map((index) => {
-                             return 0.0825*parseFloat(index.selling_price*index.quantity);
-                           }).reduce((total, num) => {
-                             return total + num
-                           }).toFixed(2)}
+                            Tax on this invoice: ${invoiceItems.map((index) => {
+                            return 0.0825 * parseFloat(index.selling_price * index.quantity);
+                          }).reduce((total, num) => {
+                            return total + num
+                          }).toFixed(2)}
                           </Typography>
                           <Typography gutterBottom component="body" className={classes.botton}>
-                           Total Cost: ${(invoiceItems.map((index) => {
-                             return 0.0825*parseFloat(index.selling_price*index.quantity);
-                           }).reduce((total, num) => {
-                             return total + num
-                           }) + invoiceItems.map((index) => {
-                            return parseFloat(index.selling_price*index.quantity);
+                            Total Cost: ${(invoiceItems.map((index) => {
+                            return 0.0825 * parseFloat(index.selling_price * index.quantity);
+                          }).reduce((total, num) => {
+                            return total + num
+                          }) + invoiceItems.map((index) => {
+                            return parseFloat(index.selling_price * index.quantity);
                           }).reduce((total, num) => {
                             return parseFloat(total + num)
                           })).toFixed(2)}
                           </Typography>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            className={classes.button}
+                            startIcon={<ShopIcon />}
+                            onClick={handleBuy}
 
+                          >
+                            Buy
+                                </Button>
                         </Paper>
                       </Grid>
 
@@ -522,7 +702,30 @@ function Item({ match }) {
                   </Grid>
 
                 </>
-              ) : (<>No items</>)}
+              ) : (<>
+                <Grid xs={12} item container >
+                  <Grid xs={12} item >
+                    <Typography gutterBottom variant="h3">
+                      Your cart is empty
+                  </Typography>
+                  </Grid>
+                  <Grid xs={12} item >
+                    <Typography gutterBottom component="body2" >
+                      Check our collection of amazing articles. Best in the market.
+                  </Typography>
+                  </Grid>
+                  <Grid xs={12} item >
+                    <Typography gutterBottom component="body2" >
+                      You can start by going to categories. We hope you enjoy your stay at our online store.
+                  </Typography>
+                  </Grid>
+                  <Grid xs={12} item >
+                    <Button href="/categories" variant="contained" className={classes.botton2} color="secondary">
+                      Categories
+                  </Button>
+                  </Grid>
+                </Grid>
+              </>)}
 
 
 
@@ -535,6 +738,31 @@ function Item({ match }) {
 
           <Footer />
         </Grid>
+        <Snackbar
+          open={updateSuccess}
+          autoHideDuration={6000}
+          onClose={handleCloseUpdateSucess}>
+          <Alert onClose={handleCloseUpdateSucess} severity="success">
+            Cart was updated!
+        </Alert>
+        </Snackbar>
+        <Snackbar
+          open={updateFailed}
+          autoHideDuration={6000}
+          onClose={handleCloseUpdateFailed}>
+          <Alert onClose={handleCloseUpdateFailed} severity="error">
+            There was a problem when updating this cart. Please provide a payment method.
+        </Alert>
+        </Snackbar>
+        <Snackbar
+          open={buySuccess}
+          autoHideDuration={10000}
+          onClose={handleCloseBuySuccess}>
+          <Alert onClose={handleCloseBuySuccess} severity="success">
+            Your purchase was succesful. Please go to Menu {'>'} Order History to review this purchase. Thank you so much!
+        </Alert>
+        </Snackbar>
+
       </React.Fragment>
     </div>
   );

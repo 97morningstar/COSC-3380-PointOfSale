@@ -5,9 +5,7 @@ import Home from "./pages/Home/Home";
 import Login from "./components/Login/Login";
 import ResetPage from "./components/ResetPassword/ResetPage";
 import Signup from "./components/Signup/Signup";
-import AccountInfo from "./components/AccountInfo/AccountInfo";
 import NotFound from "./pages/NotFound/NotFound";
-import Dashboard from "./pages/Dashboard/Dashboard";
 import ReportBug from "./pages/ReportBug/ReportBug";
 /* Categories Routes */
 import Categories from "./pages/Categories/Categories";
@@ -20,10 +18,19 @@ import Groceries from "./pages/Categories/groceries";
 import Search from "./pages/Categories/search";
 import Dash from "./pages/Dashboard/empDash";
 import empTables from "./pages/Dashboard/EmployeeTable"
+import inventoryDash from "./pages/Dashboard/inventory"
+import customerDash from "./pages/Dashboard/customer"
+import reportsDash from "./pages/Dashboard/Reports"
+import supportDash from "./pages/Dashboard/support"
+import transactionDash from "./pages/Dashboard/transaction"
 
 import Profile from "./pages/CustomerProfile/CustomerProfile";
 import Item from "./pages/Item/Item";
 import Cart from "./pages/Cart/cart";
+import OrderHistory from "./pages/OrderHistory/OrderHistory";
+import Account from "./pages/Account/Account";
+
+
 
 
 
@@ -37,7 +44,6 @@ const App = () => {
         <Route path="/login" component={Login} />
         <Route path="/lost-password" component={ResetPage} />
         <Route path="/signup" component={Signup} />
-        <Route path="/accountInfo" component={AccountInfo} />
         <Route path="/report-bug" component={ReportBug} />
 
         <Route path="/categories" component={Categories} />
@@ -48,17 +54,25 @@ const App = () => {
         <Route path="/pets" component={Pets} />
         <Route path="/groceries" component={Groceries} />
         <Route path="/profile" component={Profile} />
-        <Route path="/search" component={Search} />
+        <Route path="/search/:name" component={Search} />
         <Route path="/dash" component={Dash} />
         <Route path="/employeeTable" component={empTables} />
+        <Route path="/customer" component={customerDash} />
+        <Route path="/inventory" component={inventoryDash} />
+        <Route path="/reports" component={reportsDash} />
+        <Route path="/transaction" component={transactionDash} />
+        <Route path="/support" component={supportDash} />
+        <Route path="/account" component={Account} />
+
 
         <Route path="/item/:name" render={(props) => <Item {...props} key={Date.now()}/>} />
         <Route path="/cart" component={Cart} />
+        <Route path="/order-history" component={OrderHistory} />
+
         
 
 
 
-        <ProtectedRoute path="/dashboard" component={Dashboard} />
         <Route path="*" component={NotFound} />
       </Switch>
     </Router>

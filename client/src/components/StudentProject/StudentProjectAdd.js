@@ -163,8 +163,7 @@ export default function StudentProjectAdd({ projects, setProjects, skills }) {
         project_in_progress: studentInput.project_in_progress,
         project_role: studentInput.project_role,
       };
-      axios
-        .post(
+      axios.post(
           "http://18.213.74.196:8000/api/student_project/create",
           data,
           getConfig()

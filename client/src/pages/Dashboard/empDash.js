@@ -18,15 +18,16 @@ import { Button, LinearProgress } from "@material-ui/core";
 import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 /* Categories Images */
-import Electronics from "../../assets/Electronics.png";
-import Pets from "../../assets/Pets.png";
-import ToysAndGames from "../../assets/ToysAndGames.png";
-import Clothing from "../../assets/MensClothing.png";
-import Miscellaneous from "../../assets/Miscellaneous.png";
-import Groceries from "../../assets/Groceries.png";
+import Electronics from "../../assets/inventory.png";
+import Pets from "../../assets/reports.png";
+import ToysAndGames from "../../assets/ticket.png";
+import Clothing from "../../assets/customer.png";
+import Miscellaneous from "../../assets/transactions.png";
+import Groceries from "../../assets/employees.png";
 
 import back from "../../assets/background1.jpg";
 import Footer from "../../components/Footer/Footer";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -118,16 +119,29 @@ function Home() {
   const theme = createMuiTheme();
 
   /* Recommended Items 15 */
-  const data = {
-    searchText: 'dog',
-    amount: 3,
-    apiUrl: 'https://pixabay.com/api',
-    apiK: '20983112-12d43bcb17250999b789e998a',
-    images: []
-}
+  const history = useHistory();
+ 
 
 const arrayImages = ['Dog','Peach','Apple', 'Cup', 'Laptop'];
   
+
+useEffect(() => {
+
+  const data = {
+    jwtToken: localStorage.getItem("token"),
+    user_id: localStorage.getItem("user_id"),
+    is_employee: localStorage.getItem("is_employee")
+  }
+
+  /* VERIFY USER IS LOGGED IN */
+  axios.post("http://localhost:4000/get_dashboard", data)
+  .then((res) => {
+  })
+  .catch((err) => {
+    console.log(err);
+    history.push("/");
+  })
+},[]);
 
 
 const [imageArray, setimageArray] = useState([]);
@@ -182,7 +196,7 @@ const [imageArray, setimageArray] = useState([]);
                   </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                  <Link href="/electronics" className={classes.link} > 
+                  <Link href="/inventory" className={classes.link} > 
                       <img alt="category" className={classes.category1} src={Electronics} />
                       <Typography variant="h5" className={classes.Text} >
                       Inventory
@@ -190,7 +204,7 @@ const [imageArray, setimageArray] = useState([]);
                   </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/clothing" className={classes.link}>
+                    <Link href="/customer" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Clothing} />
                        <Typography variant="h5" className={classes.Text} >
                         Customers
@@ -200,7 +214,7 @@ const [imageArray, setimageArray] = useState([]);
             </Grid>
             <Grid xs={12} container justify="center" alignItems="center" >
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/miscellaneous" className={classes.link}>
+                    <Link href="/transaction" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Miscellaneous} />
                         <Typography variant="h5" className={classes.Text} >
                         Customer Transactions
@@ -208,7 +222,7 @@ const [imageArray, setimageArray] = useState([]);
                     </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/toys-and-games" className={classes.link}>
+                    <Link href="/support" className={classes.link}>
                         <img alt="category" className={classes.category1} src={ToysAndGames} />
                         <Typography variant="h5" className={classes.Text} >
                         Support Ticket
@@ -216,10 +230,10 @@ const [imageArray, setimageArray] = useState([]);
                     </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/pets" className={classes.link}>
+                    <Link href="/reports" className={classes.link}>
                         <img alt="category" className={classes.category1} src={Pets} />
                         <Typography variant="h5" className={classes.Text} >
-                          Something Else
+                          Reports
                      </Typography>
                     </Link>
                 </Grid>

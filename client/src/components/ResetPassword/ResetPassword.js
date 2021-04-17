@@ -47,8 +47,7 @@ export default function ResetPassword({ setValidEmail }) {
   //handleClick when user clicks on RequestResetCode button
   const handleClickResetRequest = (e) => {
     e.preventDefault();
-    axios
-      .post(
+    axios.post(
         "http://18.213.74.196:8000/api/user_accounts/request_reset_email",
         emailInput
       )
