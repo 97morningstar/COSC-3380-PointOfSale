@@ -6,13 +6,17 @@ import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
 
 import Link from "@material-ui/core/Link";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Carousel from 'react-material-ui-carousel'
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Collapse from '@material-ui/core/Collapse';
+import Box from '@material-ui/core/Box';
 
 import { Chip } from "@material-ui/core";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, IconButton } from "@material-ui/core";
 
 /* Images */
 import slogan from "../../assets/_Logo (1).png";
@@ -71,103 +75,169 @@ const useStyles = makeStyles((theme) => ({
     width: "170px",
     height: "170px",
   },
-  logoContainer:{
-      textAlign: "left"
+  logoContainer: {
+    textAlign: "left"
   },
-   food: {
+  food: {
     width: "270px",
     height: "170px",
   },
-  foodContainer:{
+  foodContainer: {
     //textAlign: "center"
   },
-  text:{
-    display: "flex", 
-    justifyContent: "flex-start" ,
+  text: {
+    display: "flex",
+    justifyContent: "flex-start",
     padding: "10px",
   },
-  carousel:{
-      width: "250px",
-      height: "150px",
-      margin: "10px"
-  },
-  nameOfItem:{
+  carousel: {
+    width: "250px",
+    height: "150px",
     margin: "10px"
   },
-  category1:{
+  nameOfItem: {
+    margin: "10px"
+  },
+  category1: {
     width: "250px",
     height: "250px",
   },
-  link:{
+  link: {
     color: "#000",
     "&:hover": {
-    textDecoration: "none",
-    color: "#007EB4"
+      textDecoration: "none",
+      color: "#007EB4"
     }
   },
-  categories:{
+  categories: {
     marginBottom: "20px",
   },
-Text1:{
-  marginTop: "30px"
-}
+  Text1: {
+    marginTop: "30px"
+  }
 }));
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  body: {
+    fontSize: 14,
+  },
+}))(TableCell);
 
-function DenseTable({rows}) {
-  const classes = useStyles();
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  },
+}))(TableRow);
+const useRowStyles = makeStyles({
+  root: {
+    '& > *': {
+      borderBottom: 'unset',
+    },
+  },
+});
+
+function Row(props) {
+  const { row } = props;
+  const [open, setOpen] = React.useState(false);
+  const classes = useRowStyles();
 
   return (
+    <React.Fragment>
+      <StyledTableRow className={classes.root}>
+        <StyledTableCell>
+          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </StyledTableCell>
+        <StyledTableCell component="th" scope="row">
+          {row.first_name}
+        </StyledTableCell>
+        <StyledTableCell align="right">{row.middle_initial}</StyledTableCell>
+        <StyledTableCell align="right">{row.last_name}</StyledTableCell>
+        <StyledTableCell align="right">{row.email}</StyledTableCell>
+        <StyledTableCell align="right">{row.store_name}</StyledTableCell>
+        <StyledTableCell align="right">{row.employee_id}</StyledTableCell>
+      </StyledTableRow>
+      <StyledTableRow>
+        <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+              <Typography variant="h6" gutterBottom component="div">
+                Employee information
+              </Typography>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <StyledTableRow>
+                    <StyledTableCell>Phone Number</StyledTableCell>
+                    <StyledTableCell>Date of Birth</StyledTableCell>
+                    <StyledTableCell>Salary</StyledTableCell>
+                    <StyledTableCell>Street Number</StyledTableCell>
+                    <StyledTableCell>Street Name</StyledTableCell>
+                    <StyledTableCell>City</StyledTableCell>
+                    <StyledTableCell>Zip code</StyledTableCell>
+                    <StyledTableCell align="right">Employment Date</StyledTableCell>
+                    <StyledTableCell align="right">Store ID</StyledTableCell>
+                  </StyledTableRow>
+                </TableHead>
+                <TableBody>
+                  {//row.inventory.map((historyRow) => (
+                    <StyledTableRow key={row.phone_number}>
+                      <StyledTableCell component="th" scope="row">
+                        {row.phone_number}
+                      </StyledTableCell>
+                      <StyledTableCell>{row.date_of_birth}</StyledTableCell>
+                      <StyledTableCell>{row.salary}</StyledTableCell>
+                      <StyledTableCell>{row.street_number}</StyledTableCell>
+                      <StyledTableCell>{row.street_name}</StyledTableCell>
+                      <StyledTableCell>{row.city}</StyledTableCell>
+                      <StyledTableCell>{row.zip_code}</StyledTableCell>
+                      <StyledTableCell align="right">{row.employment_date}</StyledTableCell>
+                      <StyledTableCell align="right">
+                        {row.store_store_id}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                    //))}
+                  }
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </StyledTableCell>
+      </StyledTableRow>
+    </React.Fragment>
+  );
+}
+
+function CollapsibleTable({ rows }) {
+  return (
     <TableContainer component={Paper}>
-      <Table className={classes.table} size="small" aria-label="a dense table">
+      <Table aria-label="collapsible table">
         <TableHead>
-          <TableRow>
-            <TableCell>employee id</TableCell>
-                <TableCell align="right">first name</TableCell>
-                <TableCell align="right">middle initial</TableCell>
-                <TableCell align="right">last name</TableCell>
-                <TableCell align="right">employment date</TableCell>
-                <TableCell align="right">date of birth</TableCell>
-                <TableCell align="right">email</TableCell>
-                <TableCell align="right">password</TableCell>
-                <TableCell align="right">salary</TableCell>
-                <TableCell align="right">street number</TableCell>
-                <TableCell align="right">street name</TableCell>
-                <TableCell align="right">city</TableCell>
-                <TableCell align="right">zip code</TableCell>
-                <TableCell align="right">phone number</TableCell>
-                <TableCell align="right">store id</TableCell>
-                <TableCell align="right">store name</TableCell>
-          </TableRow>
+          <StyledTableRow>
+            <StyledTableCell />
+            <StyledTableCell>First Name</StyledTableCell>
+            <StyledTableCell align="right">Middle Initial</StyledTableCell>
+            <StyledTableCell align="right">Last Name</StyledTableCell>
+            <StyledTableCell align="right">Email</StyledTableCell>
+            <StyledTableCell align="right">Store Name</StyledTableCell>
+            <StyledTableCell align="right">Employee ID</StyledTableCell>
+
+          </StyledTableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.employee_id}
-              </TableCell>
-              <TableCell align="right">{row.first_name}</TableCell>
-              <TableCell align="right">{row.middle_initial}</TableCell>
-              <TableCell align="right">{row.last_name}</TableCell>
-              <TableCell align="right">{row.employment_date}</TableCell>
-              <TableCell align="right">{row.date_of_birth}</TableCell>
-              <TableCell align="right">{row.email}</TableCell>
-              <TableCell align="right">{row.password}</TableCell>
-              <TableCell align="right">{row.salary}</TableCell>
-              <TableCell align="right">{row.street_number}</TableCell>
-              <TableCell align="right">{row.street_name}</TableCell>
-              <TableCell align="right">{row.city}</TableCell>
-              <TableCell align="right">{row.zip_code}</TableCell>
-              <TableCell align="right">{row.phone_number}</TableCell>
-              <TableCell align="right">{row.store_store_id}</TableCell>
+            <Row key={row.item_id} row={row} />
 
-            </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
-    
   );
-  
 }
 function Home() {
   const classes = useStyles();
@@ -177,31 +247,32 @@ function Home() {
     user_id: localStorage.getItem("user_id"),
     is_employee: localStorage.getItem("is_employee")
   }
-const [rows, setRows] = useState([]);
-let history = useHistory();
+  const [rows, setRows] = useState([]);
+  let history = useHistory();
   useEffect(() => {
-    if (data.is_employee === "true"){
-      axios.post("http://localhost:4000/api/view_all_employee",data)
-      .then((res) => {
-      
-      console.log("RESDATA",res.data[0].employee_id)
-      setRows(res.data);
-      console.log(res.data);
-      console.log(rows);
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-        history.push("/login");
-      });
-      
+    if (data.is_employee === "true") {
+      axios.post("http://localhost:4000/api/view_all_employee", data)
+        .then((res) => {
+
+          console.log("RESDATA", res.data[0].employee_id)
+
+          setRows(res.data);
+          console.log(res.data);
+          console.log(rows);
+         })
+        .catch((err) => {
+          console.log(err.response.data);
+          history.push("/login");
+        });
+
     }
-    else{
+    else {
       history.push("/login");
     }
-    
- 
 
-  },[]);
+
+
+  }, []);
 
 
   theme.typography.h3 = {
@@ -224,30 +295,31 @@ let history = useHistory();
           <Navbar />
           <Grid container xs={12} className={classes.design}>
             <Grid container xs={6} className={classes.logoContainer} justify="center">
-                  <img alt="uh logo" className={classes.logo} src={slogan} />
+              <img alt="uh logo" className={classes.logo} src={slogan} />
             </Grid>
-          
-       
+
+
           </Grid>
           <Navbarnavigation />
           <Grid>
           </Grid>
           <Grid>
-          {rows ? (<DenseTable rows={rows} />) : (null)}
-          
+            {rows ? (<CollapsibleTable rows={rows} />) : (null)}
+
           </Grid>
-         
-         
-  
-     
 
 
-      
-      
+
+
+
+
+
+
           <Footer />
         </Grid>
       </React.Fragment>
     </div>
   );
 }
+
 export default Home;
