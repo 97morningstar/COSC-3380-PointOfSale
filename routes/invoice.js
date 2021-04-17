@@ -33,9 +33,10 @@ app.post("/create_invoice", async (req, res) => {
     try {
         const data = req.body;
         console.log(data);
+        var time_of_transaction = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes();
         const newInvoice = await pool.query("INSERT INTO invoice(total_cost, time_of_transaction, order_status, payment_id_fk, customer_id_fk, store_id_fk) VALUES ( ?, ?, ?, ?, ?, ?)",
             [data.total_cost,
-            data.time_of_transaction,
+            time_of_transaction,
             data.order_status,
             data.payment_id_fk,
             data.customer_id_fk,

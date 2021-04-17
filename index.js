@@ -43,6 +43,10 @@ app.use("/get_dashboard", require("./routes/dashboard"));
 
 app.use("/", require("./routes/invoice_item_cart"));
 app.use("/", require("./routes/order_history"));
+app.use("/", require("./routes/inventory"));
+app.use("/", require("./routes/account"));
+
+
 
 
 
