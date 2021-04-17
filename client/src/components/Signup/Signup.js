@@ -164,52 +164,16 @@ export default function SignUp() {
  
 
   const signUp = (e) => {
-    /*const len = studentFirst.email.length;
-    const domain = studentFirst.email.substring(len - 13); //must be @uh.edu
-
-    if (studentFirst.role_id === "") {
-      setError("Please select an account type");
-    } else if (studentFirst.role_id === "1" && domain !== "theoutlet.com") {
-      setError('You must use a "username@theoutlet.com email" for a employee account');
-    } else {
-      setError("");*/
-
 
     studentFirst.date_of_birth = valueDateOfBirth.toJSON()
       .substring(0, 10);;
   
     studentFirst.store_id_fk = myStore.value;
-    console.log(studentFirst);
-    /* axios .post("http://18.213.74.196:8000/api/user_accounts/signup", signUpInfo)
-       .then((res) => {
-         if (res.data.error) {
-           setError(res.data.error);
-         } else {
-
-
-           //authenticate again after the user is created
-           const email = signUpInfo.email;
-           const password = signUpInfo.password1;
-           axios     .post("http://18.213.74.196:8000/api/token/", { email, password })
-             .then((res) => {
-             // localStorage.setItem("token", res.data.access);
-               localStorage.setItem("email_id", res.data.email);
-               history.push("/accountInfo");
-             });
-
-
-
-         }
-       })
-       .catch((err) => console.log(err));
-   }*/
 
     axios.post("http://localhost:4000/auth/create_customer", studentFirst, getConfig())
       .then((res) => {
         console.log("SUCCESS");
         console.log(res);
-
-
 
         if (res.data.error) {
           setError(res.data.error);
@@ -218,10 +182,6 @@ export default function SignUp() {
         }
       })
       .catch((err) => console.log(err));
-
-
-
-
 
     e.preventDefault();
   };

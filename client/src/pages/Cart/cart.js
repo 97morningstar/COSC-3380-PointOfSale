@@ -325,7 +325,7 @@ function Item({ match }) {
       )
     );
     console.log()
-    axios.delete("/api/invoice_item/" + parseInt(number))
+    axios.delete("http://localhost:4000/api/api/invoice_item/" + parseInt(number))
       .then((res) => {
         console.log(res.data)
         setUpdateSuccess(true);
