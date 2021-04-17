@@ -321,10 +321,11 @@ function Item({ match }) {
     console.log(number)
     setInvoiceItems((invoiceItems) =>
       invoiceItems.filter(
-        (invoiceItems) => invoiceItems.invoice_item_id !== number
+        (invoiceItems) => invoiceItems.invoice_item_id !== parseInt(number)
       )
     );
-    axios.delete("/api/api/invoice_item/" + parseInt(number))
+    console.log()
+    axios.delete("/api/invoice_item/" + parseInt(number))
       .then((res) => {
         console.log(res.data)
         setUpdateSuccess(true);
