@@ -90,6 +90,11 @@ export default function Navbar({user}) {
     history.push("/dash");
   }
 
+  const handleAccount = () => {
+    setAnchorEl(null);
+    history.push("/account");
+  }
+
   const [userType, setUserType] = useState(null);
  
   //Check if token exists
@@ -235,7 +240,7 @@ export default function Navbar({user}) {
         onClose={handleClose}
       >
         <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
-        <MenuItem onClick={handleProfile}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
+        <MenuItem onClick={handleAccount}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
 
 {userType ? (<>
   <MenuItem onClick={handleDashboard}> <DashboardIcon className={classes.icon}/> Dashboard</MenuItem>

@@ -18,12 +18,12 @@ import { Button, LinearProgress } from "@material-ui/core";
 import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 /* Categories Images */
-import Electronics from "../../assets/Electronics.png";
-import Pets from "../../assets/Pets.png";
-import ToysAndGames from "../../assets/ToysAndGames.png";
-import Clothing from "../../assets/MensClothing.png";
-import Miscellaneous from "../../assets/Miscellaneous.png";
-import Groceries from "../../assets/Groceries.png";
+import Electronics from "../../assets/inventory.png";
+import Pets from "../../assets/reports.png";
+import ToysAndGames from "../../assets/ticket.png";
+import Clothing from "../../assets/customer.png";
+import Miscellaneous from "../../assets/transactions.png";
+import Groceries from "../../assets/employees.png";
 
 import back from "../../assets/background1.jpg";
 import Footer from "../../components/Footer/Footer";

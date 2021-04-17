@@ -6,12 +6,13 @@ app.post("/create_item", async (req, res) => {
     try {
       const data  = req.body;
       console.log(data);
-      const newItem = await pool.query("INSERT INTO item(name, manufacture_cost, selling_price, category, brand) VALUES ( ?, ?, ?, ?, ?)",
+      const newItem = await pool.query("INSERT INTO item(name, manufacture_cost, selling_price, category, brand, discount) VALUES ( ?, ?, ?, ?, ?, ?)",
        [data.name, 
         data.manufacture_cost,
         data.selling_price,
         data.category,
-        data.brand
+        data.brand,
+        data.discount
       ] );
       
       res.json("A new item was added. Success");
