@@ -517,7 +517,7 @@ function Item({ match }) {
                     />
                     <Grid xs={12} item >
                       <Typography gutterBottom variant="h5" component="h2">
-                        Total Cost: ${parseFloat(imageArray[0].price) * numberOfItems}
+                        Total Cost: ${(parseFloat(imageArray[0].price) * numberOfItems).toFixed(2)}
                       </Typography>
                       <Typography gutterBottom variant="body3" component="body">
                         Taxes will be calculated during checkout

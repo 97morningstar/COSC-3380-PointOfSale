@@ -20,7 +20,7 @@ import Dash from "./pages/Dashboard/empDash";
 import empTables from "./pages/Dashboard/EmployeeTable"
 import inventoryDash from "./pages/Dashboard/inventory"
 import customerDash from "./pages/Dashboard/customer"
-import reportsDash from "./pages/Dashboard/reports"
+import reportsDash from "./pages/Dashboard/Reports"
 import supportDash from "./pages/Dashboard/support"
 import transactionDash from "./pages/Dashboard/transaction"
 
@@ -28,6 +28,8 @@ import Profile from "./pages/CustomerProfile/CustomerProfile";
 import Item from "./pages/Item/Item";
 import Cart from "./pages/Cart/cart";
 import OrderHistory from "./pages/OrderHistory/OrderHistory";
+import Account from "./pages/Account/Account";
+
 
 
 
@@ -60,6 +62,8 @@ const App = () => {
         <Route path="/reports" component={reportsDash} />
         <Route path="/transaction" component={transactionDash} />
         <Route path="/support" component={supportDash} />
+        <Route path="/account" component={Account} />
+
 
         <Route path="/item/:name" render={(props) => <Item {...props} key={Date.now()}/>} />
         <Route path="/cart" component={Cart} />
