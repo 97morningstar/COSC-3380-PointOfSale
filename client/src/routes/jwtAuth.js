@@ -80,9 +80,10 @@ router.post("/create_customer", validInfo, async (req, res) => {
 
      const bcryptPassword = await bcrypt.hash(data.password,salt);
 
-      
+     var now = new Date();
+     var d = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
       console.log(bcryptPassword.length);
-      const newCustomer = await pool.query("INSERT INTO customer(first_name, middle_initial, last_name, password, email, street_number, street_name, zip_code, date_of_birth, is_member, store_id_fk) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      const newCustomer = await pool.query("INSERT INTO customer(first_name, middle_initial, last_name, password, email, street_number, street_name, zip_code, date_of_birth, is_member, store_id_fk, join_date) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
        [data.first_name, 
         data.middle_initial,
         data.last_name,
@@ -93,7 +94,8 @@ router.post("/create_customer", validInfo, async (req, res) => {
         data.zip_code,
         data.date_of_birth,
         data.is_member,
-        data.store_id_fk
+        data.store_id_fk,
+        d
       ] );
       console.log("data",data);
       const cust = await pool.query("SELECT * FROM customer WHERE email = ?",[data.email]);
