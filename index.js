@@ -46,6 +46,9 @@ app.use("/", require("./routes/order_history"));
 app.use("/", require("./routes/inventory"));
 app.use("/", require("./routes/account"));
 
+app.use("/", require("./routes/report_3"));
+
+
 
 
 

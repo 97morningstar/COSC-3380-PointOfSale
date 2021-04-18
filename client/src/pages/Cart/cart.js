@@ -721,7 +721,7 @@ function Item({ match }) {
                   </Grid>
                   <Grid xs={12} item >
                     <Button href="/categories" variant="contained" className={classes.botton2} color="secondary">
-                      Categories
+                      Continue Shopping
                   </Button>
                   </Grid>
                 </Grid>
