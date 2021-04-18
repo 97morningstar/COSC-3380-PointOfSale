@@ -285,8 +285,8 @@ function Item({ match }) {
       is_employee: localStorage.getItem("is_employee")
     }
 
-
-    axios.post("http://localhost:4000/get_cart", data2)
+    if (data2.is_employee === "false"){
+      axios.post("http://localhost:4000/get_cart", data2)
       .then((res) => {
         setInvoice(res.data[0]);
         console.log("res.data",res.data)
@@ -295,6 +295,8 @@ function Item({ match }) {
         console.log(err.response);
         history.push("/login")
       });
+    }
+    
 
 
 

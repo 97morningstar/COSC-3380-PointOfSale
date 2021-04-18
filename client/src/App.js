@@ -20,7 +20,7 @@ import Dash from "./pages/Dashboard/empDash";
 import empTables from "./pages/Dashboard/EmployeeTable"
 import inventoryDash from "./pages/Dashboard/inventory"
 import customerDash from "./pages/Dashboard/customer"
-import reportsDash from "./pages/Dashboard/Reports"
+import reportsDash from "./pages/Dashboard/reports"
 import supportDash from "./pages/Dashboard/support"
 import transactionDash from "./pages/Dashboard/transaction"
 
