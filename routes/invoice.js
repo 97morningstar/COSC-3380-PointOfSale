@@ -13,6 +13,15 @@ app.get("/view_all_invoice", async (req, res) => {
         console.log(err.message);
     }
 })
+app.get("/view_all_purchases", async (req, res) => {
+    try {
+        const all_invoice = await pool.query("SELECT * FROM invoice WHERE order_status <> 'cart'");
+        res.json(all_invoice);
+    } catch (err) {
+        console.log(err.message);
+    }
+})
+
 
 //get all items in order_status =  'cart'
 app.get("/cart/:id", async (req, res) => {

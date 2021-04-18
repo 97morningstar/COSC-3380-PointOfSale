@@ -35,7 +35,19 @@ app.get("/invoice_item_hi/:id", async (req, res) => {
     console.log(err.message);
   }
 });
+//get invoice_item by invoice id
+app.get("/fullInvoice/:id", async (req, res) => {
+  try {
 
+    const { id } = req.params;
+
+    const allInvoiceitem = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
+
+    res.json(allInvoiceitem);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
 //Delete invoice item by id
 app.delete("/api/invoice_item/:id", async (req, res) => {
   try {
@@ -49,8 +61,8 @@ app.delete("/api/invoice_item/:id", async (req, res) => {
   }
 });
 
-//Create new invoice_item 
 
+//Create new invoice_item 
 app.post("/create_invoice_item", async (req, res) => {
   try {
     const data = req.body;
