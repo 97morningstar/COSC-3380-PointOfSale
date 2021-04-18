@@ -163,7 +163,21 @@ app.put("/purchase", async (req, res) => {
             }
            return res.status(400).send(error);
         }
-
+        const invoiceItems = await pool.query("SELECT * from invoice_item WHERE invoice_id_fk = ? AND order_status = 'cart'", [
+            body.invoice_id
+        ])
+        for (var i = 0; i < invoiceItems.length; i++){
+            var storeItem = await pool.query("SELECT * from store_has_item WHERE store_id = ? AND item_id = ?",[
+                body.store_id_fk,
+                invoiceItems[i].item_id_fk
+            ])
+            if (storeItem[0].quantity < invoiceItems[i].quantity){
+                const errormsg = {
+                    ERROR: "You are trying to purchase more than the remaining stock for a certain item"
+                }
+               return res.status(400).send(errormsg);
+            }
+        }
        /* const invoiceItems = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
         for (var i = 0; i < invoiceItems.length; i++) {
             if (invoiceItems[i].quantity == 0) {
@@ -182,13 +196,21 @@ app.put("/purchase", async (req, res) => {
         var now = new Date();
         var d = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes();
         console.log(d);
+        const sum = await pool.query("SELECT SUM(item.manufacture_cost * invoice_item.quantity) valsum FROM invoice_item, item WHERE invoice_item.item_id_fk = item.item_id AND invoice_item.invoice_id_fk = ? GROUP BY invoice_item.invoice_id_fk",
+        [
+            body.invoice_id
+        ])
         // We also need total_cost_after_tax
-        const updateInvoiceitem = await pool.query("UPDATE invoice SET order_status = 'purchased', time_of_transaction = ?, payment_id_fk = ?, total_cost_after_tax = ? WHERE invoice_id = ? ",
+        console.log(sum);
+        console.log(sum[0].valsum);
+        const updateInvoiceitem = await pool.query("UPDATE invoice SET order_status = 'purchased', time_of_transaction = ?, payment_id_fk = ?, total_cost_after_tax = ?, total_manufacture_cost = ? WHERE invoice_id = ? ",
             [
                 d,
                 body.payment_id_fk,
                 body.total_cost_after_tax,
-                body.invoice_id
+                sum[0].valsum,
+                body.invoice_id,
+                
             ]);
         const createNewinvoice = await pool.query("INSERT INTO invoice (customer_id_fk, store_id_fk) VALUES (?,?)", [body.customer_id_fk, body.store_id_fk])
         res.json("The transaction was successfully purchased!");

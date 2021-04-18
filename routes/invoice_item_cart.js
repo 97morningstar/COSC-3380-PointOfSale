@@ -43,7 +43,7 @@ app.get("/get_invoice_items/:customer",async (req, res) => {
          const {invoice_id_fk} = req.body;
          const {item_id_fk} = req.body;
          const {quantity} = req.body;
-
+        
        // const invoice_items = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [invoice_id]);
         const invoice_added = await pool.query("INSERT INTO invoice_item(quantity, item_id_fk, invoice_id_fk) VALUES (?,?,?)", [
           quantity,
