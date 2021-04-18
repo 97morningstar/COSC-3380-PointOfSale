@@ -96,12 +96,18 @@ export default function Navbar({user}) {
   }
 
   const [userType, setUserType] = useState(null);
+
+  const data2 = {
+    jwtToken: localStorage.getItem("token"),
+    user_id: localStorage.getItem("user_id"),
+    is_employee: localStorage.getItem("is_employee")
+  }
  
   //Check if token exists
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
-      axios.post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
+      axios.post("http://localhost:4000/auth/verify", data2)
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -156,7 +162,7 @@ export default function Navbar({user}) {
         })
         .catch((err) => {
           console.log("error");
-          console.log(err.response.data);
+          console.log(err.response);
          
           console.log(err.response);
           localStorage.removeItem("token");
