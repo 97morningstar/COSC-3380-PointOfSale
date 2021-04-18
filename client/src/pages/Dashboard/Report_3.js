@@ -5,7 +5,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
 
 import { withStyles, makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography, Button, Select, MenuItem } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 
 /* Images */
@@ -30,6 +30,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import SearchIcon from '@material-ui/icons/Search';
 
 /* Charts */
 import {
@@ -127,10 +128,13 @@ const useStyles = makeStyles((theme) => ({
         padding: "30px"
     },
     circle: {
-   
+
         position: "relative !important"
-    
-}
+
+    },
+    selectStore:{
+        width: "50%"
+    }
 
 
 }));
@@ -168,7 +172,7 @@ function Row(props) {
         <React.Fragment >
             <StyledTableRow className={classes.root}>
                 <StyledTableCell>
-                   
+
                 </StyledTableCell>
                 <StyledTableCell component="th" scope="row">
                     {row.name}
@@ -285,7 +289,6 @@ function Home() {
                 });
 
 
-
         }
         else {
             history.push("/login");
@@ -302,6 +305,47 @@ function Home() {
 
     const handleSet2 = (v) => {
         setValue(null)
+    }
+
+    const [top_10_by_categoryChart, setTop_10_by_categoryChart] = useState([]);
+    const [top_10_by_categoryTable, setTop_10_by_categoryTable] = useState([]);
+    const [category, setCategory] = useState({value: "", label: ""});
+
+    const categories = [
+        { label: "Groceries", value: 1 },
+        { label: "Clothing", value: 2 },
+        { label: "Electronics", value: 3 },
+        { label: "Pets", value: 4 },
+        { label: "Toys and Games", value: 4 },
+        { label: "Miscellaneous", value: 5 },
+
+    ]
+
+
+    const searchCategoryReport = () => {
+
+        const data2 = {
+            jwtToken: localStorage.getItem("token"),
+            user_id: localStorage.getItem("user_id"),
+            is_employee: localStorage.getItem("is_employee"),
+            category: category.value
+        }
+
+        console.log("e",category.value)
+
+        axios.post("http://localhost:4000/get_top_10_items_sales_by_Category", data2)
+            .then((res) => {
+
+                const row = res.data.map((index, i) => {
+                    return { x: index.name, y: parseFloat(index.total_cost) };
+                })
+                console.log(res.data);
+                setTop_10_by_categoryChart(row);
+                setTop_10_by_categoryTable(res.data);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            });
     }
 
 
@@ -323,15 +367,16 @@ function Home() {
 
                     </Grid>
                     <Navbarnavigation />
-                    <Grid item xs={12} className={classes.space}>
-                        <Grid item xs={12} className={classes.space}>
-                            <Typography variant="h4" component="h4" gutterBottom>
+                    <Grid container item xs={12} className={classes.space} direction="row">
+                        <Grid direction="row" item container xs={12} className={classes.space} justify="center"
+                              alignItems="center">
+                            <Typography variant="h4" component="div" gutterBottom className={classes.text}>
                                 Top 10 Items By Quantity Sold
-                        </Typography>
+                            </Typography>
                             {top_10_by_quantityChart.length !== 0 ? (
                                 <>
 
-                                    <XYPlot height={500} width={1300} xType="ordinal" style={{ width: "100%" }} margin={{ left: 100 }}>
+                                    <XYPlot color="#ff6358" height={500} width={1300} xType="ordinal" style={{ width: "100%" }} margin={{ left: 100 }}>
                                         <VerticalBarSeries data={top_10_by_quantityChart}
 
                                         />
@@ -343,22 +388,23 @@ function Home() {
                                     <CollapsibleTable rows={top_10_by_quantityTable} />
 
                                 </>
-                            ) : (<>null</>)}
+                            ) : (<></>)}
                         </Grid>
 
-                        <Grid item xs={12} className={classes.space}>
+                        <Grid container item xs={12} className={classes.space} justify="center"
+                              alignItems="center">
                             <Typography variant="h4" component="h4" gutterBottom>
                                 Top 10 Items By Total Cost Sold
                           </Typography>
                             {top_10_by_total_costChart.length !== 0 ? (
                                 <>
-                                    <XYPlot height={500} width={1500} xType="ordinal" margin={{ left: 100 }} >
+                                    <XYPlot color="#aa46be" height={500} width={1500} xType="ordinal" margin={{ left: 100 }} >
                                         <VerticalBarSeries data={top_10_by_total_costChart}
                                         />
 
                                         <XAxis />
                                         <YAxis title="Total Cost Of Items" />
-                                      
+
 
                                     </XYPlot>
 
@@ -379,12 +425,63 @@ function Home() {
                                         }
                                     </RadialChart>
 
-
-
                                     <CollapsibleTable rows={top_10_by_total_costTable} />
 
                                 </>
-                            ) : (<>null</>)}
+                            ) : (<></>)}
+                        </Grid>
+
+                        <Grid item container xs={12} className={classes.space} justify="center"
+                alignItems="center">
+                            <Typography variant="h4" component="h4" gutterBottom>
+                                Generate Report Sales by Category (Please select a category from the dropdown)
+                          </Typography>
+                        
+                            <Select
+                            displayEmpty
+                                autoFocus
+                                className={`${classes.selectStore} ${classes.information}`}
+                                closeMenuOnSelect={true}
+
+                                value={category.value}
+                                name="category"
+                                onChange={(e) => {
+                                    setCategory({value: e.target.value, label: e.target.value });
+                                    console.log(e.target.value)
+                                }}
+                            >
+                                <MenuItem value="Electronics">Electronics</MenuItem>
+                                <MenuItem value="Clothing">Clothing</MenuItem>
+                                <MenuItem value="Groceries">Groceries</MenuItem>
+                                <MenuItem value="Toys and Games">Toys and Games</MenuItem>
+                                <MenuItem value="Miscellaneous">Miscellaneous</MenuItem>
+                                <MenuItem value="Pets">Pets</MenuItem>
+
+                            </Select>
+                            <Button variant="contained" color="primary" className={classes.button} disableElevation onClick={searchCategoryReport} startIcon={<SearchIcon />}>
+                                SEARCH
+                             </Button>
+
+                       
+
+
+
+                            {top_10_by_categoryChart.length !== 0 ? (
+                                <>
+                                    <XYPlot height={500} width={1500} xType="ordinal" margin={{ left: 100 }} >
+                                        <VerticalBarSeries data={top_10_by_categoryChart}
+                                        />
+
+                                        <XAxis />
+                                        <YAxis title="Total Cost Of Items" />
+
+
+                                    </XYPlot>
+
+                                    <CollapsibleTable rows={top_10_by_categoryTable} />
+
+                                </>
+                            ) : (<></>)}
                         </Grid>
                     </Grid>
 

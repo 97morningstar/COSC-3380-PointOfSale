@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Navbar() {
   const classes = useStyles();
-  const [newValue, setValue] = useState(null);
+  const [newValue, setValue] = useState("");
   const setNewValue = (e) => {
 
     setValue({
