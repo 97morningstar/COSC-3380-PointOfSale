@@ -32,6 +32,7 @@ import Account from "./pages/Account/Account";
 
 
 import Report_3 from "./pages/Dashboard/Report_3"
+import Report_customer from "./pages/Dashboard/report_customer"
 
 
 
@@ -74,6 +75,7 @@ const App = () => {
 
 
         <Route path="/report_3" component={Report_3} />
+        <Route path="/report_customer" component={Report_customer} />
 
 
         
