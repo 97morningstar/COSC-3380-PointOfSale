@@ -26,7 +26,7 @@ app.get("/get_invoice_items/:customer",async (req, res) => {
          const {customer_id} = req.params;
          console.log(customer_id)
         
-        const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ?", [customer_id]);
+        const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ? AND is_deleted = 0", [customer_id]);
 
             res.json(payment);
 

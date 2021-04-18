@@ -7,7 +7,7 @@ app.post("/", authorize, async (req, res) => {
     try {
     
       if(req.body.is_employee !== "false"){
-        return res.status(400).send("You are not a customer");
+        return res.status(400).send("You are not an employee");
      }
 
         const invoice = await pool.query("SELECT * FROM invoice WHERE customer_id_fk = ? AND order_status = 'cart'", [req.body.user_id]);
@@ -21,6 +21,7 @@ app.post("/", authorize, async (req, res) => {
 
   app.put("/update_quantity", authorize, async (req, res) => {
     try {
+
        
         const {quantity} = req.body;
         const {invoice_item_id} = req.body;

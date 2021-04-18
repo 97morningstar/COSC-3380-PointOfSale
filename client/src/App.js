@@ -31,6 +31,9 @@ import OrderHistory from "./pages/OrderHistory/OrderHistory";
 import Account from "./pages/Account/Account";
 
 
+import Report_3 from "./pages/Dashboard/Report_3"
+
+
 
 
 
@@ -68,6 +71,10 @@ const App = () => {
         <Route path="/item/:name" render={(props) => <Item {...props} key={Date.now()}/>} />
         <Route path="/cart" component={Cart} />
         <Route path="/order-history" component={OrderHistory} />
+
+
+        <Route path="/report_3" component={Report_3} />
+
 
         
 

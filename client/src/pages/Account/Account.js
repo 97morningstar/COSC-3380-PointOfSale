@@ -10,6 +10,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Carousel from 'react-material-ui-carousel'
+import CachedIcon from '@material-ui/icons/Cached';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import CreditCardIcon from '@material-ui/icons/CreditCard';
 
@@ -23,6 +25,10 @@ import {
     Checkbox,
     FormControlLabel,
     FormGroup,
+    Dialog,
+    DialogActions,
+  DialogContent,
+  DialogTitle
 } from "@material-ui/core";
 
 import BusinessCenterRoundedIcon from "@material-ui/icons/BusinessCenterRounded";
@@ -60,6 +66,7 @@ import { useHistory } from "react-router-dom";
 import RoomIcon from '@material-ui/icons/Room';
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import Select from "react-select";
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -190,7 +197,10 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: "10px",
         paddingLeft: "10px",
 
-    }
+    },
+    space: {
+        margin: "10px"
+      },
 }));
 
 
@@ -237,20 +247,8 @@ function Home() {
 
     const [updateError, setUpdateErrors] = useState({});
 
-    //opening the edit field
-    const handleOpenEdit = (key) => {
-        showCustomerEdit({
-            ...customerEdit,
-            [key]: true,
-        });
-    };
-    //closing the edit field
-    const handleCloseEdit = (key) => {
-        showCustomerEdit({
-            ...customerEdit,
-            [key]: false,
-        });
-    };
+ 
+ 
 
     const handleCloseUpdateSucess = () => {
         setUpdateSuccess(false);
@@ -260,45 +258,51 @@ function Home() {
     };
 
     /* TODO */
-    const handleSave = (key) => {
-        setUserInfo(userInput);
-        handleCloseEdit(key);
+    const handleSave = () => {
+        
+     
 
 
 
 
 
         const data = {
-            email: userInput.email || "",
-            password: userInput.password || "",
-            card_number: userInput.card_number,
-            expiration_month: userInput.expiration_month || "",
-            expiration_year: userInput.expiration_year || "",
-            security_code: userInput.security_code || "",
+            card_number: payment.card_number || "",
+            expiration_month: payment.expiration_month || "",
+            expiration_year: payment.expiration_year || "",
+            security_code: payment.security_code || "",
+            id: payment.payment_id,
+            jwtToken: localStorage.getItem("token"),
+            user_id: localStorage.getItem("user_id"),
+            is_employee: localStorage.getItem("is_employee")
         };
 
 
-        /* FIX */
 
-        /*   axios.put(
-             "/api/customer/" +
-             localStorage.getItem("user_id") + "/" + data.store_id_fk,
+        let Update = userInfo.map((index, i) => {
+            let item = {...index}
+              if(index.payment_id === payment.payment_id){
+                  item.card_number = data.card_number;
+                  item.expiration_month = data.expiration_month;
+                  item.expiration_year = data.expiration_year;
+                  item.security_code = data.security_code
+              }
+              return item;
+        })
+        setUserInfo(Update);
+          axios.put("http://localhost:4000/account/update_payment",
              data
            )
            .then((res) => {
-             console.log("No")
-             setUpdateErrors({});
-             showCustomerEdit({
-               ...customerEdit,
-               [key]: false,
-             });
-             setUpdateSuccess(true);
+            setUpdateSuccess(true);
+            setOpenEdit(false);
            })
            .catch((err) => {
-             setUpdateErrors(err.response.data);
+             console.log(err.response);
              setUpdateFailed(true);
            });
-       */
+        
+       
 
 
 
@@ -312,7 +316,7 @@ function Home() {
 
     useEffect(() => {
 
-         setIsLoading(true);
+        setIsLoading(true);
 
         const data = {
             jwtToken: localStorage.getItem("token"),
@@ -322,36 +326,37 @@ function Home() {
 
 
         /* GET ACCOUNT INFO AUTHENTICATION */
-         axios.post("http://localhost:4000/get_account", data)
-         .then((res) => {
-           setIsLoading(false);
-        console.log("e",res)
-     
-       
-     
-           setUserInfo(res.data);
-           setUserInput(res.data);
-     
-         /*  axios.get("http://localhost:4000/api/view_all_payment_method", data)
-           .then((res) => {
-             const data = res.data.map((item, index) => {
-               return {
-                 label: item.store_name,
-                 value: item.store_id,
-               };
-             });
-             setStore(data)
+        axios.post("http://localhost:4000/get_account", data)
+            .then((res) => {
+                setIsLoading(false);
+                console.log("e", res)
+
+
+
+                setUserInfo(res.data);
+                console.log("res.data", res.data);
+                setUserInput(res.data);
+
+                /*  axios.get("http://localhost:4000/api/view_all_payment_method", data)
+                  .then((res) => {
+                    const data = res.data.map((item, index) => {
+                      return {
+                        label: item.store_name,
+                        value: item.store_id,
+                      };
+                    });
+                    setStore(data)
+                   })
+                  .catch((err) => {
+                     console.log(err);
+                   });*/
+
             })
-           .catch((err) => {
-              console.log(err);
-            });*/
-     
-         })
-         .catch((err) => {
-           console.log(err.response);
-           history.push("/login")
-         });
-         
+            .catch((err) => {
+                console.log(err.response);
+                history.push("/login")
+            });
+
 
 
 
@@ -359,538 +364,461 @@ function Home() {
 
     }, []);
 
+
+    const [openEdit, setOpenEdit] = useState(false);
+    const [payment, setPayment] = useState({
+        card_number: "",
+        expiration_month: "",
+        expiration_year: "",
+        security_code: "",
+    });
+    const [openAdd, setOpenAdd] = useState(false);
+
+    const handleUpdate = (index) => {
+        setOpenEdit(true);
+       setPayment(index)
+    }
+
+    const handleDelete = (index) => {
+       
+
+        const data = {
+            card_number: payment.card_number || "",
+            expiration_month: payment.expiration_month || "",
+            expiration_year: payment.expiration_year || "",
+            security_code: payment.security_code || "",
+            id:  parseInt(index.payment_id),
+            jwtToken: localStorage.getItem("token"),
+            user_id: localStorage.getItem("user_id"),
+            is_employee: localStorage.getItem("is_employee")
+        };
+
+        setUserInfo((userInfo) =>
+        userInfo.filter(
+          (userInfo) => userInfo.payment_id !== parseInt(index.payment_id)
+        )
+      );
+
+      console.log(data.id)
+
+       axios.put("http://localhost:4000/account/delete_payment/" + parseInt(index.payment_id), data)
+        .then((res) => {
+            console.log(res.data)
+            setUpdateSuccess(true);
+          })
+          .catch((err) => {
+            setUpdateFailed(true);
+          })
+
+
+
+
+
+    }
+
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+      };
+
+      const handleOpenEdit = () => {
+        setOpenEdit(true);
+      };
+
+
+
+    const handleCurrentProjectChange = (e) => {
+        setPayment({
+          ...payment,
+          [e.target.name]: e.target.value,
+        });
+       
+      };
+
+      const handleCloseAdd = () => {
+        setOpenAdd(false);
+      };
+    
+      const handleAdd = () => {
+       // setOpenAdd(true);
+  
+       setOpenAdd(true);
+       setPayment({
+        card_number: "",
+        expiration_month: "",
+        expiration_year: "",
+        security_code: "",
+       })
+     
+      }
+
+      const handleSaveAdd = () => {
+        const data = {
+            card_number: payment.card_number || "",
+            expiration_month: payment.expiration_month || "",
+            expiration_year: payment.expiration_year || "",
+            security_code: payment.security_code || "",
+            id: payment.payment_id,
+            jwtToken: localStorage.getItem("token"),
+            user_id: localStorage.getItem("user_id"),
+            is_employee: localStorage.getItem("is_employee")
+        };
+
+          axios.post("http://localhost:4000/account/add_payment",
+             data
+           )
+           .then((res) => {
+
+            console.log(res.data)
+
+            setUserInfo(res.data);
+
+            setUpdateSuccess(true);
+            setOpenAdd(false);
+           })
+           .catch((err) => {
+             console.log(err.response);
+             setUpdateFailed(true);
+           });
+      }
+    
+
     return (
-        
-            <Grid
-                style={{ overflowX: "hidden" }}
-                container
-                xs={12}
-                item
-                className={classes.root}
-                component="main">
-                <Navbar />
-                <Grid container item xs={12} className={classes.design} alignItems="center" justify="center">
-                    <Grid item xs={6} className={classes.logoContainer} >
-                        <Link href="/" className={classes.logoContainer} justify="center">
-                            <img alt="uh logo" className={classes.logo} src={slogan} />
-                        </Link>
+
+        <Grid
+            style={{ overflowX: "hidden" }}
+            container
+            xs={12}
+            item
+            className={classes.root}
+            component="main">
+            <Navbar />
+            <Grid container item xs={12} className={classes.design} alignItems="center" justify="center">
+                <Grid item xs={6} className={classes.logoContainer} >
+                    <Link href="/" className={classes.logoContainer} justify="center">
+                        <img alt="uh logo" className={classes.logo} src={slogan} />
+                    </Link>
+                </Grid>
+
+
+            </Grid>
+            <Navbarnavigation />
+
+            {isLoading ? (
+                <>
+
+                    <Grid
+                        container
+                        item
+                        justify="center"
+                        alignItems="center"
+                        direction="row">
+                        <Grid item md={12}>
+                            <LinearProgress color="secondary" />
+                        </Grid>
+                    </Grid>
+
+                </>
+            ) : (
+
+                <Grid container item xs={12} spacing={0} direction="column" >
+                    <Grid item direction="row" spacing={3} alignItems="center" justify="center" className={classes.space}>
+                    <Typography variant="h3"  component="div">
+                        PAYMENT METHODS
+                    </Typography>
+                    <Button variant="contained" color="primary" disableElevation className={classes.space} onClick={() => {return handleAdd()}} startIcon={<AddCircleOutlineIcon />}>
+                                    ADD
+                              </Button>
                     </Grid>
 
 
-                </Grid>
-                <Navbarnavigation />
-
-                {isLoading ? (
-                    <>
-
-                        <Grid
-                            container
-                            item
-                            justify="center"
-                            alignItems="center"
-                            direction="row">
-                            <Grid item md={12}>
-                                <LinearProgress color="secondary" />
-                            </Grid>
-                        </Grid>
-
-                    </>
-                ) : (
-                   
-                        <Grid container item xs={12} spacing={0} direction="column" >
-                            <Grid container item direction="row" spacing={3} className={classes.grid}>
-                                <Grid item xs={1} className={classes.iconList}>
-                                    <AccountCircleIcon />
-                                </Grid>
-                                <Grid item xs={9} className={classes.alignStart}>
-                                    <Box component={"span"} className={classes.sectionHeader}>
-                                        Email
-                                     </Box>
-                                    {customerEdit.email === false ? (
-                                        <Box
-                                            component="div"
-                                            variant="body2"
-                                            className={classes.information}
-                                            color="textPrimary">
-                                            email@email.com
-
-                                            {updateError.email ? (
-                                                <Typography className={classes.error} color="error">
-                                                    {updateError.email} Email not saved. Please
-                                                         fix all errors before saving.
-                                                </Typography>
-                                            ) : null}
-                                        </Box>
-                                    ) : (
-                                        <TextField
-                                            autoFocus
-                                            onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
-                                            className={`${classes.textForm} ${classes.information}`}
-                                            multiline={true}
-                                            name="email"
-                                            inputProps={{
-                                                maxLength: 50,
-                                            }}
-
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    handleSave("email");
-                                                }
-                                            }}
-                                            onChange={(e) => {
-                                                setUserInput({
-                                                    ...userInput,
-                                                    email: e.target.value,
-                                                });
-                                            }}
-                                            value={userInput.email}
-                                        />
-                                    )}
-                                </Grid>
-                                <Grid item xs={2} className={classes.iconListGrid}>
-                                    {customerEdit.email === false ? (
-                                        <IconButton
-                                            className={classes.icon}
-                                            onClick={() => {
-                                                handleOpenEdit("email");
-                                            }}>
-                                            <EditTwoToneIcon />
-                                        </IconButton>
-                                    ) : (
-                                        <>
-                                            <Grid container item direction="row">
-                                                <Grid item xs={6}>
-                                                    <IconButton
-                                                        className={classes.icon}
-                                                        onClick={() => {
-                                                            handleCancel("email");
-                                                        }}>
-                                                        <ClearRoundedIcon />
-                                                    </IconButton>
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <IconButton
-                                                        className={classes.icon}
-                                                        onClick={() => {
-                                                            handleSave("email");
-                                                        }}>
-                                                        <CheckRoundedIcon style={{ color: "green" }} />
-                                                    </IconButton>
-                                                </Grid>
-                                            </Grid>
-                                        </>
-                                    )}
-                                </Grid>
-                            </Grid>
+                    <Divider
+                        variant="inset"
+                        component="li"
+                        className={classes.divider}
+                    />
 
 
-                            <Divider
-                                variant="inset"
-                                component="li"
-                                className={classes.divider}
-                            />
 
 
-                         
-
-                          {userInfo.map((index,i) => { return(<>
+                    {userInfo.map((index, i) => {
+                        return (<>
                             <Typography variant="h6" gutterBottom component="div">
-                                Payment Method {i+1}
-              </Typography>
- <Grid container item direction="row" spacing={3} className={classes.grid}>
-
- <Grid item xs={1} className={classes.iconList}>
-     <CreditCardIcon />
- </Grid>
- <Grid item xs={9} className={classes.alignStart}>
-
-     <Box component={"span"} className={classes.sectionHeader}>
-         Card Number
-      </Box>
-     {customerEdit.card_number === false ? (
-         <Box
-             component="div"
-             variant="body2"
-             className={classes.information}
-             color="textPrimary">
-             {index.card_number}
-
-             {updateError.card_number ? (
-                 <Typography className={classes.error} color="error">
-                     {updateError.card_number} Card Number not saved. Please
-                          fix all errors before saving.
-                 </Typography>
-             ) : null}
-         </Box>
-     ) : (
-         <TextField
-             autoFocus
-             onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
-             className={`${classes.textForm} ${classes.information}`}
-             multiline={true}
-             name="card_number"
-             inputProps={{
-                 maxLength: 50,
-             }}
-
-             onKeyDown={(e) => {
-                 if (e.key === "Enter") {
-                     handleSave("card_number");
-                 }
-             }}
-             onChange={(e) => {
-                 setUserInput({
-                     ...index,
-                     card_number: e.target.value,
-                 });
-             }}
-             value={userInput.card_number}
-         />
-     )}
- </Grid>
- <Grid item xs={2} className={classes.iconListGrid}>
-     {customerEdit.card_number === false ? (
-         <IconButton
-             className={classes.icon}
-             onClick={() => {
-                 handleOpenEdit("card_number");
-             }}>
-             <EditTwoToneIcon />
-         </IconButton>
-     ) : (
-         <>
-             <Grid container item direction="row">
-                 <Grid item xs={6}>
-                     <IconButton
-                         className={classes.icon}
-                         onClick={() => {
-                             handleCancel("card_number");
-                         }}>
-                         <ClearRoundedIcon />
-                     </IconButton>
-                 </Grid>
-                 <Grid item xs={6}>
-                     <IconButton
-                         className={classes.icon}
-                         onClick={() => {
-                             handleSave("card_number");
-                         }}>
-                         <CheckRoundedIcon style={{ color: "green" }} />
-                     </IconButton>
-                 </Grid>
-             </Grid>
-         </>
-     )}
- </Grid>
 
 
+                                <CreditCardIcon /> Payment Method {i + 1}
+                                <Button variant="contained" color="primary" disableElevation className={classes.space} onClick={() => {return handleUpdate(index)}} startIcon={<CachedIcon />}>
+                                    UPDATE
+                              </Button>
+                                <Button variant="contained" color="secondary" disableElevation className={classes.space} onClick={() => { return handleDelete(index)}} startIcon={<DeleteIcon />}>
+                                    DELETE
+                                </Button>
+
+                            </Typography>
+                            <Grid container item direction="row" xs={12} spacing={3} className={classes.grid} alignItems="center" justify="center">
+                                <Grid item xs={2}>
+
+                                    <Box component={"span"} className={classes.sectionHeader}>
+                                        Card Number
+                                     </Box>
+                                    <Box
+                                        component="div"
+                                        variant="body2"
+                                        className={classes.information}
+                                        color="textPrimary">
+                                        {index.card_number}
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Box component={"span"} className={classes.sectionHeader}>
+                                        Expiration Month
+                                         </Box>
+
+                                    <Box
+                                        component="div"
+                                        variant="body2"
+                                        className={classes.information}
+                                        color="textPrimary">
+                                        {index.expiration_month}
+                                    </Box>
+
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Box component={"span"} className={classes.sectionHeader}>
+                                        Expiration Year
+                                        </Box>
+                                    <Box
+                                        component="div"
+                                        variant="body2"
+                                        className={classes.information}
+                                        color="textPrimary">
+                                        {index.expiration_year}
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Box component={"span"} className={classes.sectionHeader}>
+                                        Security Code
+                                        </Box>
+
+                                    <Box
+                                        component="div"
+                                        variant="body2"
+                                        className={classes.information}
+                                        color="textPrimary">
+                                        {index.security_code}
+                                    </Box>
+                                </Grid>
+                             </Grid>
+
+                             
+                    
+
+                        </>)
+
+                    })}
 
 
- <Divider
-     variant="inset"
-     component="li"
-     className={classes.divider}
- />
-
- <Grid container item direction="row" spacing={3} className={classes.grid}>
-     <Grid item xs={1} className={classes.iconList}>
-         <CreditCardIcon />
-     </Grid>
-     <Grid item xs={9} className={classes.alignStart}>
-         <Box component={"span"} className={classes.sectionHeader}>
-             Expiration Month
-      </Box>
-         {customerEdit.expiration_month === false ? (
-             <Box
-                 component="div"
-                 variant="body2"
-                 className={classes.information}
-                 color="textPrimary">
-                 {index.expiration_month}
-
-                 {updateError.expiration_month ? (
-                     <Typography className={classes.error} color="error">
-                         {updateError.expiration_month} Expiration Month not saved. Please
-                          fix all errors before saving.
-                     </Typography>
-                 ) : null}
-             </Box>
-         ) : (
-             <TextField
-                 autoFocus
-                 onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
-                 className={`${classes.textForm} ${classes.information}`}
-                 multiline={true}
-                 name="expiration_month"
-                 inputProps={{
-                     maxLength: 50,
-                 }}
-                 onKeyDown={(e) => {
-                     if (e.key === "Enter") {
-                         handleSave("expiration_month");
-                     }
-                 }}
-                 onChange={(e) => {
-                     setUserInput({
-                         ...userInput,
-                         expiration_month: e.target.value,
-                     });
-                 }}
-                 value={userInput.expiration_month}
-             />
-         )}
-     </Grid>
-     <Grid item xs={2} className={classes.iconListGrid}>
-         {customerEdit.expiration_month === false ? (
-             <IconButton
-                 className={classes.icon}
-                 onClick={() => {
-                     handleOpenEdit("expiration_month");
-                 }}>
-                 <EditTwoToneIcon />
-             </IconButton>
-         ) : (
-             <>
-                 <Grid container item direction="row">
-                     <Grid item xs={6}>
-                         <IconButton
-                             className={classes.icon}
-                             onClick={() => {
-                                 handleCancel("expiration_month");
-                             }}>
-                             <ClearRoundedIcon />
-                         </IconButton>
-                     </Grid>
-                     <Grid item xs={6}>
-                         <IconButton
-                             className={classes.icon}
-                             onClick={() => {
-                                 handleSave("expiration_month");
-                             }}>
-                             <CheckRoundedIcon style={{ color: "green" }} />
-                         </IconButton>
-                     </Grid>
-                 </Grid>
-             </>
-         )}
-     </Grid>
- </Grid>
-
- <Divider
-     variant="inset"
-     component="li"
-     className={classes.divider}
- />
-
- <Grid container item direction="row" spacing={3} className={classes.grid}>
-     <Grid item xs={1} className={classes.iconList}>
-         <CreditCardIcon />
-     </Grid>
-     <Grid item xs={9} className={classes.alignStart}>
-         <Box component={"span"} className={classes.sectionHeader}>
-             Expiration Year
-      </Box>
-         {customerEdit.expiration_year === false ? (
-             <Box
-                 component="div"
-                 variant="body2"
-                 className={classes.information}
-                 color="textPrimary">
-                 {index.expiration_year}
-
-                 {updateError.expiration_year ? (
-                     <Typography className={classes.error} color="error">
-                         {updateError.expiration_year} Expiration Month not saved. Please
-                          fix all errors before saving.
-                     </Typography>
-                 ) : null}
-             </Box>
-         ) : (
-             <TextField
-                 autoFocus
-                 onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
-                 className={`${classes.textForm} ${classes.information}`}
-                 multiline={true}
-                 name="expiration_year"
-                 inputProps={{
-                     maxLength: 50,
-                 }}
-                 onKeyDown={(e) => {
-                     if (e.key === "Enter") {
-                         handleSave("expiration_year");
-                     }
-                 }}
-                 onChange={(e) => {
-                     setUserInput({
-                         ...userInput,
-                         expiration_year: e.target.value,
-                     });
-                 }}
-                 value={userInput.expiration_year}
-             />
-         )}
-     </Grid>
-     <Grid item xs={2} className={classes.iconListGrid}>
-         {customerEdit.expiration_year === false ? (
-             <IconButton
-                 className={classes.icon}
-                 onClick={() => {
-                     handleOpenEdit("expiration_year");
-                 }}>
-                 <EditTwoToneIcon />
-             </IconButton>
-         ) : (
-             <>
-                 <Grid container item direction="row">
-                     <Grid item xs={6}>
-                         <IconButton
-                             className={classes.icon}
-                             onClick={() => {
-                                 handleCancel("expiration_year");
-                             }}>
-                             <ClearRoundedIcon />
-                         </IconButton>
-                     </Grid>
-                     <Grid item xs={6}>
-                         <IconButton
-                             className={classes.icon}
-                             onClick={() => {
-                                 handleSave("expiration_year");
-                             }}>
-                             <CheckRoundedIcon style={{ color: "green" }} />
-                         </IconButton>
-                     </Grid>
-                 </Grid>
-             </>
-         )}
-     </Grid>
- </Grid>
-
- <Divider
-     variant="inset"
-     component="li"
-     className={classes.divider}
- />
-
- <Grid container item direction="row" spacing={3} className={classes.grid}>
-     <Grid item xs={1} className={classes.iconList}>
-         <CreditCardIcon />
-     </Grid>
-     <Grid item xs={9} className={classes.alignStart}>
-         <Box component={"span"} className={classes.sectionHeader}>
-             Security Code
-      </Box>
-         {customerEdit.security_code === false ? (
-             <Box
-                 component="div"
-                 variant="body2"
-                 className={classes.information}
-                 color="textPrimary">
-                 {index.security_code}
-
-                 {updateError.security_code ? (
-                     <Typography className={classes.error} color="error">
-                         {updateError.security_code} Expiration Month not saved. Please
-                          fix all errors before saving.
-                     </Typography>
-                 ) : null}
-             </Box>
-         ) : (
-             <TextField
-                 autoFocus
-                 onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
-                 className={`${classes.textForm} ${classes.information}`}
-                 multiline={true}
-                 name="security_code"
-                 inputProps={{
-                     maxLength: 50,
-                 }}
-                 onKeyDown={(e) => {
-                     if (e.key === "Enter") {
-                         handleSave("security_code");
-                     }
-                 }}
-                 onChange={(e) => {
-                     setUserInput({
-                         ...userInput,
-                         security_code: e.target.value,
-                     });
-                 }}
-                 value={userInput.security_code}
-             />
-         )}
-     </Grid>
-     <Grid item xs={2} className={classes.iconListGrid}>
-         {customerEdit.security_code === false ? (
-             <IconButton
-                 className={classes.icon}
-                 onClick={() => {
-                     handleOpenEdit("security_code");
-                 }}>
-                 <EditTwoToneIcon />
-             </IconButton>
-         ) : (
-             <>
-                 <Grid container item direction="row">
-                     <Grid item xs={6}>
-                         <IconButton
-                             className={classes.icon}
-                             onClick={() => {
-                                 handleCancel("security_code");
-                             }}>
-                             <ClearRoundedIcon />
-                         </IconButton>
-                     </Grid>
-                     <Grid item xs={6}>
-                         <IconButton
-                             className={classes.icon}
-                             onClick={() => {
-                                 handleSave("security_code");
-                             }}>
-                             <CheckRoundedIcon style={{ color: "green" }} />
-                         </IconButton>
-                     </Grid>
-                 </Grid>
-             </>
-         )}
-     </Grid>
-
-
- </Grid>
-</Grid>
-
-</>)
-
-                          })}                              
-
-
-                           
+<Dialog
+        open={openEdit}
+        onClose={handleCloseEdit}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle
+          classes={classes.addNewTitle}
+          id="form-dialog-title"
+          style={{ wordBreak: "break-all" }}
+        >
+          UPDATE PAYMENT METHOD
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="card_number"
+            label="Card Number"
+            name="card_number"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.card_number || ""}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="expiration_month"
+            label="Expiration Month"
+            name="expiration_month"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.expiration_month || ""}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="expiration_year"
+            label="Expiration Year"
+            name="expiration_year"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.expiration_year || ""}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="security_code"
+            label="Security Code"
+            name="security_code"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.security_code || ""}
+            onChange={handleCurrentProjectChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseEdit}
+            style={{ backgroundColor: "#f0f0f0", color: "#C8102E" }}
+          >
+            CANCEL
+           </Button>
+          <Button
+            onClick={handleSave}
+            style={{ backgroundColor: "#C8102E", color: "#FFFFFF" }}
+            className={classes.projectAdd}
+          >
+            SAVE
+           </Button>
+        </DialogActions>
+      </Dialog>
 
 
 
-                <Footer />
-                        <Snackbar
-                            open={updateSuccess}
-                            autoHideDuration={6000}
-                            onClose={handleCloseUpdateSucess}>
-                            <Alert onClose={handleCloseUpdateSucess} severity="success">
-                                Payment was saved!
+
+
+      <Dialog
+        open={openAdd}
+        onClose={handleCloseAdd}
+        aria-labelledby="form-dialog-title"
+        overlayStyle={{backgroundColor: 'transparent'}}
+
+      >
+        <DialogTitle
+          classes={classes.addNewTitle}
+          id="form-dialog-title"
+          style={{ wordBreak: "break-all" }}
+        >
+          ADD PAYMENT METHOD
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="card_number"
+            label="Card Number"
+            name="card_number"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.card_number || ""}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="expiration_month"
+            label="Expiration Month"
+            name="expiration_month"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.expiration_month || ""}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="expiration_year"
+            label="Expiration Year"
+            name="expiration_year"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.expiration_year || ""}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="security_code"
+            label="Security Code"
+            name="security_code"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={payment.security_code || ""}
+            onChange={handleCurrentProjectChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseAdd}
+            style={{ backgroundColor: "#f0f0f0", color: "#C8102E" }}
+          >
+            CANCEL
+           </Button>
+          <Button
+            onClick={handleSaveAdd}
+            style={{ backgroundColor: "#C8102E", color: "#FFFFFF" }}
+            className={classes.projectAdd}
+          >
+            SAVE
+           </Button>
+        </DialogActions>
+      </Dialog>
+
+
+
+
+
+
+                    <Footer />
+                    <Snackbar
+                        open={updateSuccess}
+                        autoHideDuration={6000}
+                        onClose={handleCloseUpdateSucess}>
+                        <Alert onClose={handleCloseUpdateSucess} severity="success">
+                            Payment was saved!
                           </Alert>
-                        </Snackbar>
-                        <Snackbar
-                            open={updateFailed}
-                            autoHideDuration={6000}
-                            onClose={handleCloseUpdateFailed}>
-                            <Alert onClose={handleCloseUpdateFailed} severity="error">
-                                There was a problem when saving the user. Please fix all errors
-                                before saving.
+                    </Snackbar>
+                    <Snackbar
+                        open={updateFailed}
+                        autoHideDuration={6000}
+                        onClose={handleCloseUpdateFailed}>
+                        <Alert onClose={handleCloseUpdateFailed} severity="error">
+                            There was a problem. Please try again at a later time.
                          </Alert>
-                        </Snackbar>
-                   
-            </Grid>
-                  )}  </Grid>
+                    </Snackbar>
 
-        
+
+                    
+
+                </Grid>
+            )}  </Grid>
+
+
     );
 }
 export default Home;
