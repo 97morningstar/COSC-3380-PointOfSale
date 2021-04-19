@@ -5,8 +5,10 @@ import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
 
 import { withStyles, makeStyles } from "@material-ui/core/styles";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography, Button, Select, MenuItem } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
+import DatePicker from "react-date-picker";
+import SearchIcon from '@material-ui/icons/Search';
 
 /* Images */
 import slogan from "../../assets/_Logo (1).png";
@@ -127,11 +129,15 @@ const useStyles = makeStyles((theme) => ({
         padding: "30px"
     },
     circle: {
-   
-        position: "relative !important"
-    
-}
 
+        position: "relative !important"
+
+    },
+    selectStore: {
+        width: "50%"
+    },spaceUp:{
+        marginTop: "20px"
+    }
 
 }));
 const StyledTableCell = withStyles((theme) => ({
@@ -168,13 +174,13 @@ function Row(props) {
         <React.Fragment >
             <StyledTableRow className={classes.root}>
                 <StyledTableCell>
-                   
+
                 </StyledTableCell>
                 <StyledTableCell component="th" scope="row">
-                    {row.first_name}
+                    {row.first_name} {row.middle_initial} {row.last_name}
                 </StyledTableCell>
                 <StyledTableCell align="right">{row.email}</StyledTableCell>
-                <StyledTableCell align="right">{row.join_date}</StyledTableCell>
+                <StyledTableCell align="right">{row.join_date.substring(0, 10)}</StyledTableCell>
                 <StyledTableCell align="right">{row.store_name}</StyledTableCell>
             </StyledTableRow>
         </React.Fragment>
@@ -243,49 +249,98 @@ function Home() {
     const [all_customers_by_timeFrame, setAll_customers_by_timeframe] = useState([]);
 
     let history = useHistory();
+
+    const [startDate, setStartDate] = useState(new Date);
+    const [endDate, setEndDate] = useState(new Date);
+    const [myStore, setMyStore] = useState({ value: "", label: "" });
+    const [store, setStore] = useState([]);
+    const [amountNewCustomers, setAmountNewCustomers] = useState({});
+
+
+    const handleAmountOfNewCustomers = () => {
+        const data2 = {
+            jwtToken: localStorage.getItem("token"),
+            user_id: localStorage.getItem("user_id"),
+            is_employee: localStorage.getItem("is_employee"),
+            start_date: startDate.toJSON().substring(0, 10),
+            store_id_fk: myStore.value,
+            end_date: endDate.toJSON().substring(0, 10)
+        }
+
+        axios.post("http://localhost:4000/get_amount_of_customers_by_time_frame", data2)
+            .then((res) => {
+
+                console.log("found", res.data)
+
+                const row = res.data.map((index, i) => {
+
+                    return { x: index.name, y: parseInt(index.quantity) };
+                })
+                setAmountNewCustomers(res.data[0]);
+                //setTop_10_by_quantityChart(row);
+                //setTop_10_by_quantityTable(res.data)
+
+                console.log("first", res.data);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            });
+    }
+
+    const handleTimeFrame = () => {
+
+        //   userInput.start_date = userInput.start_date.toJSON().substring(0, 10);
+        //    userInput.end_date = userInput.end_date.toJSON().substring(0, 10);
+
+        console.log(startDate.toJSON().substring(0, 10), endDate.toJSON().substring(0, 10))
+
+        const data2 = {
+            jwtToken: localStorage.getItem("token"),
+            user_id: localStorage.getItem("user_id"),
+            is_employee: localStorage.getItem("is_employee"),
+            start_date: startDate.toJSON().substring(0, 10),
+            store_id_fk: myStore.value,
+            end_date: endDate.toJSON().substring(0, 10)
+        }
+
+        axios.post("http://localhost:4000/get_all_customers_by_time_frame", data2)
+            .then((res) => {
+
+                console.log("found", res.data)
+
+                const row = res.data.map((index, i) => {
+
+                    return { x: index.name, y: parseInt(index.quantity) };
+                })
+                setAll_customers_by_timeframe(res.data);
+                //setTop_10_by_quantityChart(row);
+                //setTop_10_by_quantityTable(res.data)
+
+                // console.log("first", res.data);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            });
+    }
+
+
     useEffect(() => {
         if (data.is_employee === "true") {
-            axios.post("http://localhost:4000/get_all_customers_by_time_frame", data)
+            axios.get("http://localhost:4000/api/view_all_stores")
                 .then((res) => {
+                    const data = res.data.map((item, index) => {
+                        return {
+                            label: item.store_name,
+                            value: item.store_id,
+                        };
+                    });
+                    setStore(data)
+                    console.log(data)
 
-
-                    const row = res.data.map((index, i) => {
-
-                        return { x: index.name, y: parseInt(index.quantity) };
-                    })
-                    setAll_customers_by_timeframe(res.data);
-                    //setTop_10_by_quantityChart(row);
-                    //setTop_10_by_quantityTable(res.data)
-
-                    // console.log("first", res.data);
                 })
                 .catch((err) => {
-                    console.log(err.response);
+                    console.log(err);
                 });
-
-/*
-            axios.post("http://localhost:4000/get_top_10_items_by_total_cost", data)
-                .then((res) => {
-
-
-                    const row = res.data.map((index, i) => {
-
-                        return { x: index.name, y: parseFloat(index.total_cost) };
-                    })
-                    const rowRadial = res.data.map((index, i) => {
-
-                        return { label: index.name, angle: parseFloat(index.total_cost) };
-                    })
-                    //setTop_10_by_total_costChart(row);
-                    //setTop_10_by_total_costRadial(rowRadial);
-                    setAll_customers_by_timeframe(res.data);
-
-                    // console.log("oh", res.data);
-                })
-                .catch((err) => {
-                    console.log(err.response);
-                });
-*/
 
 
         }
@@ -325,25 +380,126 @@ function Home() {
 
                     </Grid>
                     <Navbarnavigation />
-                    <Grid item xs={12} className={classes.space}>
-                        Time Frame: "date" to "date" <br></br>
-                        Store: "store name"<br></br>
-                        Amount of New Customers: "number"<br></br>
-                        Avg New customers per day: "number"<br></br>
-                        Amount of Total Customers: "number"<br></br>
-                        Percentage Increase in this time frame: "number"<br></br>
+
+                <Grid container item xs={12} className={classes.space} direction="row">
+
+                        <Grid item xs={6} className={classes.space} direction="row">
+                            <Typography variant="h5" component="h5" gutterBottom>
+                                Select Start Date
+                        </Typography>
+                            <DatePicker
+                                calendarAriaLabel="Toggle calendar"
+                                clearAriaLabel="Clear value"
+                                dayAriaLabel="Day"
+                                monthAriaLabel="Month"
+                                nativeInputAriaLabel="Date"
+                                onChange={(e) => {
+                                    setStartDate(e);
+                                }}
+                                value={startDate}
+                                yearAriaLabel="Year"
+                            />
                         </Grid>
+                        <Grid item xs={6} className={classes.space} direction="row">
+                            <Typography variant="h5" component="h5" gutterBottom>
+                                Select End Date
+                        </Typography>
+                            <DatePicker
+                                calendarAriaLabel="Toggle calendar"
+                                clearAriaLabel="Clear value"
+                                dayAriaLabel="Day"
+                                monthAriaLabel="Month"
+                                nativeInputAriaLabel="Date"
+                                onChange={(e) => {
+                                    setEndDate(e);
+                                }}
+                                value={endDate}
+                                yearAriaLabel="Year"
+                            />
+                        </Grid>
+                        <Grid item xs={12} className={classes.space} direction="row">
+                            <Typography variant="h5" component="h5" gutterBottom>
+                                Select Store
+                        </Typography>
+                            <Typography variant="body3" component="body3" gutterBottom>
+                                (If you don't select a store you will be shown the total customers from every store in the time frame selected)
+                        </Typography>
+                            <Select
+                                autoFocus
+                                className={`${classes.selectStore} ${classes.information}`}
+                                closeMenuOnSelect={true}
+
+                                value={myStore.value}
+                                name="store"
+                                onChange={(e) => {
+                                    return setMyStore({ value: e.target.value, label: e.target.value });
+                                    console.log({ value: e.target.value, label: e.target.value })
+
+                                }}
+                            >
+                                <MenuItem value={""}></MenuItem>
+                                {store.length !== 0 ? (store.map((a) => {
+                                    return (
+                                        <MenuItem value={a.value}>{a.label}</MenuItem>
+                                    )
+                                })) : (<></>)}
+                            </Select>
+                        </Grid>
+                        <Grid item xs={12} direction="row">
+                            <Button variant="contained" color="primary" className={classes.button} disableElevation onClick={handleTimeFrame} startIcon={<SearchIcon />}>
+                                SEARCH
+                             </Button>
+                        </Grid>
+
+
+
+
+
+
+
+
+                    </Grid>
+                    <Grid item xs={12} className={classes.space}>
+                        <Grid item xs={12} >
+                            <Typography variant="h4" component="h4" gutterBottom>
+                                Calculate Amount Of New Customers
+                        </Typography>
+                            <Button variant="contained" color="primary" className={classes.button} disableElevation onClick={handleAmountOfNewCustomers} startIcon={<SearchIcon />}>
+                                CALCULATE
+                             </Button>
+                            {amountNewCustomers.total && amountNewCustomers.diff ? (<>
+                                <Typography variant="h5" component="div" gutterBottom className={classes.spaceUp}>
+                                    Number Of Customers: {amountNewCustomers.total}
+                                </Typography>
+                                <Typography variant="h5" component="div" gutterBottom>
+                                    Average New Customer Per Day: {(amountNewCustomers.total / amountNewCustomers.diff).toFixed(2)}
+
+
+                                </Typography>
+                                <Typography variant="h5" component="div" gutterBottom>
+                                    Number Of Days: {amountNewCustomers.diff}
+                                </Typography>
+                                {all_customers_by_timeFrame.length !== 0 ? (<Typography variant="h5" component="div" gutterBottom>
+                                Percentage Increase in this time frame: {((amountNewCustomers.total * 100) / all_customers_by_timeFrame.length).toFixed(2)}%
+                                </Typography>
+                                ) : (<></>)}
+                            </>
+                            ) : (<></>)}
+                        </Grid>
+                        
+                    </Grid>
+
                     <Grid item xs={12} className={classes.space}>
                         <Grid item xs={12} className={classes.space}>
                             <Typography variant="h4" component="h4" gutterBottom>
                                 New Customers
                         </Typography>
 
-                                    <CollapsibleTable rows={all_customers_by_timeFrame} />
+                            <CollapsibleTable rows={all_customers_by_timeFrame} />
 
                         </Grid>
 
-                        
+
                     </Grid>
 
                     <Footer />

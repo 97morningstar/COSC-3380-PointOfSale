@@ -7,7 +7,7 @@ app.post("/get_all_customers_by_time_frame", authorize, async (req, res) => {
     try {
     
       if(req.body.is_employee !== "true"){
-        return res.status(400).send("You are not an employee");
+        return res.status(400).send("You are not a customer");
      }
         const {start_date} = req.body;
         const {end_date} = req.body;
@@ -31,12 +31,18 @@ app.post("/get_amount_of_customers_by_time_frame", authorize, async (req, res) =
   try {
   
     if(req.body.is_employee !== "true"){
-      return res.status(400).send("You are not an employee");
+      return res.status(400).send("You are not a customer");
    }
    const {start_date} = req.body;
    const {end_date} = req.body;
+
+const end = end_date;
+const start = start_date;
+
    const {store_id_fk} = req.body;
-      const amount_of_customers = await pool.query("SELECT COUNT(customer_id) FROM customer WHERE join_date <= ? AND join_date >= ? AND store_id_fk LIKE CONCAT('%',?,'%')", [
+      const amount_of_customers = await pool.query("SELECT COUNT(customer_id) as total, DATEDIFF(?,?) as diff FROM customer WHERE join_date <= ? AND join_date >= ? AND store_id_fk LIKE CONCAT('%',?,'%')", [
+        end,
+        start,
         end_date,
         start_date,
         store_id_fk
