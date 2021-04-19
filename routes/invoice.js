@@ -163,7 +163,8 @@ app.put("/purchase", async (req, res) => {
             }
            return res.status(400).send(error);
         }
-        const invoiceItems = await pool.query("SELECT * from invoice_item WHERE invoice_id_fk = ? AND order_status = 'cart'", [
+        const invoiceItems = await pool.query("SELECT * from invoice_item, invoice WHERE invoice_id_fk = ? AND order_status = 'cart' AND invoice_id = ?", [
+            body.invoice_id,
             body.invoice_id
         ])
         for (var i = 0; i < invoiceItems.length; i++){
