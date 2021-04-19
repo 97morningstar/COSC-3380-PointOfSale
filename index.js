@@ -59,7 +59,7 @@ app.use("/", require("./routes/report_profit"));
 
 
 /* Do not move from here */
-app.get('/', (request, response) => {
+app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
