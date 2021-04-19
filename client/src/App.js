@@ -20,7 +20,7 @@ import Dash from "./pages/Dashboard/empDash";
 import empTables from "./pages/Dashboard/EmployeeTable"
 import inventoryDash from "./pages/Dashboard/inventory"
 import customerDash from "./pages/Dashboard/customer"
-import reportsDash from "./pages/Dashboard/Reports"
+import reportsDash from "./pages/Dashboard/reports"
 import supportDash from "./pages/Dashboard/support"
 import transactionDash from "./pages/Dashboard/transaction"
 
@@ -33,6 +33,8 @@ import Account from "./pages/Account/Account";
 
 import Report_3 from "./pages/Dashboard/Report_3"
 import Report_customer from "./pages/Dashboard/report_customer"
+import Report_profit from "./pages/Dashboard/report_profit"
+import Report_dash from "./pages/Dashboard/report_dash"
 
 
 
@@ -76,6 +78,8 @@ const App = () => {
 
         <Route path="/report_3" component={Report_3} />
         <Route path="/report_customer" component={Report_customer} />
+        <Route path="/report_profit" component={Report_profit} />
+        <Route path="/report_dash" component={Report_dash} />
 
 
         

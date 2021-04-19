@@ -249,7 +249,7 @@ export default function Navbar({ user }) {
                     <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon} /> View Profile</MenuItem>
 
 
-                    {userType ? (<>
+                    {userType==false ? (<>
                       <MenuItem onClick={handleAccount}> <SupervisorAccountIcon className={classes.icon} /> Account</MenuItem>
                     </>) : (
                       <></>
@@ -265,7 +265,7 @@ export default function Navbar({ user }) {
                     )
                     }
 
-                    {userType=="false" ? (<>
+                    {userType==false ? (<>
                       <MenuItem onClick={handleOrderHistory}> <HistoryIcon className={classes.icon} /> Order History</MenuItem>
                     </>) : (
                       <></>
