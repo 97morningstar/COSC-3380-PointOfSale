@@ -173,7 +173,7 @@ function Row(props) {
 
     /* FIX */
 
-    axios.put("http://localhost:4000/inventory/update_quantity", rowData)
+    axios.put("/inventory/update_quantity", rowData)
       .then((res) => {
         console.log(res.data);
         history.go(0);
@@ -193,7 +193,7 @@ function Row(props) {
       store_id: store_id,
       item_id: rowData.item_id
     }
-    axios.put("http://localhost:4000/inventory/restock_store", neededInfo)
+    axios.put("/inventory/restock_store", neededInfo)
       .then((res) => {
         console.log(res.data);
         history.go(0);
@@ -214,7 +214,7 @@ function Row(props) {
       item_id: rowData.item_id
     }
 
-    axios.put("http://localhost:4000/inventory/restock_warehouse", neededInfo)
+    axios.put("/inventory/restock_warehouse", neededInfo)
       .then((res) => {
         console.log(res.data);
         history.go(0);
@@ -228,7 +228,7 @@ function Row(props) {
 
     setOpenEdit(false);
 
-    axios.put("http://localhost:4000/inventory/update_item", rowData)
+    axios.put("/inventory/update_item", rowData)
       .then((res) => {
         console.log(res.data);
         history.go(0);
@@ -509,7 +509,7 @@ const handleSave = () => {
   setOpenAdd(false);
 
   /* AXIOS GOES HERE */
-axios.post("http://localhost:4000/api/create_item",item)
+axios.post("/api/create_item",item)
 .then((res) => {
   console.log(res.data)
 })
@@ -520,7 +520,7 @@ axios.post("http://localhost:4000/api/create_item",item)
 
   useEffect(() => {
     if (data.is_employee === "true") {
-      axios.post("http://localhost:4000/api/view_all_inventories", data)
+      axios.post("/api/view_all_inventories", data)
         .then((res) => {
 
           console.log("RESDATA", res.data[0].name)

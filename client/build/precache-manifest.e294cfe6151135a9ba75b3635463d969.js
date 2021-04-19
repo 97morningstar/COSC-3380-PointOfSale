@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "9d7e36aec443cb792c5889f789df0142",
+    "revision": "c9e50efc412ea7d3b7f290c93ce52ece",
     "url": "/index.html"
   },
   {
-    "revision": "9483d8ff9d9c6360cacf",
+    "revision": "e1bd6de2be3225f485d2",
     "url": "/static/css/2.058fa3a9.chunk.css"
   },
   {
-    "revision": "b7d3c19c530ffe127152",
+    "revision": "3ae4002bc241fe23f60b",
     "url": "/static/css/main.ee6ec498.chunk.css"
   },
   {
-    "revision": "9483d8ff9d9c6360cacf",
-    "url": "/static/js/2.75c32214.chunk.js"
+    "revision": "e1bd6de2be3225f485d2",
+    "url": "/static/js/2.1933ddf5.chunk.js"
   },
   {
     "revision": "9efecc6e366a89e935d3722c67df4853",
-    "url": "/static/js/2.75c32214.chunk.js.LICENSE.txt"
+    "url": "/static/js/2.1933ddf5.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "b7d3c19c530ffe127152",
-    "url": "/static/js/main.bd3aa40c.chunk.js"
+    "revision": "3ae4002bc241fe23f60b",
+    "url": "/static/js/main.a43a0900.chunk.js"
   },
   {
     "revision": "ce52a3f297470fd68ccd",
@@ -80,11 +80,31 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/background1.c2169ed6.jpg"
   },
   {
+    "revision": "4944c042c947c0829a7e09bc2bfedf55",
+    "url": "/static/media/customer_report.4944c042.png"
+  },
+  {
     "revision": "45d8ea9396b4e50a93fa956d77980f7e",
     "url": "/static/media/food.45d8ea93.png"
   },
   {
+    "revision": "1d710e34fd5f6768056c66bcceaa52c8",
+    "url": "/static/media/item_report.1d710e34.png"
+  },
+  {
     "revision": "6a9d678d39afb26b74bfaf58fb169c10",
     "url": "/static/media/placeholder.6a9d678d.png"
+  },
+  {
+    "revision": "74f3451578eb38a1195046cda5e467c4",
+    "url": "/static/media/profit_report.74f34515.png"
+  },
+  {
+    "revision": "1989eb423d6e88d6a69654c688c1a49b",
+    "url": "/static/media/reports.1989eb42.png"
+  },
+  {
+    "revision": "c87579727c23dcf720024be8f8b9ef9b",
+    "url": "/static/media/ticket.c8757972.png"
   }
 ]);
