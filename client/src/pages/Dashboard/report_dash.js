@@ -18,16 +18,11 @@ import { Button, LinearProgress } from "@material-ui/core";
 import slogan from "../../assets/_Logo (1).png";
 import food from "../../assets/food.png";
 /* Categories Images */
-import Electronics from "../../assets/inventory.png";
-import Pets from "../../assets/reports.png";
-import ToysAndGames from "../../assets/ticket.png";
-import Clothing from "../../assets/customer.png";
-import Miscellaneous from "../../assets/transactions.png";
-import Groceries from "../../assets/employees.png";
-
+import profit_report from "../../assets/profit_report.png";
+import customer_report from "../../assets/customer_report.png";
+import item_report from "../../assets/item_report.png";
 import back from "../../assets/background1.jpg";
 import Footer from "../../components/Footer/Footer";
-import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -119,29 +114,16 @@ function Home() {
   const theme = createMuiTheme();
 
   /* Recommended Items 15 */
-  const history = useHistory();
- 
+  const data = {
+    searchText: 'dog',
+    amount: 3,
+    apiUrl: 'https://pixabay.com/api',
+    apiK: '20983112-12d43bcb17250999b789e998a',
+    images: []
+}
 
 const arrayImages = ['Dog','Peach','Apple', 'Cup', 'Laptop'];
   
-
-useEffect(() => {
-
-  const data = {
-    jwtToken: localStorage.getItem("token"),
-    user_id: localStorage.getItem("user_id"),
-    is_employee: localStorage.getItem("is_employee")
-  }
-
-  /* VERIFY USER IS LOGGED IN */
-  axios.post("http://localhost:4000/get_dashboard", data)
-  .then((res) => {
-  })
-  .catch((err) => {
-    console.log(err);
-    history.push("/");
-  })
-},[]);
 
 
 const [imageArray, setimageArray] = useState([]);
@@ -166,9 +148,11 @@ const [imageArray, setimageArray] = useState([]);
           component="main">
           <Navbar />
           <Grid container xs={12} className={classes.design}>
-            <Grid container xs={6} className={classes.logoContainer} justify="center">
-                  <img alt="uh logo" className={classes.logo} src={slogan} />
-            </Grid>
+          <Grid container xs={6} className={classes.logoContainer} justify="center">
+                  <Link href="/" className={classes.logoContainer} justify="center">
+                      <img alt="uh logo" className={classes.logo} src={slogan} />
+                    </Link>
+              </Grid>
           
        
           </Grid>
@@ -180,7 +164,7 @@ const [imageArray, setimageArray] = useState([]);
        <Grid  container  xs={12}  spacing={5}   direction="column"   alignItems="center"  justify="center">
             <Grid xs={12} item className={classes.text} >
                 <Typography variant="h3" className={classes.Text1} >
-                      Employee Dashboard
+                      Reports
                 </Typography>
             </Grid>
         </Grid>
@@ -188,52 +172,26 @@ const [imageArray, setimageArray] = useState([]);
         <Grid xs={12}    container justify="center" alignItems="center"  spacing={1} className={classes.categories} >
             <Grid xs={12} container justify="center" alignItems="center"  >
                 <Grid item xs={4} className={classes.categoryItem}>
-                  <Link href="/employeeTable" className={classes.link}>
-                      <img alt="category" className={classes.category1} src={Groceries} />
+                  <Link href="/report_customer" className={classes.link}>
+                      <img alt="category" className={classes.category1} src={customer_report} />
                       <Typography variant="h5" className={classes.Text} >
-                      Employees
+                      Customer Report
                      </Typography>
                   </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                  <Link href="/inventory" className={classes.link} > 
-                      <img alt="category" className={classes.category1} src={Electronics} />
+                  <Link href="/report_profit" className={classes.link} > 
+                      <img alt="category" className={classes.category1} src={profit_report} />
                       <Typography variant="h5" className={classes.Text} >
-                      Inventory
+                      Profit Report
                      </Typography>
                   </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/customer" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={Clothing} />
+                    <Link href="/Report_3" className={classes.link}>
+                        <img alt="category" className={classes.category1} src={item_report} />
                        <Typography variant="h5" className={classes.Text} >
-                        Customers
-                     </Typography>
-                    </Link>
-                </Grid>
-            </Grid>
-            <Grid xs={12} container justify="center" alignItems="center" >
-                <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/transaction" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={Miscellaneous} />
-                        <Typography variant="h5" className={classes.Text} >
-                        Customer Transactions
-                     </Typography>
-                    </Link>
-                </Grid>
-                <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/support" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={ToysAndGames} />
-                        <Typography variant="h5" className={classes.Text} >
-                        Support Ticket
-                     </Typography>
-                    </Link>
-                </Grid>
-                <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/report_dash" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={Pets} />
-                        <Typography variant="h5" className={classes.Text} >
-                          Reports
+                        Item Report
                      </Typography>
                     </Link>
                 </Grid>

@@ -3,7 +3,7 @@ const pool = require("../services/db");
 const authorize = require("../client/src/middleware/authorization");
 
 // Get customer if authorized
-app.post("/get_all_customers_by_time_frame", authorize, async (req, res) => {
+app.post("/get_all_invoices_by_time_frame", authorize, async (req, res) => {
     try {
     
       if(req.body.is_employee !== "true"){
@@ -12,7 +12,7 @@ app.post("/get_all_customers_by_time_frame", authorize, async (req, res) => {
         const {start_date} = req.body;
         const {end_date} = req.body;
         const {store_id_fk} = req.body;
-        const customers_in_timeframe = await pool.query("SELECT * FROM customer,store WHERE join_date <= ? AND join_date >= ? AND store_id = store_id_fk  AND store_id_fk LIKE CONCAT('%',?,'%') ", 
+        const customers_in_timeframe = await pool.query("SELECT invoice_id,time_of_transaction,total_cost_after_tax,total_manufacture_cost,store_name FROM invoice,store WHERE time_of_transaction <= ? AND time_of_transaction >= ? AND store_id_fk LIKE CONCAT('%',?,'%') AND store_id_fk = store_id ", 
         [
             end_date,
             start_date,
@@ -27,7 +27,7 @@ app.post("/get_all_customers_by_time_frame", authorize, async (req, res) => {
   });
 
   // Get customer if authorized
-app.post("/get_amount_of_customers_by_time_frame", authorize, async (req, res) => {
+app.post("/get_sales_info_by_time_frame",authorize ,async (req, res) => {
   try {
   
     if(req.body.is_employee !== "true"){
@@ -40,7 +40,7 @@ const end = end_date;
 const start = start_date;
 
    const {store_id_fk} = req.body;
-      const amount_of_customers = await pool.query("SELECT COUNT(customer_id) as total, DATEDIFF(?,?) as diff FROM customer WHERE join_date <= ? AND join_date >= ? AND store_id_fk LIKE CONCAT('%',?,'%')", [
+      const amount_of_customers = await pool.query("SELECT  COUNT(total_cost_after_tax) as amount_of_sales, AVG(total_cost_after_tax) as avg_cost, SUM(total_cost_after_tax) as total_cost, SUM(total_cost_after_tax - total_manufacture_cost) as profit, SUM(total_manufacture_cost) as total_manufacture_cost, DATEDIFF(?,?) as diff FROM invoice WHERE time_of_transaction <= ? AND time_of_transaction >= ? AND store_id_fk LIKE CONCAT('%',?,'%') ", [
         end,
         start,
         end_date,
@@ -57,16 +57,16 @@ const start = start_date;
 
 
 
-  // Get customer if authorized
-  app.post("/get_total_amont_of_customers", authorize, async (req, res) => {
+   // Get customer if authorized
+app.post("/get_total_sales_info", authorize,async (req, res) => {
     try {
     
       if(req.body.is_employee !== "true"){
         return res.status(400).send("You are not a customer");
      }
-  
      const {store_id_fk} = req.body;
-        const amount_of_customers = await pool.query("SELECT COUNT(customer_id) as total FROM customer", [
+        const amount_of_customers = await pool.query("SELECT  COUNT(total_cost_after_tax) as amount_of_sales, AVG(total_cost_after_tax) as avg_cost, SUM(total_cost_after_tax) as total_cost, SUM(total_cost_after_tax - total_manufacture_cost) as profit, SUM(total_manufacture_cost) as total_manufacture_cost FROM invoice", [
+
         ]);
   
       res.json(amount_of_customers);
@@ -75,6 +75,5 @@ const start = start_date;
       res.status(500).send("Server error");
     }
   });
-
 
 module.exports = app;

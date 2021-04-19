@@ -249,7 +249,7 @@ export default function Navbar({ user }) {
                     <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon} /> View Profile</MenuItem>
 
 
-                    {userType == false ? (<>
+                    {userType==false ? (<>
                       <MenuItem onClick={handleAccount}> <SupervisorAccountIcon className={classes.icon} /> Account</MenuItem>
                     </>) : (
                       <></>

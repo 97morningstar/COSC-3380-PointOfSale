@@ -182,6 +182,47 @@ function Row(props) {
       })
 
   }
+  const handleRestockStore = store_id =>() => {
+    setOpenEdit(false);
+
+    /* FIX */
+    console.log(rowData);
+    console.log("item id",rowData.item_id);
+    console.log("store_id", store_id);
+    const neededInfo = {
+      store_id: store_id,
+      item_id: rowData.item_id
+    }
+    axios.put("http://localhost:4000/inventory/restock_store", neededInfo)
+      .then((res) => {
+        console.log(res.data);
+        history.go(0);
+      })
+      .catch((err) => {
+      })
+
+  }
+  const handleRestockWarehouse = warehouse_id =>() => {
+    setOpenEdit(false);
+
+    /* FIX */
+    console.log(rowData);
+    console.log("item id",rowData.item_id);
+    console.log("warehouse_id", warehouse_id);
+    const neededInfo = {
+      warehouse_id: warehouse_id,
+      item_id: rowData.item_id
+    }
+
+    axios.put("http://localhost:4000/inventory/restock_warehouse", neededInfo)
+      .then((res) => {
+        console.log(res.data);
+        history.go(0);
+      })
+      .catch((err) => {
+      })
+
+  }
 
   const handleSave = () => {
 
@@ -251,6 +292,7 @@ function Row(props) {
                     <StyledTableCell>Store Quantity</StyledTableCell>
                     <StyledTableCell align="right">Warehouse Name</StyledTableCell>
                     <StyledTableCell align="right">Warehouse Quantity</StyledTableCell>
+                    <StyledTableCell align="center">Actions</StyledTableCell>
                   </StyledTableRow>
                 </TableHead>
                 <TableBody>
@@ -264,6 +306,12 @@ function Row(props) {
                       <StyledTableCell align="right">
                         {historyRow.warehouse_quantity}
                       </StyledTableCell>
+                      <Button variant="contained" color="primary" disableElevation className={classe.space} onClick={handleRestockStore(historyRow.store_id) } startIcon={<CachedIcon />}>
+                          Restock Store
+                      </Button>
+                      <Button variant="contained" color="primary" disableElevation className={classe.space} onClick={handleRestockWarehouse(historyRow.warehouse_id)} startIcon={<CachedIcon />}>
+                          Restock Warehouse
+                      </Button>
                     </StyledTableRow>
                   ))}
                 </TableBody>
@@ -493,6 +541,8 @@ axios.post("http://localhost:4000/api/create_item",item)
           }
           console.log("obj", obj);
           var invObj = {
+            store_id: res.data[0].store_id,
+            warehouse_id: res.data[0].warehouse_id,
             store_name: res.data[0].store_name,
             store_quantity: res.data[0].storeQuantity,
             warehouse_name: res.data[0].warehouse_name,
@@ -505,6 +555,8 @@ axios.post("http://localhost:4000/api/create_item",item)
           arr.push(obj);
           for (var i = 1; i < res.data.length; i++) {
             invObj = {
+              store_id: res.data[i].store_id,
+            warehouse_id: res.data[i].warehouse_id,
               store_name: res.data[i].store_name,
               store_quantity: res.data[i].storeQuantity,
               warehouse_name: res.data[i].warehouse_name,

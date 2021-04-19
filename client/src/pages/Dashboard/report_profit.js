@@ -177,10 +177,11 @@ function Row(props) {
 
                 </StyledTableCell>
                 <StyledTableCell component="th" scope="row">
-                    {row.first_name} {row.middle_initial} {row.last_name}
+                    {row.invoice_id}
                 </StyledTableCell>
-                <StyledTableCell align="right">{row.email}</StyledTableCell>
-                <StyledTableCell align="right">{row.join_date.substring(0, 10)}</StyledTableCell>
+                <StyledTableCell align="right">{row.time_of_transaction.substring(0,10)}</StyledTableCell>
+                <StyledTableCell align="right">{row.total_cost_after_tax}</StyledTableCell>
+                <StyledTableCell align="right">{row.total_manufacture_cost}</StyledTableCell>
                 <StyledTableCell align="right">{row.store_name}</StyledTableCell>
             </StyledTableRow>
         </React.Fragment>
@@ -210,9 +211,10 @@ function CollapsibleTable({ rows }) {
                 <TableHead>
                     <StyledTableRow>
                         <StyledTableCell />
-                        <StyledTableCell>Full Name</StyledTableCell>
-                        <StyledTableCell align="right">Email</StyledTableCell>
-                        <StyledTableCell align="right">Join Date</StyledTableCell>
+                        <StyledTableCell>invoice id</StyledTableCell>
+                        <StyledTableCell align="right">Transaction Date</StyledTableCell>
+                        <StyledTableCell align="right">Total Cost</StyledTableCell>
+                        <StyledTableCell align="right">Total Manufacturing Cost</StyledTableCell>
                         <StyledTableCell align="right">Store Name</StyledTableCell>
                     </StyledTableRow>
                 </TableHead>
@@ -241,7 +243,7 @@ function Home() {
     }
     const [valueRow, setValue] = useState(null);
 
-    const [all_customers_by_timeFrame, setAll_customers_by_timeframe] = useState([]);
+    const [all_invoices_by_timeFrame, setAll_invoices_by_timeframe] = useState([]);
 
     let history = useHistory();
 
@@ -249,8 +251,8 @@ function Home() {
     const [endDate, setEndDate] = useState(new Date);
     const [myStore, setMyStore] = useState({ value: "", label: "" });
     const [store, setStore] = useState([]);
-    const [amountNewCustomers, setAmountNewCustomers] = useState({});
-    const [totalCustomers, setTotalCustomers] = useState({});
+    const [salesInfoByTimeFrame, setSalesInfoByTimeFrame] = useState({});
+    const [totalSalesInfo, setTotalSalesInfo] = useState({});
 
 
     const handleAmountOfNewCustomers = () => {
@@ -262,34 +264,31 @@ function Home() {
             store_id_fk: myStore.value,
             end_date: endDate.toJSON().substring(0, 10)
         }
-        axios.post("http://localhost:4000/get_total_amont_of_customers", data2)
+        axios.post("http://localhost:4000/get_total_sales_info", data2)
         .then((res) => {
 
-            console.log("found", res.data)
+            console.log("setTotalSalesInfo", res.data)
 
             const row = res.data.map((index, i) => {
 
                 return { x: index.name, y: parseInt(index.quantity) };
             })
-            setTotalCustomers(res.data[0]);
-            //setTop_10_by_quantityChart(row);
-            //setTop_10_by_quantityTable(res.data)
-
+            setTotalSalesInfo(res.data[0]);
             console.log("total", res.data);
         })
         .catch((err) => {
             console.log(err.response);
         });
-        axios.post("http://localhost:4000/get_amount_of_customers_by_time_frame", data2)
+        axios.post("http://localhost:4000/get_sales_info_by_time_frame", data2)
             .then((res) => {
 
-                console.log("found", res.data)
+                console.log("salesInfoByTimeFrame", res.data)
 
                 const row = res.data.map((index, i) => {
 
                     return { x: index.name, y: parseInt(index.quantity) };
                 })
-                setAmountNewCustomers(res.data[0]);
+                setSalesInfoByTimeFrame(res.data[0]);
                 //setTop_10_by_quantityChart(row);
                 //setTop_10_by_quantityTable(res.data)
 
@@ -316,20 +315,16 @@ function Home() {
             end_date: endDate.toJSON().substring(0, 10)
         }
 
-        axios.post("http://localhost:4000/get_all_customers_by_time_frame", data2)
+        axios.post("http://localhost:4000/get_all_invoices_by_time_frame", data2)
             .then((res) => {
 
-                console.log("found", res.data)
+                console.log("setAll_invoices_by_timeframe", res.data)
 
                 const row = res.data.map((index, i) => {
 
                     return { x: index.name, y: parseInt(index.quantity) };
                 })
-                setAll_customers_by_timeframe(res.data);
-                //setTop_10_by_quantityChart(row);
-                //setTop_10_by_quantityTable(res.data)
-
-                // console.log("first", res.data);
+                setAll_invoices_by_timeframe(res.data);
             })
             .catch((err) => {
                 console.log(err.response);
@@ -435,7 +430,7 @@ function Home() {
                                 Select Store
                         </Typography>
                             <Typography variant="body3" component="body3" gutterBottom>
-                                (If you don't select a store you will be shown the total customers from every store in the time frame selected)
+                                (If you don't select a store you will be shown the total profit margin from every store in the time frame selected)
                         </Typography>
                             <Select
                                 autoFocus
@@ -475,31 +470,32 @@ function Home() {
                     <Grid item xs={12} className={classes.space}>
                         <Grid item xs={12} >
                             <Typography variant="h4" component="h4" gutterBottom>
-                                Calculate Amount Of New Customers
+                                Calculate Sales info
                         </Typography>
                             <Button variant="contained" color="primary" className={classes.button} disableElevation onClick={handleAmountOfNewCustomers} startIcon={<SearchIcon />}>
                                 CALCULATE
                              </Button>
-                            {amountNewCustomers.total && amountNewCustomers.diff ? (<>
+                            {salesInfoByTimeFrame.total_cost && salesInfoByTimeFrame.diff ? (<>
                                 <Typography variant="h5" component="div" gutterBottom className={classes.spaceUp}>
-                                    Number Of New Customers: {amountNewCustomers.total}
+                                    Amount of Sales: {salesInfoByTimeFrame.amount_of_sales}
                                 </Typography>
                                 <Typography variant="h5" component="div" gutterBottom>
-                                    Average New Customer Per Day: {(amountNewCustomers.total / amountNewCustomers.diff).toFixed(2)}
+                                    Average Cost Per Sale: ${(salesInfoByTimeFrame.avg_cost * 1).toFixed(2)}
 
 
                                 </Typography>
                                 <Typography variant="h5" component="div" gutterBottom>
-                                    Number Of Days: {amountNewCustomers.diff}
+                                    Total Cost of Sales: ${(salesInfoByTimeFrame.total_cost * 1 ).toFixed(2)}
                                 </Typography>
-                                {all_customers_by_timeFrame.length !== 0 ? (<Typography variant="h5" component="div" gutterBottom>
-                                Percentage of Total Customers: {((amountNewCustomers.total * 100) / totalCustomers.total).toFixed(2)}%
+                                <Typography variant="h5" component="div" gutterBottom>
+                                    Total Manufacturing Cost of Sales: ${(salesInfoByTimeFrame.total_manufacture_cost * 1 ).toFixed(2)}
                                 </Typography>
-                                ) : (<></>)}
-                                {all_customers_by_timeFrame.length !== 0 ? (<Typography variant="h5" component="div" gutterBottom>
-                                Total Customers: {totalCustomers.total}
+                                <Typography variant="h5" component="div" gutterBottom>
+                                    Total Profit: ${(salesInfoByTimeFrame.profit * 1 ).toFixed(2)}
                                 </Typography>
-                                ) : (<></>)}
+                                <Typography variant="h5" component="div" gutterBottom>
+                                    Number Of Days: {salesInfoByTimeFrame.diff}
+                                </Typography>
                             </>
                             ) : (<></>)}
                         </Grid>
@@ -509,10 +505,10 @@ function Home() {
                     <Grid item xs={12} className={classes.space}>
                         <Grid item xs={12} className={classes.space}>
                             <Typography variant="h4" component="h4" gutterBottom>
-                                New Customers
+                                Transactions
                         </Typography>
 
-                            <CollapsibleTable rows={all_customers_by_timeFrame} />
+                            <CollapsibleTable rows={all_invoices_by_timeFrame} />
 
                         </Grid>
 
