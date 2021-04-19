@@ -55,7 +55,41 @@ const authorize = require("../client/src/middleware/authorization");
       res.status(500).send("Server error");
     }
   });
+  app.put("/inventory/restock_store", async (req, res) => {
+    try {
+       
+        const {item_id} = req.body; 
+        const {store_id} = req.body;
+        
+        const quantity_store = await pool.query("UPDATE store_has_item SET quantity=50 WHERE store_has_item.item_id = ? AND store_has_item.store_id = ?", 
+        [
+         item_id,
+         store_id
+        ]);
+      res.send("Success");
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  });
 
+  app.put("/inventory/restock_warehouse", async (req, res) => {
+    try {
+       
+        const {item_id} = req.body; 
+        const {warehouse_id} = req.body;
+        const quantity_warehouse = await pool.query("UPDATE warehouse_has_item SET quantity=1000 WHERE warehouse_has_item.item_id = ? AND warehouse_has_item.warehouse_id =?", 
+        [
+         item_id,
+         warehouse_id
+        ]);
+    
+      res.send("Success");
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  });
 
 
 

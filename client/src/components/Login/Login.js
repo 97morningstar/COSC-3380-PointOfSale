@@ -118,14 +118,16 @@ function Login() {
         if (res.data.is_employee === true){
           localStorage.setItem("user_id", res.data.user.employee_id);
           localStorage.setItem("is_employee", true);
+          history.push("/dash");
 
         }
         else{
           localStorage.setItem("user_id", res.data.user.customer_id);
           localStorage.setItem("is_employee", false);
+          history.push("/");
         }
         
-        history.push("/");
+        
  
           
        

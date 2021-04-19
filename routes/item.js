@@ -33,7 +33,7 @@ app.get("/view_all_items", async (req, res) => {
   })
 app.post("/view_all_inventories", authorize ,async (req,res) => {
   try {
-    const all_items = await pool.query("SELECT item.item_id,item.name,item.category,item.brand,item.selling_price,item.manufacture_cost,item.discount,store.store_name,store_has_item.quantity as storeQuantity,warehouse.warehouse_name,warehouse_has_item.quantity as warehouseQuantity FROM item,store_has_item,warehouse_has_item,store,warehouse WHERE item.item_id = warehouse_has_item.item_id AND item.item_id = store_has_item.item_id AND store.store_id = store_has_item.store_id AND warehouse.warehouse_id = warehouse_has_item.warehouse_id AND warehouse.store_store_id = store.store_id ORDER BY item.item_id,store.store_name ASC");
+    const all_items = await pool.query("SELECT item.item_id,item.name,item.category,item.brand,item.selling_price,item.manufacture_cost,item.discount, store_has_item.store_id, warehouse_has_item.warehouse_id,store.store_name,store_has_item.quantity as storeQuantity,warehouse.warehouse_name,warehouse_has_item.quantity as warehouseQuantity FROM item,store_has_item,warehouse_has_item,store,warehouse WHERE item.item_id = warehouse_has_item.item_id AND item.item_id = store_has_item.item_id AND store.store_id = store_has_item.store_id AND warehouse.warehouse_id = warehouse_has_item.warehouse_id AND warehouse.store_store_id = store.store_id ORDER BY item.item_id,store.store_name ASC");
 
     res.json(all_items);
   }catch (err) {
