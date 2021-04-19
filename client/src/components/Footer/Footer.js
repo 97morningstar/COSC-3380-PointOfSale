@@ -74,7 +74,6 @@ export default function Footer() {
               style={{ textDecoration: "none" }}
             >
               <Typography variant="body1" className={classes.footerText}>
-                Change Later
               </Typography>
             </Link>
           </Grid>
@@ -85,7 +84,6 @@ export default function Footer() {
               style={{ textDecoration: "none" }}
             >
               <Typography variant="body1" className={classes.footerRelated}>
-                Change Later
               </Typography>
             </Link>
           </Grid>

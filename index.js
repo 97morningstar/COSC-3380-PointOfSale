@@ -48,6 +48,7 @@ app.use("/", require("./routes/account"));
 
 app.use("/", require("./routes/report_3"));
 app.use("/", require("./routes/report_customer"));
+app.use("/", require("./routes/report_profit"));
 
 
 
