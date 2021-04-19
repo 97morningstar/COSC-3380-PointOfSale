@@ -60,7 +60,7 @@ app.get("/item/category/:category", async (req, res) => {
   
       const {category} = req.params;
   
-      const items_by_category = await pool.query("SELECT * FROM item, store_has_item WHERE store_has_item.item_id=item.item_id AND store_has_item.quantity > 0 AND category = ?", [category]);
+      const items_by_category = await pool.query("SELECT * FROM item WHERE category = ?", [category]);
   
       res.json(items_by_category);
     }catch (err) {
