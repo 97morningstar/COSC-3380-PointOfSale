@@ -26,7 +26,7 @@ app.get("/get_invoice_items/:customer",async (req, res) => {
          const {customer_id} = req.params;
          console.log(customer_id)
         
-        const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ?", [customer_id]);
+        const payment = await pool.query("SELECT * FROM payment WHERE customer_id_fk = ? AND is_deleted = 0", [customer_id]);
 
             res.json(payment);
 
@@ -43,7 +43,7 @@ app.get("/get_invoice_items/:customer",async (req, res) => {
          const {invoice_id_fk} = req.body;
          const {item_id_fk} = req.body;
          const {quantity} = req.body;
-
+        
        // const invoice_items = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [invoice_id]);
         const invoice_added = await pool.query("INSERT INTO invoice_item(quantity, item_id_fk, invoice_id_fk) VALUES (?,?,?)", [
           quantity,

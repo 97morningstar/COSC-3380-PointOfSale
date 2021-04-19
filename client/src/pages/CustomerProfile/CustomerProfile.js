@@ -289,8 +289,7 @@ const [updateError, setUpdateErrors] = useState({});
 
     console.log("data",data);
 
-    axios.put(
-      "/api/customer/" +
+    axios.put("http://localhost:4000/api/customer/" +
       localStorage.getItem("user_id") + "/" + data.store_id_fk,
       data
     )
