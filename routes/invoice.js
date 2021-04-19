@@ -163,10 +163,10 @@ app.put("/purchase", async (req, res) => {
             }
            return res.status(400).send(error);
         }
-        const invoiceItems = await pool.query("SELECT * from invoice_item WHERE invoice_id_fk = ? AND order_status = 'cart'", [
+        /*const invoiceItems = await pool.query("SELECT * from invoice_item WHERE invoice_id_fk = ? AND order_status = 'cart'", [
             body.invoice_id
-        ])
-        for (var i = 0; i < invoiceItems.length; i++){
+        ])*/
+        /*for (var i = 0; i < invoiceItems.length; i++){
             var storeItem = await pool.query("SELECT * from store_has_item WHERE store_id = ? AND item_id = ?",[
                 body.store_id_fk,
                 invoiceItems[i].item_id_fk
@@ -177,7 +177,7 @@ app.put("/purchase", async (req, res) => {
                 }
                return res.status(400).send(errormsg);
             }
-        }
+        }*/
        /* const invoiceItems = await pool.query("SELECT * FROM invoice_item WHERE invoice_id_fk = ?", [id]);
         for (var i = 0; i < invoiceItems.length; i++) {
             if (invoiceItems[i].quantity == 0) {

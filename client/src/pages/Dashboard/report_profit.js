@@ -480,18 +480,18 @@ function Home() {
                                     Amount of Sales: {salesInfoByTimeFrame.amount_of_sales}
                                 </Typography>
                                 <Typography variant="h5" component="div" gutterBottom>
-                                    Average Cost Per Sale: {(salesInfoByTimeFrame.avg_cost * 1).toFixed(2)}
+                                    Average Cost Per Sale: ${(salesInfoByTimeFrame.avg_cost * 1).toFixed(2)}
 
 
                                 </Typography>
                                 <Typography variant="h5" component="div" gutterBottom>
-                                    Total Cost of Sales: {(salesInfoByTimeFrame.total_cost * 1 ).toFixed(2)}
+                                    Total Cost of Sales: ${(salesInfoByTimeFrame.total_cost * 1 ).toFixed(2)}
                                 </Typography>
                                 <Typography variant="h5" component="div" gutterBottom>
-                                    Total Manufacturing Cost of Sales: {(salesInfoByTimeFrame.total_manufacture_cost * 1 ).toFixed(2)}
+                                    Total Manufacturing Cost of Sales: ${(salesInfoByTimeFrame.total_manufacture_cost * 1 ).toFixed(2)}
                                 </Typography>
                                 <Typography variant="h5" component="div" gutterBottom>
-                                    Total Profit: {(salesInfoByTimeFrame.profit * 1 ).toFixed(2)}
+                                    Total Profit: ${(salesInfoByTimeFrame.profit * 1 ).toFixed(2)}
                                 </Typography>
                                 <Typography variant="h5" component="div" gutterBottom>
                                     Number Of Days: {salesInfoByTimeFrame.diff}
@@ -505,7 +505,7 @@ function Home() {
                     <Grid item xs={12} className={classes.space}>
                         <Grid item xs={12} className={classes.space}>
                             <Typography variant="h4" component="h4" gutterBottom>
-                                New Customers
+                                Transactions
                         </Typography>
 
                             <CollapsibleTable rows={all_invoices_by_timeFrame} />
