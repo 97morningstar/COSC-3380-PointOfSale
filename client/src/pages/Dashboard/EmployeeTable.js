@@ -157,11 +157,10 @@ function Row(props) {
         <StyledTableCell component="th" scope="row">
           {row.first_name}
         </StyledTableCell>
-        <StyledTableCell align="right">{row.middle_initial}</StyledTableCell>
-        <StyledTableCell align="right">{row.last_name}</StyledTableCell>
-        <StyledTableCell align="right">{row.email}</StyledTableCell>
-        <StyledTableCell align="right">{row.store_name}</StyledTableCell>
-        <StyledTableCell align="right">{row.employee_id}</StyledTableCell>
+        <StyledTableCell align="center">{row.middle_initial}</StyledTableCell>
+        <StyledTableCell align="center">{row.last_name}</StyledTableCell>
+        <StyledTableCell align="center" >{row.email}</StyledTableCell>
+        <StyledTableCell align="center">{row.employee_id}</StyledTableCell>
       </StyledTableRow>
       <StyledTableRow>
         <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -173,31 +172,31 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <StyledTableRow>
-                    <StyledTableCell>Phone Number</StyledTableCell>
-                    <StyledTableCell>Date of Birth</StyledTableCell>
-                    <StyledTableCell>Salary</StyledTableCell>
-                    <StyledTableCell>Street Number</StyledTableCell>
-                    <StyledTableCell>Street Name</StyledTableCell>
-                    <StyledTableCell>City</StyledTableCell>
-                    <StyledTableCell>Zip code</StyledTableCell>
-                    <StyledTableCell align="right">Employment Date</StyledTableCell>
-                    <StyledTableCell align="right">Store ID</StyledTableCell>
+                    <StyledTableCell align="center">Phone Number</StyledTableCell>
+                    <StyledTableCell align="center">Date of Birth</StyledTableCell>
+                    <StyledTableCell align="center">Salary</StyledTableCell>
+                    <StyledTableCell align="center">Street Number</StyledTableCell>
+                    <StyledTableCell align="center">Street Name</StyledTableCell>
+                    <StyledTableCell align="center">City</StyledTableCell>
+                    <StyledTableCell align="center">Zip code</StyledTableCell>
+                    <StyledTableCell align="center" >Employment Date</StyledTableCell>
+                    <StyledTableCell align="center">Store ID</StyledTableCell>
                   </StyledTableRow>
                 </TableHead>
                 <TableBody>
                   {//row.inventory.map((historyRow) => (
                     <StyledTableRow key={row.phone_number}>
-                      <StyledTableCell component="th" scope="row">
+                      <StyledTableCell component="th" scope="row" align="center">
                         {row.phone_number}
                       </StyledTableCell>
-                      <StyledTableCell>{row.date_of_birth}</StyledTableCell>
-                      <StyledTableCell>{row.salary}</StyledTableCell>
-                      <StyledTableCell>{row.street_number}</StyledTableCell>
-                      <StyledTableCell>{row.street_name}</StyledTableCell>
-                      <StyledTableCell>{row.city}</StyledTableCell>
-                      <StyledTableCell>{row.zip_code}</StyledTableCell>
-                      <StyledTableCell align="right">{row.employment_date}</StyledTableCell>
-                      <StyledTableCell align="right">
+                      <StyledTableCell align="center">{row.date_of_birth}</StyledTableCell>
+                      <StyledTableCell align="center">{row.salary}</StyledTableCell>
+                      <StyledTableCell align="center">{row.street_number}</StyledTableCell>
+                      <StyledTableCell align="center">{row.street_name}</StyledTableCell>
+                      <StyledTableCell align="center">{row.city}</StyledTableCell>
+                      <StyledTableCell align="center">{row.zip_code}</StyledTableCell>
+                      <StyledTableCell align="center">{row.employment_date}</StyledTableCell>
+                      <StyledTableCell align="center">
                         {row.store_store_id}
                       </StyledTableCell>
                     </StyledTableRow>
@@ -220,12 +219,12 @@ function CollapsibleTable({ rows }) {
         <TableHead>
           <StyledTableRow>
             <StyledTableCell />
-            <StyledTableCell>First Name</StyledTableCell>
-            <StyledTableCell align="right">Middle Initial</StyledTableCell>
-            <StyledTableCell align="right">Last Name</StyledTableCell>
-            <StyledTableCell align="right">Email</StyledTableCell>
-            <StyledTableCell align="right">Store Name</StyledTableCell>
-            <StyledTableCell align="right">Employee ID</StyledTableCell>
+            <StyledTableCell >First Name</StyledTableCell>
+            <StyledTableCell align="center">Middle Initial</StyledTableCell>
+            <StyledTableCell align="center">Last Name</StyledTableCell>
+            <StyledTableCell align="center">Email</StyledTableCell>
+
+            <StyledTableCell align="center">Employee ID</StyledTableCell>
 
           </StyledTableRow>
         </TableHead>
@@ -239,6 +238,7 @@ function CollapsibleTable({ rows }) {
     </TableContainer>
   );
 }
+
 function Home() {
   const classes = useStyles();
   const theme = createMuiTheme();
@@ -259,7 +259,8 @@ function Home() {
           setRows(res.data);
           console.log(res.data);
           console.log(rows);
-         })
+          
+        })
         .catch((err) => {
           console.log(err.response.data);
           history.push("/login");
