@@ -261,7 +261,7 @@ function Item({ match }) {
     if(numberOfItems !== 0){
 
   
-    axios.post("http://localhost:4000/add_to_cart", cart_data)
+    axios.post("/add_to_cart", cart_data)
       .then((res) => {
         setUpdateSuccess(true);
        })
@@ -286,7 +286,7 @@ function Item({ match }) {
     }
 
 if(data2.is_employee === "false"){
-    axios.post("http://localhost:4000/get_cart", data2)
+    axios.post("/get_cart", data2)
       .then((res) => {
         setInvoice(res.data[0]);
         console.log("res.data",res.data)
@@ -299,7 +299,7 @@ if(data2.is_employee === "false"){
 
 
 
-    axios.get("http://localhost:4000/api/item/" + match.params.name)
+    axios.get("/api/item/" + match.params.name)
       .then((res) => {
 
         console.log("item", res.data);
@@ -334,7 +334,7 @@ if(data2.is_employee === "false"){
 
             /* SHOP ITEMS IN THE SAME CATEGORY */
 
-            axios.get("http://localhost:4000/api/item/category/" + res.data[0].category)
+            axios.get("/api/item/category/" + res.data[0].category)
               .then((res) => {
 
                 console.log(res.data);

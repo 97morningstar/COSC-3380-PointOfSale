@@ -165,7 +165,7 @@ const [images, setimages] = useState([]);
 */
 
 
-    axios.get("http://localhost:4000/api/view_all_items" , getConfig())
+    axios.get("/api/view_all_items" , getConfig())
     .then((res) => {
     
     

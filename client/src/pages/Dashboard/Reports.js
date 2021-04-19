@@ -255,7 +255,7 @@ let history = useHistory();
 var myRows = [];
   useEffect(() => {
     if (data.is_employee === "true"){
-      axios.get("http://localhost:4000/api/view_all_purchases")
+      axios.get("/api/view_all_purchases")
       .then((res) => {
       
       console.log("myData",res);
@@ -271,7 +271,7 @@ var myRows = [];
       console.log("res.length",res.data.length);
       console.log("res.length",res.data[0].invoice_id);
       for (var i = 0; i < res.data.length; i++){
-         axios.get("http://localhost:4000/api/fullInvoice/"+[res.data[i].invoice_id]).then((invoice_items) => {
+         axios.get("/api/fullInvoice/"+[res.data[i].invoice_id]).then((invoice_items) => {
           console.log(i,invoice_items);
           obj = invoice_items.data;
           myArr.push(obj);
