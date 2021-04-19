@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { AppBar, Toolbar, Button, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import UHLogo from "../../assets/UHLogo.png";
@@ -11,10 +11,11 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Redirect 
+  Redirect
 } from "react-router-dom";
 
 //Icons
+import slogan from "../../assets/_Logo (1).png";
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
@@ -47,15 +48,15 @@ const useStyles = makeStyles((theme) => ({
   Logout: {
     objectFit: "contain",
   },
-  icon:{
+  icon: {
     margin: "10px"
   },
-  menu:{
+  menu: {
     color: "#fff"
   }
 }));
 
-export default function Navbar({user}) {
+export default function Navbar({ user }) {
   const classes = useStyles();
   const history = useHistory();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -102,7 +103,7 @@ export default function Navbar({user}) {
     user_id: localStorage.getItem("user_id"),
     is_employee: localStorage.getItem("is_employee")
   }
- 
+
   //Check if token exists
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
@@ -112,80 +113,80 @@ export default function Navbar({user}) {
           //Got new access token.
           console.log("res", res);
           console.log("jwt", localStorage.getItem("is_employee"));
-         // localStorage.setItem("token", res.data.jwtToken);
-         // setTimeout(isLoggedIn, 17900 * 1000);
+          // localStorage.setItem("token", res.data.jwtToken);
+          // setTimeout(isLoggedIn, 17900 * 1000);
 
           setIsAuthenticated(true);
 
           const employee = localStorage.getItem("is_employee");
 
-         
 
-          if (employee === "true"){
+
+          if (employee === "true") {
             setUserType(true);
             console.log("is_employee")
 
-            axios.get("http://localhost:4000/api/employee/"+localStorage.getItem("user_id"))
-               .then((res) => {
-            
-          
-                  setUserName(res.data[0].first_name)
-          
-                  console.log("Employee Firstname:",res.data[0].first_name);
-          
-                })
-               .catch((err) => {
-                  console.log(err);
-                });
+            axios.get("http://localhost:4000/api/employee/" + localStorage.getItem("user_id"))
+              .then((res) => {
+
+
+                setUserName(res.data[0].first_name)
+
+                console.log("Employee Firstname:", res.data[0].first_name);
+
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }
-          else if(employee === "false"){
+          else if (employee === "false") {
             setUserType(false);
             console.log("custoemr")
-            axios.get("http://localhost:4000/api/customer/"+localStorage.getItem("user_id"))
-            .then((res) => {
-         
-       
-               setUserName(res.data[0].first_name)
-       
-               console.log(res.data[0].first_name);
-       
-             })
-            .catch((err) => {
-               console.log(err);
-             });
+            axios.get("http://localhost:4000/api/customer/" + localStorage.getItem("user_id"))
+              .then((res) => {
 
-           
+
+                setUserName(res.data[0].first_name)
+
+                console.log(res.data[0].first_name);
+
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+
+
           }
-                
-         
-      
+
+
+
         })
         .catch((err) => {
           console.log("error");
           console.log(err.response);
-         
+
           console.log(err.response);
           localStorage.removeItem("token");
           localStorage.removeItem("user_id");
           localStorage.removeItem("is_employee");
           history.push("/login");
-         // history.push("/login");
+          // history.push("/login");
         });
-    }else{
+    } else {
       console.log("no token x");
 
     }
   };
 
-  const routeChange = () =>{ 
+  const routeChange = () => {
     console.log("login attempt");
-    let path = `/login`; 
+    let path = `/login`;
     history.push(path);
   }
-  const logoutButton = () =>{
+  const logoutButton = () => {
     localStorage.clear();
     history.go(0);
-  } 
+  }
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -197,84 +198,98 @@ export default function Navbar({user}) {
           <Toolbar>
             <Grid item xs={11}>
               <Link href="/" className={classes.logo}>
-                
+              <img alt="uh logo" className={classes.logo} src={slogan} />
               </Link>
             </Grid>
 
-           
 
 
-            {!isAuthenticated ? (  
-           <>
-            <Grid item className={classes.icon}>
-              <AccountCircleIcon />
-            </Grid>
-           <Grid item>
-              <Button
-                size="small"
-                color="inherit"
-                onClick={routeChange}
-                className={classes.Login}
-              >
-                Login
-              </Button> 
-              </Grid>
-               <Grid item>
-               <Button
-                 size="small"
-                 color="inherit"
-                 className={classes.SignUp}
-                 href="/signup"
-               >
-                 Sign Up
+
+            {!isAuthenticated ? (
+              <>
+                <Grid item className={classes.icon}>
+                  <AccountCircleIcon />
+                </Grid>
+                <Grid item>
+                  <Button
+                    size="small"
+                    color="inherit"
+                    onClick={routeChange}
+                    className={classes.Login}
+                  >
+                    Login
+              </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    size="small"
+                    color="inherit"
+                    className={classes.SignUp}
+                    href="/signup"
+                  >
+                    Sign Up
                </Button>
-             </Grid>
+                </Grid>
               </>
-              
-              ) :
+
+            ) :
               (
-               <> Welcome {userName ? (userName) : (null)} 
-               
-               <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menu}>
-        Menu <KeyboardArrowDownIcon/>
-      </Button>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon}/> View Profile</MenuItem>
-        <MenuItem onClick={handleAccount}> <SupervisorAccountIcon className={classes.icon}/> Account</MenuItem>
+                <> Welcome {userName ? (userName) : (null)}
 
-{userType ? (<>
-  <MenuItem onClick={handleDashboard}> <DashboardIcon className={classes.icon}/> Dashboard</MenuItem>
-  </>) : (
-  <>
-  <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon}/> Cart</MenuItem>
-  </>
-  )
-}
-        
+                  <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.menu}>
+                    Menu <KeyboardArrowDownIcon />
+                  </Button>
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon} /> View Profile</MenuItem>
 
-        {/* Check if the user is an employee, if yes, show employee dashboard */}  
-        <MenuItem onClick={handleOrderHistory}> <HistoryIcon className={classes.icon}/> Order History</MenuItem>
 
-         
+                    {userType ? (<>
+                      <MenuItem onClick={handleAccount}> <SupervisorAccountIcon className={classes.icon} /> Account</MenuItem>
+                    </>) : (
+                      <></>
+                    )
+                    }
 
-        <MenuItem onClick={logoutButton}> <ExitToAppIcon className={classes.icon}/> Logout</MenuItem>
+                    {userType ? (<>
+                      <MenuItem onClick={handleDashboard}> <DashboardIcon className={classes.icon} /> Dashboard</MenuItem>
+                    </>) : (
+                      <>
+                        <MenuItem onClick={handleCart}> <ShoppingCartIcon className={classes.icon} /> Cart</MenuItem>
+                      </>
+                    )
+                    }
 
-      </Menu>
-               
-               </>
+                    {userType=="false" ? (<>
+                      <MenuItem onClick={handleOrderHistory}> <HistoryIcon className={classes.icon} /> Order History</MenuItem>
+                    </>) : (
+                      <></>
+                    )
+                    }
+
+
+                    {/* Check if the user is an employee, if yes, show employee dashboard */}
+                   
+
+
+
+                    <MenuItem onClick={logoutButton}> <ExitToAppIcon className={classes.icon} /> Logout</MenuItem>
+
+                  </Menu>
+
+                </>
               )}
-             
 
 
 
-            
-           
+
+
+
           </Toolbar>
         </AppBar>
       </React.Fragment>
