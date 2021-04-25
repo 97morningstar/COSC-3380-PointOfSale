@@ -101,9 +101,7 @@ export default function Navbar() {
                  
                   </Grid>
                   <Grid item xs={1}  className={classes.aligns} >
-                  <Link href="/contact-us" className={classes.words}>
-                  Contact Us
-                  </Link> 
+                  
                   </Grid>
               
 

@@ -24,7 +24,7 @@ app.post("/create_item", async (req, res) => {
   // get all items
 app.get("/view_all_items", async (req, res) => {
     try {
-      const all_items = await pool.query("SELECT * FROM item");
+      const all_items = await pool.query("SELECT * FROM item, store_has_item WHERE store_has_item.item_id=item.item_id AND store_has_item.quantity > 0");
   
       res.json(all_items);
     }catch (err) {

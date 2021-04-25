@@ -171,7 +171,7 @@ export default function SignUp() {
   const signUp = (e) => {
 
     studentFirst.date_of_birth = valueDateOfBirth.toJSON()
-      .substring(0, 10);;
+      .substring(0, 10);
   
     studentFirst.store_id_fk = myStore.value;
 
