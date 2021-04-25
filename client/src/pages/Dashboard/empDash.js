@@ -134,7 +134,7 @@ useEffect(() => {
   }
 
   /* VERIFY USER IS LOGGED IN */
-  axios.post("/get_dashboard", data)
+  axios.post("http://localhost:4000/get_dashboard", data)
   .then((res) => {
   })
   .catch((err) => {
@@ -188,7 +188,7 @@ const [imageArray, setimageArray] = useState([]);
         <Grid xs={12}    container justify="center" alignItems="center"  spacing={1} className={classes.categories} >
             <Grid xs={12} container justify="center" alignItems="center"  >
                 <Grid item xs={4} className={classes.categoryItem}>
-                  <Link href="/employeeTable" className={classes.link}>
+                  <Link href="/employee" className={classes.link}>
                       <img alt="category" className={classes.category1} src={Groceries} />
                       <Typography variant="h5" className={classes.Text} >
                       Employees

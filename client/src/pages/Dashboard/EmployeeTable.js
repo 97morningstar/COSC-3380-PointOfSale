@@ -7,7 +7,13 @@ import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
 
 import Link from "@material-ui/core/Link";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Grid, Typography } from "@material-ui/core";
+import {
+  Grid, Typography, Dialog, TextField,
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from "@material-ui/core";
+import Select from "react-select";
 import { createMuiTheme } from "@material-ui/core/styles";
 import Carousel from 'react-material-ui-carousel'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -35,6 +41,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import CachedIcon from '@material-ui/icons/Cached';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -114,6 +123,10 @@ const useStyles = makeStyles((theme) => ({
   },
   Text1: {
     marginTop: "30px"
+  },
+  button: {
+    margin: "10px",
+    width: "300px"
   }
 }));
 const StyledTableCell = withStyles((theme) => ({
@@ -139,12 +152,58 @@ const useRowStyles = makeStyles({
       borderBottom: 'unset',
     },
   },
+  space: {
+    margin: "10px"
+  }
 });
 
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
+  const [openEdit, setOpenEdit] = useState(false);
+  const [rowData, setRowData] = useState(row);
+  const history = useHistory();
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleUpdate = () => {
+    setOpenEdit(true);
+  }
+
+  const handleDelete = () => {
+
+    axios.delete("http://localhost:4000/api/delete/employee/" + row.employee_id)
+      .then((res) => {
+        console.log(res.data);
+        history.go(0);
+      })
+      .catch((err) => {
+      })
+
+  }
+
+  const handleSave = () => {
+
+    setOpenEdit(false);
+
+    axios.put("http://localhost:4000/api/employee/" + row.employee_id, rowData)
+      .then((res) => {
+        console.log(res.data);
+        //history.go(0);
+      })
+      .catch((err) => {
+      })
+  }
+
+  const handleCurrentProjectChange = (e) => {
+    setRowData({
+      ...rowData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <React.Fragment>
@@ -155,12 +214,21 @@ function Row(props) {
           </IconButton>
         </StyledTableCell>
         <StyledTableCell component="th" scope="row">
-          {row.first_name}
+          {rowData.first_name}
         </StyledTableCell>
-        <StyledTableCell align="center">{row.middle_initial}</StyledTableCell>
-        <StyledTableCell align="center">{row.last_name}</StyledTableCell>
-        <StyledTableCell align="center" >{row.email}</StyledTableCell>
-        <StyledTableCell align="center">{row.employee_id}</StyledTableCell>
+        <StyledTableCell align="center">{rowData.middle_initial}</StyledTableCell>
+        <StyledTableCell align="center">{rowData.last_name}</StyledTableCell>
+        <StyledTableCell align="center" >{rowData.email}</StyledTableCell>
+        <StyledTableCell align="center">{rowData.employee_id}</StyledTableCell>
+        <StyledTableCell >
+          <Button variant="contained" color="primary" disableElevation className={classes.space} onClick={handleUpdate} startIcon={<CachedIcon />}>
+            UPDATE EMPLOYEE INFORMATION
+                       </Button>
+          <Button variant="contained" color="secondary" disableElevation className={classes.space} onClick={handleDelete}>
+            FIRE THIS EMPLOYEE
+                       </Button>
+
+        </StyledTableCell>
       </StyledTableRow>
       <StyledTableRow>
         <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -185,20 +253,21 @@ function Row(props) {
                 </TableHead>
                 <TableBody>
                   {//row.inventory.map((historyRow) => (
-                    <StyledTableRow key={row.phone_number}>
+                    <StyledTableRow key={rowData.phone_number}>
                       <StyledTableCell component="th" scope="row" align="center">
-                        {row.phone_number}
+                        {rowData.phone_number}
                       </StyledTableCell>
-                      <StyledTableCell align="center">{row.date_of_birth}</StyledTableCell>
-                      <StyledTableCell align="center">{row.salary}</StyledTableCell>
-                      <StyledTableCell align="center">{row.street_number}</StyledTableCell>
-                      <StyledTableCell align="center">{row.street_name}</StyledTableCell>
-                      <StyledTableCell align="center">{row.city}</StyledTableCell>
-                      <StyledTableCell align="center">{row.zip_code}</StyledTableCell>
-                      <StyledTableCell align="center">{row.employment_date}</StyledTableCell>
+                      <StyledTableCell align="center">{rowData.date_of_birth.substring(0, 10)}</StyledTableCell>
+                      <StyledTableCell align="center">{rowData.salary.toFixed(2)}</StyledTableCell>
+                      <StyledTableCell align="center">{rowData.street_number}</StyledTableCell>
+                      <StyledTableCell align="center">{rowData.street_name}</StyledTableCell>
+                      <StyledTableCell align="center">{rowData.city}</StyledTableCell>
+                      <StyledTableCell align="center">{rowData.zip_code}</StyledTableCell>
+                      <StyledTableCell align="center">{rowData.employment_date.substring(0, 10)}</StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.store_store_id}
+                        {rowData.store_store_id}
                       </StyledTableCell>
+
                     </StyledTableRow>
                     //))}
                   }
@@ -208,6 +277,170 @@ function Row(props) {
           </Collapse>
         </StyledTableCell>
       </StyledTableRow>
+
+
+      <Dialog
+        open={openEdit}
+        onClose={handleCloseEdit}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle
+          classes={classes.addNewTitle}
+          id="form-dialog-title"
+          style={{ wordBreak: "break-all" }}
+        >
+          EDIT {rowData.first_name}'s personal information
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="first_name"
+            label="First Name"
+            name="first_name"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.first_name}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="middle_initial"
+            label="Middle Initial"
+            name="middle_initial"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.middle_initial}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="last_name"
+            label="Last Name"
+            name="last_name"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.last_name}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email"
+            name="email"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.email}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="phone_number"
+            label="Phone Number"
+            name="phone_number"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.phone_number}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="salary"
+            label="Salary"
+            name="salary"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.salary.toFixed(2)}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="street_number"
+            label="Street Number"
+            name="street_number"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.street_number}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="street_name"
+            label="Street Name"
+            name="street_name"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.street_name}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="city"
+            label="City"
+            name="city"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.city}
+            onChange={handleCurrentProjectChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="zip_code"
+            label="Zip Code"
+            name="zip_code"
+            inputProps={{ maxLength: 200 }}
+            type="string"
+            fullWidth
+            variant="outlined"
+            value={rowData.zip_code}
+            onChange={handleCurrentProjectChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseEdit}
+            variant="contained" color="secondary" disableElevation
+          >
+            CANCEL
+             </Button>
+          <Button
+            onClick={handleSave}
+            variant="contained" color="primary" disableElevation
+            className={classes.projectAdd}
+          >
+            SAVE
+             </Button>
+        </DialogActions>
+      </Dialog>
+
+
     </React.Fragment>
   );
 }
@@ -223,15 +456,13 @@ function CollapsibleTable({ rows }) {
             <StyledTableCell align="center">Middle Initial</StyledTableCell>
             <StyledTableCell align="center">Last Name</StyledTableCell>
             <StyledTableCell align="center">Email</StyledTableCell>
-
             <StyledTableCell align="center">Employee ID</StyledTableCell>
-
+            <StyledTableCell align="center">Actions</StyledTableCell>
           </StyledTableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <Row key={row.item_id} row={row} />
-
           ))}
         </TableBody>
       </Table>
@@ -247,11 +478,14 @@ function Home() {
     user_id: localStorage.getItem("user_id"),
     is_employee: localStorage.getItem("is_employee")
   }
+  const [store, setStore] = useState({});
+  const [myStore, setMyStore] = useState({});
   const [rows, setRows] = useState([]);
   let history = useHistory();
+
   useEffect(() => {
     if (data.is_employee === "true") {
-      axios.post("/api/view_all_employee", data)
+      axios.post("http://localhost:4000/api/view_all_employee", data)
         .then((res) => {
 
           console.log("RESDATA", res.data[0].employee_id)
@@ -259,7 +493,9 @@ function Home() {
           setRows(res.data);
           console.log(res.data);
           console.log(rows);
+
           
+
         })
         .catch((err) => {
           console.log(err.response.data);
@@ -271,20 +507,64 @@ function Home() {
       history.push("/login");
     }
 
+    axios.get("http://localhost:4000/api/view_all_stores")
+      .then((res) => {
+        const data = res.data.map((item, index) => {
+          return {
+            label: item.store_name,
+            value: item.store_id,
+          };
+        });
+        console.log(data)
+        setStore(data)
+       })
+      .catch((err) => {
+         console.log(err);
+       });
 
 
   }, []);
 
+  const [openAdd, setOpenAdd] = useState(false);
+  const [employee, setEmployee] = useState({});
 
-  theme.typography.h3 = {
-    fontSize: "1.4rem",
-    "@media (min-width:400px)": {
-      fontSize: "1.4rem",
-    },
-    [theme.breakpoints.up("md")]: {
-      fontSize: "2rem",
-    },
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
   };
+
+  const handleAdd = () => {
+    setOpenAdd(true);
+  }
+
+  const handleSave = () => {
+   // setOpenAdd(false);
+
+    console.log(employee)
+
+employee.store_store_id = myStore.value;
+
+    /* AXIOS GOES HERE */
+    axios.post("http://localhost:4000/api/employee/create_employee", employee)
+      .then((res) => {
+        console.log(res.data)
+        console.log("Success")
+
+        // history.go(0)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  const handleCurrentProjectChange = (e) => {
+    e.stopPropagation();
+    setEmployee({
+      ...employee,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+
   return (
     <div>
       <React.Fragment>
@@ -305,20 +585,257 @@ function Home() {
           <Grid>
           </Grid>
           <Grid>
+            <Button variant="contained" color="primary" className={classes.button} disableElevation onClick={handleAdd} startIcon={<AddIcon />}>
+              ADD NEW EMPLOYEE
+        </Button>
             {rows ? (<CollapsibleTable rows={rows} />) : (null)}
 
           </Grid>
-
-
-
-
-
-
-
-
           <Footer />
         </Grid>
       </React.Fragment>
+
+
+      <Dialog
+        open={openAdd}
+        onClose={handleCloseAdd}
+        aria-labelledby="form-dialog-title"
+      >
+
+        <DialogTitle
+          classes={classes.addNewTitle}
+          id="form-dialog-title"
+          style={{ wordBreak: "break-all" }}
+        >
+          ADD new employee information
+        </DialogTitle>
+        <form className={classes.form} onSubmit={handleSave}>
+          <DialogContent>
+
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="first_name"
+              label="First Name"
+              name="first_name"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.first_name}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="middle_initial"
+              label="Middle Initial"
+              name="middle_initial"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.middle_initial}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="last_name"
+              label="Last Name"
+              name="last_name"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.last_name}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="email"
+              label="Email"
+              name="email"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.email}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="password"
+              label="Password"
+              name="password"
+              inputProps={{ maxLength: 200 }}
+              type="password"
+              fullWidth
+              variant="outlined"
+              value={employee.password}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="phone_number"
+              label="Phone Number"
+              name="phone_number"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.phone_number}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="salary"
+              label="Salary"
+              name="salary"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.salary}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="street_number"
+              label="Street Number"
+              name="street_number"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.street_number}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="street_name"
+              label="Street Name"
+              name="street_name"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.street_name}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="city"
+              label="City"
+              name="city"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.city}
+              onChange={handleCurrentProjectChange}
+            />
+            <TextField
+              required
+              autoFocus
+              margin="dense"
+              id="zip_code"
+              label="Zip Code"
+              name="zip_code"
+              inputProps={{ maxLength: 200 }}
+              type="string"
+              fullWidth
+              variant="outlined"
+              value={employee.zip_code}
+              onChange={handleCurrentProjectChange}
+            />
+            <Typography gutterBottom variant="body" component="body3" className={classes.space}>
+              Date Of Birth
+           </Typography>
+            <TextField
+              required
+              fullWidth
+              autoFocus
+              type="date"
+              name="date_of_birth"
+              onChange={handleCurrentProjectChange}
+              value={employee.date_of_birth}
+            />
+            <Typography gutterBottom variant="body" component="body3" className={classes.space}>
+              Employment Date
+           </Typography>
+            <TextField
+              required
+              fullWidth
+              autoFocus
+              type="date"
+              name="employment_date"
+              onChange={handleCurrentProjectChange}
+              value={employee.employment_date}
+            />
+            <Select
+              autoFocus
+              className={`${classes.selectStore} ${classes.information}`}
+              required
+              fullWidth
+              closeMenuOnSelect={true}
+              options={store}
+              value={{
+                label: myStore.label,
+                value: myStore.value,
+              }}
+              name="store_store_id"
+              onChange={(e) => {
+                setMyStore(
+                  {
+                 label: e.label,
+                value: e.value
+                });
+                console.log(e.value)
+              }}
+            />
+
+          </DialogContent>
+          <DialogActions>
+            <Button
+              type="submit"
+              color="secondary"
+              onClick={handleCloseAdd}
+              variant="contained" disableElevation
+            >
+              CANCEL
+             </Button>
+            <Button
+              type="submit"
+              color="primary"
+
+              variant="contained" disableElevation
+              className={classes.projectAdd}
+            >
+              SAVE
+             </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+
     </div>
   );
 }

@@ -113,7 +113,7 @@ export default function SignUp() {
   const [store, setStore] = useState({});
   useEffect(() => {
 
-    axios.get("/api/view_all_stores")
+    axios.get("http://localhost:4000/api/view_all_stores")
       .then((res) => {
         const data = res.data.map((item, index) => {
           return {
@@ -133,7 +133,7 @@ export default function SignUp() {
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
-      axios.post("/auth/verify", {jwtToken: localStorage.getItem("token")})
+      axios.post("http://localhost:4000/auth/verify", {jwtToken: localStorage.getItem("token")})
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -166,11 +166,11 @@ export default function SignUp() {
   const signUp = (e) => {
 
     studentFirst.date_of_birth = valueDateOfBirth.toJSON()
-      .substring(0, 10);;
+      .substring(0, 10);
   
     studentFirst.store_id_fk = myStore.value;
 
-    axios.post("/auth/create_customer", studentFirst, getConfig())
+    axios.post("http://localhost:4000/auth/create_customer", studentFirst, getConfig())
       .then((res) => {
         console.log("SUCCESS");
         console.log(res);

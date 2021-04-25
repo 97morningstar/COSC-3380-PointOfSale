@@ -74,7 +74,7 @@ function Login() {
 
 
       console.log("token exists");
-      axios.post("/auth/verify", data)
+      axios.post("http://localhost:4000/auth/verify", data)
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -107,7 +107,7 @@ function Login() {
     e.preventDefault();
 
 
-    axios.post("/auth/login", loginInfo)
+    axios.post("http://localhost:4000/auth/login", loginInfo)
       .then((res) => {
 
       
