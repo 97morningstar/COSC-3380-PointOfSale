@@ -210,7 +210,6 @@ app.put("/purchase", async (req, res) => {
                 body.total_cost_after_tax,
                 sum[0].valsum,
                 body.invoice_id,
-                
             ]);
         const createNewinvoice = await pool.query("INSERT INTO invoice (customer_id_fk, store_id_fk) VALUES (?,?)", [body.customer_id_fk, body.store_id_fk])
         res.json("The transaction was successfully purchased!");

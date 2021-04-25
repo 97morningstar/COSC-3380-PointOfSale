@@ -48,7 +48,7 @@ import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-
+import Alert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
@@ -67,10 +67,10 @@ import RoomIcon from '@material-ui/icons/Room';
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import Select from "react-select";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-
+/*
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+}*/
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -161,6 +161,9 @@ const useStyles = makeStyles((theme) => ({
     information: {
         margin: "10px",
     },
+    alert: {
+      marginTop: theme.spacing(2),
+    },
     error: {
         paddingLeft: "10px",
         paddingRight: "10px",
@@ -223,6 +226,7 @@ function Home() {
     const [userInfo, setUserInfo] = useState([]);
     const [userInput, setUserInput] = useState({});
     let history = useHistory();
+    const [error, setError] = useState("");
 
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
@@ -232,6 +236,9 @@ function Home() {
     };
     const handleCloseDeleteDialog = () => {
         setOpenDeleteDialog(false);
+    };
+    const handleCloseUpdateFailed = () => {
+      setUpdateFailed(false);
     };
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const [updateFailed, setUpdateFailed] = useState(false);
@@ -253,9 +260,7 @@ function Home() {
     const handleCloseUpdateSucess = () => {
         setUpdateSuccess(false);
     };
-    const handleCloseUpdateFailed = () => {
-        setUpdateFailed(false);
-    };
+
 
     /* TODO */
     const handleSave = () => {
@@ -299,6 +304,7 @@ function Home() {
            })
            .catch((err) => {
              console.log(err.response);
+             setUpdateErrors(err.response.data);
              setUpdateFailed(true);
            });
         
@@ -476,7 +482,8 @@ function Home() {
             setOpenAdd(false);
            })
            .catch((err) => {
-             console.log(err.response);
+             console.log(err.response.data);
+             setUpdateErrors(err.response.data);
              setUpdateFailed(true);
            });
       }
@@ -542,6 +549,11 @@ function Home() {
 
                     {userInfo.map((index, i) => {
                         return (<>
+                        {error ? (
+        <Alert className={classes.alert} variant="filled" severity="error">
+          {error}
+        </Alert>
+      ) : null}
                             <Typography variant="h6" gutterBottom component="div">
 
 
@@ -808,7 +820,17 @@ function Home() {
                         autoHideDuration={6000}
                         onClose={handleCloseUpdateFailed}>
                         <Alert onClose={handleCloseUpdateFailed} severity="error">
-                            There was a problem. Please try again at a later time.
+                        {updateError.validation ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.validation}
+                          </Typography>
+                        ) : null}
+                        {updateError.validation1 ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.validation1}
+                          </Typography>
+                        ) : null}
+                        fix this error before signing up.
                          </Alert>
                     </Snackbar>
 
