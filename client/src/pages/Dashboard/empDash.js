@@ -4,7 +4,9 @@ import { getConfig } from "../../authConfig";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
-
+import profit_report from "../../assets/profit_report.png";
+import customer_report from "../../assets/customer_report.png";
+import item_report from "../../assets/item_report.png";
 import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
@@ -187,7 +189,7 @@ const [imageArray, setimageArray] = useState([]);
 
         <Grid xs={12}    container justify="center" alignItems="center"  spacing={1} className={classes.categories} >
             <Grid xs={12} container justify="center" alignItems="center"  >
-                <Grid item xs={4} className={classes.categoryItem}>
+                <Grid item xs={6} className={classes.categoryItem}>
                   <Link href="/employee" className={classes.link}>
                       <img alt="category" className={classes.category1} src={Groceries} />
                       <Typography variant="h5" className={classes.Text} >
@@ -195,7 +197,7 @@ const [imageArray, setimageArray] = useState([]);
                      </Typography>
                   </Link>
                 </Grid>
-                <Grid item xs={4} className={classes.categoryItem}>
+                <Grid item xs={6} className={classes.categoryItem}>
                   <Link href="/inventory" className={classes.link} > 
                       <img alt="category" className={classes.category1} src={Electronics} />
                       <Typography variant="h5" className={classes.Text} >
@@ -204,36 +206,31 @@ const [imageArray, setimageArray] = useState([]);
                   </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/customer" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={Clothing} />
-                       <Typography variant="h5" className={classes.Text} >
-                        Customers
-                     </Typography>
-                    </Link>
+                    
                 </Grid>
             </Grid>
             <Grid xs={12} container justify="center" alignItems="center" >
-                <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/transaction" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={Miscellaneous} />
-                        <Typography variant="h5" className={classes.Text} >
-                        Customer Transactions
+            <Grid item xs={4} className={classes.categoryItem}>
+                  <Link href="/report_customer" className={classes.link}>
+                      <img alt="category" className={classes.category1} src={customer_report} />
+                      <Typography variant="h5" className={classes.Text} >
+                      Customer Report
                      </Typography>
-                    </Link>
+                  </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/support" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={ToysAndGames} />
-                        <Typography variant="h5" className={classes.Text} >
-                        Support Ticket
+                  <Link href="/report_profit" className={classes.link} > 
+                      <img alt="category" className={classes.category1} src={profit_report} />
+                      <Typography variant="h5" className={classes.Text} >
+                      Profit Report
                      </Typography>
-                    </Link>
+                  </Link>
                 </Grid>
                 <Grid item xs={4} className={classes.categoryItem}>
-                    <Link href="/report_dash" className={classes.link}>
-                        <img alt="category" className={classes.category1} src={Pets} />
-                        <Typography variant="h5" className={classes.Text} >
-                          Reports
+                    <Link href="/Report_3" className={classes.link}>
+                        <img alt="category" className={classes.category1} src={item_report} />
+                       <Typography variant="h5" className={classes.Text} >
+                        Item Report
                      </Typography>
                     </Link>
                 </Grid>
