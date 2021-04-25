@@ -286,7 +286,7 @@ function Item(props) {
     }
 
     /* VERIFY USER IS LOGGED IN - THIS CALLS A INNER JOIN TABLE - ALSO IT CALCULATES A REPORT FOR THE USER*/
-    axios.post("/order_history", data)
+    axios.post("http://localhost:4000/order_history", data)
       .then((res) => {
 
         setIsLoading(false);

@@ -290,7 +290,7 @@ function Home() {
               return item;
         })
         setUserInfo(Update);
-          axios.put("/account/update_payment",
+          axios.put("http://localhost:4000/account/update_payment",
              data
            )
            .then((res) => {
@@ -326,7 +326,7 @@ function Home() {
 
 
         /* GET ACCOUNT INFO AUTHENTICATION */
-        axios.post("/get_account", data)
+        axios.post("http://localhost:4000/get_account", data)
             .then((res) => {
                 setIsLoading(false);
                 console.log("e", res)
@@ -337,7 +337,7 @@ function Home() {
                 console.log("res.data", res.data);
                 setUserInput(res.data);
 
-                /*  axios.get("/api/view_all_payment_method", data)
+                /*  axios.get("http://localhost:4000/api/view_all_payment_method", data)
                   .then((res) => {
                     const data = res.data.map((item, index) => {
                       return {
@@ -401,7 +401,7 @@ function Home() {
 
       console.log(data.id)
 
-       axios.put("/account/delete_payment/" + parseInt(index.payment_id), data)
+       axios.put("http://localhost:4000/account/delete_payment/" + parseInt(index.payment_id), data)
         .then((res) => {
             console.log(res.data)
             setUpdateSuccess(true);
@@ -463,7 +463,7 @@ function Home() {
             is_employee: localStorage.getItem("is_employee")
         };
 
-          axios.post("/account/add_payment",
+          axios.post("http://localhost:4000/account/add_payment",
              data
            )
            .then((res) => {

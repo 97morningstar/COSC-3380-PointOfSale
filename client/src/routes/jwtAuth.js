@@ -29,7 +29,7 @@ router.post("/create_employee", validInfo ,async (req, res) => {
      const bcryptPassword = await bcrypt.hash(data.password,salt);
 
       
-      console.log(bcryptPassword.length);
+      console.log(data);
       const newEmployee = await pool.query("INSERT INTO employee(first_name, middle_initial, last_name,employment_date,date_of_birth, email,password, salary,street_number, street_name,city ,zip_code, phone_number,store_store_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)",
        [data.first_name, 
         data.middle_initial,

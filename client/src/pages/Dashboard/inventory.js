@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, memo } from "react";
 import axios from "axios";
 
 import Navbar from "../../components/Navbar/Navbar";
@@ -38,6 +38,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import AddIcon from '@material-ui/icons/Add';
 import CachedIcon from '@material-ui/icons/Cached';
 import DeleteIcon from '@material-ui/icons/Delete';
+import {Table1} from "./inventoryAdd";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -151,335 +152,7 @@ const useRowStyles = makeStyles({
   },
 });
 
-function Row(props) {
-  const { row } = props;
-  const [rowData, setRowData] = useState(row);
-  const [open, setOpen] = React.useState(false);
-  const classes = useRowStyles();
-  const classe = useStyles();
-  const [openEdit, setOpenEdit] = useState(false);
-  const history = useHistory();
 
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-  };
-
-  const handleUpdate = () => {
-    setOpenEdit(true);
-  }
-
-  const handleDelete = () => {
-    setOpenEdit(false);
-
-    /* FIX */
-
-    axios.put("/inventory/update_quantity", rowData)
-      .then((res) => {
-        console.log(res.data);
-        history.go(0);
-      })
-      .catch((err) => {
-      })
-
-  }
-  const handleRestockStore = store_id =>() => {
-    setOpenEdit(false);
-
-    /* FIX */
-    console.log(rowData);
-    console.log("item id",rowData.item_id);
-    console.log("store_id", store_id);
-    const neededInfo = {
-      store_id: store_id,
-      item_id: rowData.item_id
-    }
-    axios.put("/inventory/restock_store", neededInfo)
-      .then((res) => {
-        console.log(res.data);
-        history.go(0);
-      })
-      .catch((err) => {
-      })
-
-  }
-  const handleRestockWarehouse = warehouse_id =>() => {
-    setOpenEdit(false);
-
-    /* FIX */
-    console.log(rowData);
-    console.log("item id",rowData.item_id);
-    console.log("warehouse_id", warehouse_id);
-    const neededInfo = {
-      warehouse_id: warehouse_id,
-      item_id: rowData.item_id
-    }
-
-    axios.put("/inventory/restock_warehouse", neededInfo)
-      .then((res) => {
-        console.log(res.data);
-        history.go(0);
-      })
-      .catch((err) => {
-      })
-
-  }
-
-  const handleSave = () => {
-
-    setOpenEdit(false);
-
-    axios.put("/inventory/update_item", rowData)
-      .then((res) => {
-        console.log(res.data);
-        history.go(0);
-      })
-      .catch((err) => {
-      })
-  }
-
-  /*const  handleCurrentProjectChange = (e, which) => {
-       console.log(e.target.value)
-  }*/
-
-  const handleCurrentProjectChange = (e) => {
-    setRowData({
-      ...rowData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-
-
-  return (
-    <React.Fragment>
-      <StyledTableRow className={classes.root}>
-        <StyledTableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </StyledTableCell>
-        <StyledTableCell component="th" scope="row">
-          {row.name}
-        </StyledTableCell>
-        <StyledTableCell align="right">{row.category}</StyledTableCell>
-        <StyledTableCell align="right">{row.brand}</StyledTableCell>
-        <StyledTableCell align="right">{row.selling_price}</StyledTableCell>
-        <StyledTableCell align="right">{row.manufacture_cost}</StyledTableCell>
-        <StyledTableCell align="right">{row.discount}</StyledTableCell>
-        <StyledTableCell align="right">{row.item_id}</StyledTableCell>
-        <StyledTableCell >
-          <Button variant="contained" color="primary" disableElevation className={classe.space} onClick={handleUpdate} startIcon={<CachedIcon />}>
-            UPDATE
-        </Button>
-          <Button variant="contained" color="secondary" disableElevation className={classe.space} onClick={handleDelete} startIcon={<DeleteIcon />}>
-            DELETE FROM INVENTORY
-        </Button>
-
-        </StyledTableCell>
-
-      </StyledTableRow>
-      <StyledTableRow>
-        <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              <Typography variant="h6" gutterBottom component="div">
-                Item Inventory
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <StyledTableRow>
-                    <StyledTableCell>Store Name</StyledTableCell>
-                    <StyledTableCell>Store Quantity</StyledTableCell>
-                    <StyledTableCell align="right">Warehouse Name</StyledTableCell>
-                    <StyledTableCell align="right">Warehouse Quantity</StyledTableCell>
-                    <StyledTableCell align="center">Actions</StyledTableCell>
-                  </StyledTableRow>
-                </TableHead>
-                <TableBody>
-                  {row.inventory.map((historyRow) => (
-                    <StyledTableRow key={historyRow.store_name}>
-                      <StyledTableCell component="th" scope="row">
-                        {historyRow.store_name}
-                      </StyledTableCell>
-                      <StyledTableCell>{historyRow.store_quantity}</StyledTableCell>
-                      <StyledTableCell align="right">{historyRow.warehouse_name}</StyledTableCell>
-                      <StyledTableCell align="right">
-                        {historyRow.warehouse_quantity}
-                      </StyledTableCell>
-                      <Button variant="contained" color="primary" disableElevation className={classe.space} onClick={handleRestockStore(historyRow.store_id) } startIcon={<CachedIcon />}>
-                          Restock Store
-                      </Button>
-                      <Button variant="contained" color="primary" disableElevation className={classe.space} onClick={handleRestockWarehouse(historyRow.warehouse_id)} startIcon={<CachedIcon />}>
-                          Restock Warehouse
-                      </Button>
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </StyledTableCell>
-      </StyledTableRow>
-
-
-      <Dialog
-        open={openEdit}
-        onClose={handleCloseEdit}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle
-          classes={classes.addNewTitle}
-          id="form-dialog-title"
-          style={{ wordBreak: "break-all" }}
-        >
-          EDIT {row.name}
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Name"
-            name="name"
-            inputProps={{ maxLength: 200 }}
-            type="string"
-            fullWidth
-            variant="outlined"
-            value={rowData.name}
-            onChange={handleCurrentProjectChange}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="b"
-            label="Brand"
-            name="brand"
-            inputProps={{ maxLength: 200 }}
-            type="string"
-            fullWidth
-            variant="outlined"
-            value={rowData.brand}
-            onChange={handleCurrentProjectChange}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="category"
-            label="Category"
-            name="category"
-            inputProps={{ maxLength: 200 }}
-            type="string"
-            fullWidth
-            variant="outlined"
-            value={rowData.category}
-            onChange={handleCurrentProjectChange}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="manufacture_cost"
-            label="Manufacture Cost"
-            name="manufacture_cost"
-            inputProps={{ maxLength: 200 }}
-            type="string"
-            fullWidth
-            variant="outlined"
-            value={rowData.manufacture_cost}
-            onChange={handleCurrentProjectChange}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="discount"
-            label="Discount"
-            name="discount"
-            inputProps={{ maxLength: 200 }}
-            type="string"
-            fullWidth
-            variant="outlined"
-            value={rowData.discount}
-            onChange={handleCurrentProjectChange}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="selling_price"
-            label="Selling Price"
-            name="selling_price"
-            inputProps={{ maxLength: 200 }}
-            type="string"
-            fullWidth
-            variant="outlined"
-            value={rowData.selling_price}
-            onChange={handleCurrentProjectChange}
-          />
-
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleCloseEdit}
-            style={{ backgroundColor: "#f0f0f0", color: "#C8102E" }}
-          >
-            CANCEL
-           </Button>
-          <Button
-            onClick={handleSave}
-            style={{ backgroundColor: "#C8102E", color: "#FFFFFF" }}
-            className={classes.projectAdd}
-          >
-            SAVE
-           </Button>
-        </DialogActions>
-      </Dialog>
-
-    </React.Fragment>
-  );
-}
-Row.propTypes = {
-  row: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-    //name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
-};
-function CollapsibleTable({ rows }) {
-  return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <StyledTableRow>
-            <StyledTableCell />
-            <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell align="right">Category</StyledTableCell>
-            <StyledTableCell align="right">Brand</StyledTableCell>
-            <StyledTableCell align="right">Selling Price</StyledTableCell>
-            <StyledTableCell align="right">Manufacture Cost</StyledTableCell>
-            <StyledTableCell align="right">Discount Percent Off</StyledTableCell>
-            <StyledTableCell align="right">Item ID</StyledTableCell>
-            <StyledTableCell align="center">Actions</StyledTableCell>
-
-          </StyledTableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <Row key={row.item_id} row={row} />
-
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
 
 
 function Home() {
@@ -509,9 +182,10 @@ const handleSave = () => {
   setOpenAdd(false);
 
   /* AXIOS GOES HERE */
-axios.post("/api/create_item",item)
+axios.post("http://localhost:4000/api/create_item",item)
 .then((res) => {
   console.log(res.data)
+  history.go(0)
 })
 .catch((err) => {
 
@@ -520,7 +194,7 @@ axios.post("/api/create_item",item)
 
   useEffect(() => {
     if (data.is_employee === "true") {
-      axios.post("/api/view_all_inventories", data)
+      axios.post("http://localhost:4000/api/view_all_inventories", data)
         .then((res) => {
 
           console.log("RESDATA", res.data[0].name)
@@ -641,13 +315,25 @@ axios.post("/api/create_item",item)
             ADD NEW ITEM
         </Button>
           <Grid>
-            {rows ? (<CollapsibleTable rows={rows} />) : (null)}
+
+            {/* Optimization on the table :D */}
+            {rows ? (<Table1 rows={rows} />) : (null)}
+
 
           </Grid>
 
 
 
-          <Dialog
+
+
+
+
+
+
+          <Footer />
+        </Grid>
+      </React.Fragment>
+      <Dialog
         open={openAdd}
         onClose={handleCloseAdd}
         aria-labelledby="form-dialog-title"
@@ -743,27 +429,19 @@ axios.post("/api/create_item",item)
         <DialogActions>
           <Button
             onClick={handleCloseAdd}
-            style={{ backgroundColor: "#f0f0f0", color: "#C8102E" }}
+            variant="contained" color="secondary" disableElevation 
           >
             CANCEL
            </Button>
           <Button
             onClick={handleSave}
-            style={{ backgroundColor: "#C8102E", color: "#FFFFFF" }}
+            variant="contained" color="primary" disableElevation 
             className={classes.projectAdd}
           >
             SAVE
            </Button>
         </DialogActions>
       </Dialog>
-
-
-
-
-
-          <Footer />
-        </Grid>
-      </React.Fragment>
     </div>
   );
 }

@@ -6,7 +6,6 @@ import Login from "./components/Login/Login";
 import ResetPage from "./components/ResetPassword/ResetPage";
 import Signup from "./components/Signup/Signup";
 import NotFound from "./pages/NotFound/NotFound";
-import ReportBug from "./pages/ReportBug/ReportBug";
 /* Categories Routes */
 import Categories from "./pages/Categories/Categories";
 import Miscellaneous from "./pages/Categories/miscellaneous";
@@ -20,7 +19,7 @@ import Dash from "./pages/Dashboard/empDash";
 import empTables from "./pages/Dashboard/EmployeeTable"
 import inventoryDash from "./pages/Dashboard/inventory"
 import customerDash from "./pages/Dashboard/customer"
-import reportsDash from "./pages/Dashboard/reports"
+import reportsDash from "./pages/Dashboard/Reports"
 import supportDash from "./pages/Dashboard/support"
 import transactionDash from "./pages/Dashboard/transaction"
 
@@ -50,7 +49,6 @@ const App = () => {
         <Route path="/login" component={Login} />
         <Route path="/lost-password" component={ResetPage} />
         <Route path="/signup" component={Signup} />
-        <Route path="/report-bug" component={ReportBug} />
 
         <Route path="/categories" component={Categories} />
         <Route path="/miscellaneous" component={Miscellaneous} />
@@ -62,7 +60,7 @@ const App = () => {
         <Route path="/profile" component={Profile} />
         <Route path="/search/:name" component={Search} />
         <Route path="/dash" component={Dash} />
-        <Route path="/employeeTable" component={empTables} />
+        <Route path="/employee" component={empTables} />
         <Route path="/customer" component={customerDash} />
         <Route path="/inventory" component={inventoryDash} />
         <Route path="/reports" component={reportsDash} />

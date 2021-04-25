@@ -150,7 +150,7 @@ function Home() {
 
   useEffect(() => {
 
-    axios.get("/api/item/category/Toys and Games")
+    axios.get("http://localhost:4000/api/item/category/Toys and Games")
       .then((res) => {
 
         console.log(res.data);
