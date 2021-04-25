@@ -248,7 +248,7 @@ function Home() {
     let history = useHistory();
     useEffect(() => {
         if (data.is_employee === "true") {
-            axios.post("http://localhost:4000/get_top_10_items_by_quantity", data)
+            axios.post("/get_top_10_items_by_quantity", data)
                 .then((res) => {
 
 
@@ -266,7 +266,7 @@ function Home() {
                 });
 
 
-            axios.post("http://localhost:4000/get_top_10_items_by_total_cost", data)
+            axios.post("/get_top_10_items_by_total_cost", data)
                 .then((res) => {
 
 
@@ -333,7 +333,7 @@ function Home() {
 
         console.log("e",category.value)
 
-        axios.post("http://localhost:4000/get_top_10_items_sales_by_Category", data2)
+        axios.post("/get_top_10_items_sales_by_Category", data2)
             .then((res) => {
 
                 const row = res.data.map((index, i) => {

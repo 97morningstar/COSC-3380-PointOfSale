@@ -24,7 +24,58 @@ app.post("/employee/create_employee", async (req, res) => {
     //console.log(data.email);
 
     const bcryptPassword = await bcrypt.hash(data.password,salt);
-
+    data.street_number = data.street_number.toString();
+    data.salary = data.salary.toString();
+    data.zip_code = data.zip_code.toString();
+    data.phone_number = data.phone_number.toString();
+    var users_with_same_email = await pool.query("SELECT * FROM customer WHERE email = ?",[
+      data.email
+  ]); 
+  if (users_with_same_email.length !== 0){
+    const error = {
+      validation: "This Email is already in use"
+    }
+     return res.status(401).send(error);
+  }
+  users_with_same_email = await pool.query("SELECT * FROM employee WHERE email = ?",[
+    data.email
+]); 
+if (users_with_same_email.length !== 0){
+  const error = {
+    validation: "This Email is already in use"
+  }
+   return res.status(401).send(error);
+}
+if (data.password.length < 6){
+  const error = {
+    validation: "password must be atleast 6 characters"
+  }
+   return res.status(401).send(error);
+}
+    else if (data.middle_initial.length !== 1){
+      const error = {
+        validation: "Middle Initial must be one character long"
+      }
+       return res.status(401).send(error);
+    }
+    if (data.street_number.match(/^[0-9]+$/) === null){
+      const error = {
+        validation: "Street Number should only contain digits"
+      }
+       return res.status(401).send(error);
+    }
+    if (data.zip_code.match(/^[0-9]+$/) === null){
+      const error = {
+        validation: "Zip Code should only contain digits"
+      }
+       return res.status(401).send(error);
+    }
+    if (data.salary.match(/^[0-9]*\.?[0-9]*$/) === null){
+      const error = {
+        validation: "Salary Should be a valid Dollar Amount (no dollar Sign)"
+      }
+       return res.status(401).send(error);
+    }
 
     const newEmployee = await pool.query("INSERT INTO `employee`(`first_name`, `middle_initial`, `last_name`, `employment_date`, `date_of_birth`, `email`, `password`, `salary`, `street_number`, `street_name`, `city`, `zip_code`, `phone_number`, `store_store_id`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [

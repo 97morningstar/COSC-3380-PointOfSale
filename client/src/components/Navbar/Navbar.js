@@ -108,7 +108,7 @@ export default function Navbar({ user }) {
   const isLoggedIn = () => {
     if (localStorage.getItem("token")) {
       console.log("token exists");
-      axios.post("http://localhost:4000/auth/verify", data2)
+      axios.post("/auth/verify", data2)
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -126,7 +126,7 @@ export default function Navbar({ user }) {
             setUserType(true);
             console.log("is_employee")
 
-            axios.get("http://localhost:4000/api/employee/" + localStorage.getItem("user_id"))
+            axios.get("/api/employee/" + localStorage.getItem("user_id"))
               .then((res) => {
 
 
@@ -142,7 +142,7 @@ export default function Navbar({ user }) {
           else if (employee === "false") {
             setUserType(false);
             console.log("custoemr")
-            axios.get("http://localhost:4000/api/customer/" + localStorage.getItem("user_id"))
+            axios.get("/api/customer/" + localStorage.getItem("user_id"))
               .then((res) => {
 
 

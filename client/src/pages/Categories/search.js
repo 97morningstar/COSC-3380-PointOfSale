@@ -141,7 +141,7 @@ function Home({ match }) {
   useEffect(() => {
     console.log("location.state.name", match.params.name);
 
-    axios.get("http://localhost:4000/api/item/search/" + match.params.name)
+    axios.get("/api/item/search/" + match.params.name)
       .then((res) => {
 
         console.log(res.data);
@@ -162,7 +162,10 @@ function Home({ match }) {
                 images: response.data.hits,
                 name: index.name.replace("+", " "),
                 price: "$" + index.selling_price,
-                item_id: index.item_id
+                item_id: index.item_id,
+                discount: index.discount,
+                discounted_price: parseFloat(index.selling_price) * parseFloat( 1 - index.discount)
+
               }
 
               console.log(image);
@@ -265,7 +268,11 @@ function Home({ match }) {
                               {index.name}
                             </Typography>
                             <Chip
-                              label={index.price} />
+                            
+                              label={(index.discount=="0.00" ?(index.price):(<>
+                              <span style={{textDecoration: "line-through"}}> {index.price} </span><span>${index.discounted_price.toFixed(2)}</span>
+                               </>))} 
+                              />
                           </CardContent>
                         </CardActionArea>
 

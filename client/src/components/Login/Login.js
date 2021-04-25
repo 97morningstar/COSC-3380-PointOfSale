@@ -74,7 +74,7 @@ function Login() {
 
 
       console.log("token exists");
-      axios.post("http://localhost:4000/auth/verify", data)
+      axios.post("/auth/verify", data)
         .then((res) => {
           //Got new access token.
           console.log("res", res);
@@ -107,7 +107,7 @@ function Login() {
     e.preventDefault();
 
 
-    axios.post("http://localhost:4000/auth/login", loginInfo)
+    axios.post("/auth/login", loginInfo)
       .then((res) => {
 
       
@@ -210,12 +210,7 @@ function Login() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link
-                    to="/lost-password"
-                    href="lost-password"
-                    variant="body2">
-                    {"Forgot Password?"}
-                  </Link>
+            
                 </Grid>
               </Grid>
               <Box mt={5}></Box>

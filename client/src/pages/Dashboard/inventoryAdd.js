@@ -233,7 +233,7 @@ export function Ting({rows}){
   
       setOpenEdit(false);
   
-      axios.put("http://localhost:4000/inventory/update_item", rowData)
+      axios.put("/inventory/update_item", rowData)
         .then((res) => {
           console.log(res.data);
          // history.go(0);

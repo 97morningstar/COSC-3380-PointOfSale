@@ -165,7 +165,7 @@ const [images, setimages] = useState([]);
 */
 
 
-    axios.get("http://localhost:4000/api/view_all_items" , getConfig())
+    axios.get("/api/view_all_items" , getConfig())
     .then((res) => {
     
     
@@ -199,7 +199,9 @@ const [images, setimages] = useState([]);
               images: response.data.hits,
               name: res.data[i].name, // The name of the article
               price: "$" + res.data[i].selling_price,
-              item_id: res.data[i].item_id
+              item_id: res.data[i].item_id,
+              discount: res.data[i].discount,
+                discounted_price: parseFloat(res.data[i].selling_price) * parseFloat( 1 - res.data[i].discount)
             }
   
   
@@ -302,9 +304,12 @@ const [images, setimages] = useState([]);
                     <Typography variant="body" className={classes.nameOfItem} >
                       {index.name} 
                      </Typography>
-                      <Chip 
-                      label={index.price}
-                      />
+                     <Chip
+                            
+                            label={(index.discount=="0.00" ?(index.price):(<>
+                            <span style={{textDecoration: "line-through"}}> {index.price} </span><span>${index.discounted_price.toFixed(2)}</span>
+                             </>))} 
+                            />
                       <Grid item xs={12} className={classes.nameOfItem} >
                       <Link
                           style={{ textDecoration: "none", color: "black" }}

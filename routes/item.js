@@ -45,6 +45,7 @@ app.get("/item/:item_id", async (req, res) => {
     try {
   
       const {item_id} = req.params;
+      
       console.log("item_id");
       const item_by_id = await pool.query("SELECT * FROM item WHERE item_id = ?", [item_id]);
   
@@ -53,7 +54,42 @@ app.get("/item/:item_id", async (req, res) => {
       console.log(err.message);
     }
   })
-  
+  // get item by id and Store Id
+app.put("/itemByStoreID/:item_id",async (req, res) => {
+  try {
+
+    const {item_id} = req.params;
+    console.log("item_id", item_id);
+    const {user_id} = req.body;
+    console.log("user_id",user_id);
+    const getCustomer = await pool.query("Select * FROM customer WHERE customer_id = ?",[
+      user_id
+    ])
+    const getEmployee = await pool.query("Select * FROM employee WHERE employee_id = ?",[
+      user_id
+    ])
+    if (getCustomer.length !== 0){
+      const item_by_id = await pool.query("SELECT * FROM item,store_has_item WHERE item.item_id = ? AND store_has_item.store_id = ? AND store_has_item.item_id = item.item_id", [
+        item_id,
+        getCustomer[0].store_id_fk
+        
+      ]);
+      res.json(item_by_id);
+    }
+    else{
+      const item_by_id = await pool.query("SELECT * FROM item,store_has_item WHERE item.item_id = ? AND store_has_item.store_id = ? AND store_has_item.item_id = item.item_id", [
+        item_id,
+        getEmployee[0].store_store_id
+      ]);
+      res.json(item_by_id);
+    }
+    
+
+    
+  }catch (err) {
+    console.log(err.message);
+  }
+})
   // get items by category
 app.get("/item/category/:category", async (req, res) => {
     try {
