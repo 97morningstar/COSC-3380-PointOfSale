@@ -61,6 +61,8 @@ router.post("/create_customer", validInfo, async (req, res) => {
         //destruct
 
       const data  = req.body;
+      data.street_number = data.street_number.toString();
+      data.zip_code = data.zip_code.toString();
       console.log("auth create custoemr");
       var users_with_same_email = await pool.query("SELECT * FROM customer WHERE email = ?",[
         data.email

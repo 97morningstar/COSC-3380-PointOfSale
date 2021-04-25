@@ -160,7 +160,10 @@ function Home() {
                 images: response.data.hits,
                 name: index.name.replace("+", " "),
                 price: "$" + index.selling_price,
-                item_id: index.item_id
+                item_id: index.item_id,
+                discount: index.discount,
+                discounted_price: parseFloat(index.selling_price) * parseFloat( 1 - index.discount)
+
               }
 
               console.log(image);
@@ -264,7 +267,12 @@ function Home() {
                             <Typography gutterBottom variant="h5" component="h2">
                               {index.name}
                             </Typography>
-                            <Chip label={index.price} />
+                            <Chip
+                            
+                              label={(index.discount=="0.00" ?(index.price):(<>
+                              <span style={{textDecoration: "line-through"}}> {index.price} </span><span>${index.discounted_price.toFixed(2)}</span>
+                               </>))} 
+                              />
                           </CardContent>
                         </CardActionArea>
 

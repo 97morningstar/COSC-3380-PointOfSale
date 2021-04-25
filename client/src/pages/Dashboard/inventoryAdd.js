@@ -178,7 +178,7 @@ export function Ting({rows}){
   
      
   
-      axios.put("/inventory/update_quantity", rowData)
+      axios.put("http://localhost:4000/inventory/update_quantity", rowData)
         .then((res) => {
           console.log(res.data);
           history.go(0);
@@ -198,7 +198,7 @@ export function Ting({rows}){
         store_id: store_id,
         item_id: rowData.item_id
       }
-      axios.put("/inventory/restock_store", neededInfo)
+      axios.put("http://localhost:4000/inventory/restock_store", neededInfo)
         .then((res) => {
           console.log(res.data);
           history.go(0);
@@ -219,7 +219,7 @@ export function Ting({rows}){
         item_id: rowData.item_id
       }
   
-      axios.put("/inventory/restock_warehouse", neededInfo)
+      axios.put("http://localhost:4000/inventory/restock_warehouse", neededInfo)
         .then((res) => {
           console.log(res.data);
           history.go(0);

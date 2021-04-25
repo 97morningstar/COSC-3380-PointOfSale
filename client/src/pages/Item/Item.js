@@ -246,7 +246,7 @@ function Item({ match }) {
  
 
  
-
+  const [updateError, setUpdateErrors] = useState({});
   const handleAddCart = () => {
 
     const cart_data = {
@@ -267,23 +267,25 @@ function Item({ match }) {
        })
       .catch((err) => {
         console.log(err);
-        history.push("/login");
+        setUpdateFailed(true);
+        setUpdateErrors(err.response.data);        
       });
     }else{
-      setUpdateFailed(true);
+        setUpdateErrors({validation : "Can't add an item of quantity 0 to the cart."})
+        setUpdateFailed(true);
     }
 
 
   }
 
-
+  const data2 = {
+    jwtToken: localStorage.getItem("token"),
+    user_id: localStorage.getItem("user_id"),
+    is_employee: localStorage.getItem("is_employee")
+  }
   useEffect(() => {
 
-    const data2 = {
-      jwtToken: localStorage.getItem("token"),
-      user_id: localStorage.getItem("user_id"),
-      is_employee: localStorage.getItem("is_employee")
-    }
+   
 
 if(data2.is_employee === "false"){
     axios.post("http://localhost:4000/get_cart", data2)
@@ -299,7 +301,7 @@ if(data2.is_employee === "false"){
 
 
 
-    axios.get("http://localhost:4000/api/item/" + match.params.name)
+    axios.put("http://localhost:4000/api/itemByStoreID/" + match.params.name, data2)
       .then((res) => {
 
         console.log("item", res.data);
@@ -316,14 +318,18 @@ if(data2.is_employee === "false"){
 
             console.log(response.data.hits);
 
-
+            console.log("user",data2.user_id);
             const image = {
               images: response.data.hits,
               name: res.data[0].name.replace("+", " "),
               price: res.data[0].selling_price,
               category: res.data[0].category,
               brand: res.data[0].brand,
-              item_id: res.data[0].item_id
+              item_id: res.data[0].item_id,
+              quantity:res.data[0].quantity,
+              discount: res.data[0].discount,
+                discounted_price: parseFloat(res.data[0].selling_price) * parseFloat( 1 - res.data[0].discount)
+
             }
 
             console.log(image);
@@ -355,7 +361,9 @@ if(data2.is_employee === "false"){
                         images: response.data.hits,
                         name: index.name.replace("+", " "),
                         price: index.selling_price,
-                        item_id: index.item_id
+                        item_id: index.item_id,
+                        discount: index.discount,
+                        discounted_price: parseFloat(index.selling_price) * parseFloat( 1 - index.discount)
                       }
 
                       console.log(image);
@@ -456,9 +464,13 @@ if(data2.is_employee === "false"){
                     />
                   </Grid>
                   <Grid xs={12} item >
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Price: ${imageArray[0].price}
-                    </Typography>
+                   
+                  <Typography gutterBottom variant="h5" component="h2">
+                  Price: 
+                            {(imageArray[0].discount=="0.00" ?(imageArray[0].price):(<>
+                            <span style={{textDecoration: "line-through"}}> {imageArray[0].price} </span><span>${imageArray[0].discounted_price.toFixed(2)}</span>
+                             </>))} 
+                             </Typography>
                   </Grid>
 
                   <Grid xs={12} item >
@@ -491,6 +503,9 @@ if(data2.is_employee === "false"){
                       <Typography gutterBottom variant="body3" component="body">
                         You need to have an account to be able to buy
                    </Typography>
+                      <Typography gutterBottom variant="body" component="body">
+                        Store Stock: {imageArray[0].quantity}
+                   </Typography>
 
                   
                     <Grid xs={12} item >
@@ -518,7 +533,7 @@ if(data2.is_employee === "false"){
                     />
                     <Grid xs={12} item >
                       <Typography gutterBottom variant="h5" component="h2">
-                        Total Cost: ${(parseFloat(imageArray[0].price) * numberOfItems).toFixed(2)}
+                        Total Cost: ${(parseFloat(imageArray[0].discounted_price) * numberOfItems).toFixed(2)}
                       </Typography>
                       <Typography gutterBottom variant="body3" component="body">
                         Taxes will be calculated during checkout
@@ -526,6 +541,7 @@ if(data2.is_employee === "false"){
 
                     </Grid>
                   </>
+                  {data2.is_employee=="false" ?(<>
                   <Grid container xs={12}>
                     <Grid items xs={12}>
                       <Button onClick={handleAddCart} size="medium" variant="contained" color="primary" className={classes.botton}>
@@ -533,6 +549,17 @@ if(data2.is_employee === "false"){
                       </Button>
                     </Grid>
                   </Grid>
+                  </>) : (
+                    <Grid container xs={12}>
+                    <Grid items xs={12}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      Employees can't add items to their cart
+               </Typography>
+                    </Grid>
+                  </Grid>
+                    
+               
+                  )}
                 </Grid>
 
 
@@ -584,7 +611,11 @@ if(data2.is_employee === "false"){
                               {index.name}
                             </Typography>
                             <Chip
-                              label={index.price} />
+                            
+                              label={(index.discount=="0.00" ?(<>${index.price}</>):(<>
+                              <span style={{textDecoration: "line-through"}}> {index.price} </span><span>${index.discounted_price.toFixed(2)}</span>
+                               </>))} 
+                              />
                           </CardContent>
                         </CardActionArea>
                         <Link
@@ -644,7 +675,11 @@ if(data2.is_employee === "false"){
         autoHideDuration={6000}
         onClose={handleCloseUpdateFailed}>
         <Alert onClose={handleCloseUpdateFailed} severity="error">
-          There was a problem when adding this item to your cart. Please check that you have set at least one item or if you are logged in into the site
+        {updateError.validation ? (
+                          <Typography className={classes.error} color="white">
+                            {updateError.validation}
+                          </Typography>
+                        ) : null}
         </Alert>
       </Snackbar>
       </React.Fragment>

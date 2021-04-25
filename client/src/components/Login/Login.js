@@ -210,12 +210,7 @@ function Login() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link
-                    to="/lost-password"
-                    href="lost-password"
-                    variant="body2">
-                    {"Forgot Password?"}
-                  </Link>
+            
                 </Grid>
               </Grid>
               <Box mt={5}></Box>

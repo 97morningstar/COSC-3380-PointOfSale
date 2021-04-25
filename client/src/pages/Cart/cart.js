@@ -253,8 +253,10 @@ function Item({ match }) {
 
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [buySuccess, setBuySuccess] = useState(false);
+  const [buyFailed, setBuyFailed] = useState(false);
   const [updateFailed, setUpdateFailed] = useState(false);
-
+  const [updateError, setUpdateErrors] = useState({});
+  const [buyError, setBuyErrors] = useState({});
   const handleCloseUpdateSucess = () => {
     setUpdateSuccess(false);
   };
@@ -263,6 +265,9 @@ function Item({ match }) {
   };
   const handleCloseBuySuccess = () => {
     setBuySuccess(false);
+  };
+  const handleCloseBuyFailed = () => {
+    setBuyFailed(false);
   };
 
 
@@ -274,11 +279,11 @@ function Item({ match }) {
 
   const handleBuy = () => {
     let total = (invoiceItems.map((index) => {
-      return 0.0825 * parseFloat(index.selling_price * index.quantity);
+      return 0.0825 * parseFloat((index.selling_price * (1 - index.discount)) * index.quantity);
     }).reduce((total, num) => {
       return total + num
     }) + invoiceItems.map((index) => {
-      return parseFloat(index.selling_price * index.quantity);
+      return parseFloat((index.selling_price * (1 - index.discount)) * index.quantity);
     }).reduce((total, num) => {
       return parseFloat(total + num)
     })).toFixed(2)
@@ -294,20 +299,24 @@ function Item({ match }) {
         store_id_fk: invoiceItems[0].store_id_fk
       }
 
-      if (paymentMethod.length !== 0) {
-        setInvoiceItems([]);
-      }
+      
 
+      console.log("Clicking Purchase Button");
 
       axios.put("http://localhost:4000/api/purchase", data)
         .then((res) => {
           console.log(res.data)
           setBuySuccess(true)
+          if (paymentMethod.length !== 0) {
+            setInvoiceItems([]);
+          }
         })
         .catch((err) => {
           console.log(err.response.data)
-          setUpdateFailed(true);
+          setBuyErrors(err.response.data);
+          setBuyFailed(true);
         })
+        
     } else {
       setUpdateFailed(true);
     }
@@ -408,7 +417,7 @@ function Item({ match }) {
             setInvoiceItems(response.data);
 
             setIsLoading(false);
-
+            
             /* GET IMAGES */
             response.data.map((index) => {
               index.name = index.name.replace(" ", "+");
@@ -423,7 +432,7 @@ function Item({ match }) {
                   index.name = index.name.replace("+", " ");
 
                   const image = {
-                    images: response.data.hits[0],
+                    images: response.data.hits[0]
                   }
 
                   setimageArray(imageArray => [...imageArray, image]);
@@ -575,7 +584,10 @@ function Item({ match }) {
                                   Brand: {index.brand}
                                 </Typography>
                                 <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
-                                  Price: ${index.selling_price}
+                                  Price: ${(index.selling_price * (1 - index.discount)).toFixed(2)}
+                                </Typography>
+                                <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
+                                  Stock: {index.stock}
                                 </Typography>
                                 <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
                                   Quantity:
@@ -600,7 +612,7 @@ function Item({ match }) {
                                   }}
                                 />
                                 <Typography gutterBottom variant="h6" component="h2" className={classes.botton}>
-                                  Subtotal: ${(index.quantity * index.selling_price).toFixed(2)}
+                                  Subtotal: ${(index.quantity * (index.selling_price * (1 - index.discount))).toFixed(2)}
                                 </Typography>
 
                                 <Button
@@ -662,25 +674,25 @@ function Item({ match }) {
                           />
                           <Typography gutterBottom component="body" className={classes.botton}>
                             Total Before Tax: ${(invoiceItems.map((index) => {
-                            return parseFloat(index.selling_price * index.quantity);
+                            return parseFloat((index.selling_price * (1 - index.discount)) * index.quantity);
                           }).reduce((total, num) => {
                             return total + num
                           })).toFixed(2)}
                           </Typography>
                           <Typography gutterBottom component="body" className={classes.botton}>
                             Tax on this invoice: ${invoiceItems.map((index) => {
-                            return 0.0825 * parseFloat(index.selling_price * index.quantity);
+                            return 0.0825 * parseFloat((index.selling_price * (1 - index.discount)) * index.quantity);
                           }).reduce((total, num) => {
                             return total + num
                           }).toFixed(2)}
                           </Typography>
                           <Typography gutterBottom component="body" className={classes.botton}>
                             Total Cost: ${(invoiceItems.map((index) => {
-                            return 0.0825 * parseFloat(index.selling_price * index.quantity);
+                            return 0.0825 * parseFloat((index.selling_price * (1 - index.discount)) * index.quantity);
                           }).reduce((total, num) => {
                             return total + num
                           }) + invoiceItems.map((index) => {
-                            return parseFloat(index.selling_price * index.quantity);
+                            return parseFloat((index.selling_price * (1 - index.discount)) * index.quantity);
                           }).reduce((total, num) => {
                             return parseFloat(total + num)
                           })).toFixed(2)}
@@ -752,6 +764,14 @@ function Item({ match }) {
           onClose={handleCloseUpdateFailed}>
           <Alert onClose={handleCloseUpdateFailed} severity="error">
             There was a problem when updating this cart. Please provide a payment method.
+        </Alert>
+        </Snackbar>
+        <Snackbar
+          open={buyFailed}
+          autoHideDuration={10000}
+          onClose={handleCloseBuyFailed}>
+          <Alert onClose={handleCloseBuyFailed} severity="error">
+          Purchase Failed. One of the items you are trying to purchase doesn't have enough stock. Lower your item's quantity and Try again.
         </Alert>
         </Snackbar>
         <Snackbar

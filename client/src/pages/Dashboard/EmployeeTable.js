@@ -4,7 +4,8 @@ import { getConfig } from "../../authConfig";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Navbarnavigation from "../../components/NavbarNavigation/Navbar";
-
+import Alert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 import Link from "@material-ui/core/Link";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
@@ -146,6 +147,8 @@ const StyledTableRow = withStyles((theme) => ({
     },
   },
 }))(TableRow);
+
+
 const useRowStyles = makeStyles({
   root: {
     '& > *': {
@@ -172,7 +175,7 @@ function Row(props) {
   const handleUpdate = () => {
     setOpenEdit(true);
   }
-
+  
   const handleDelete = () => {
 
     axios.delete("http://localhost:4000/api/delete/employee/" + row.employee_id)
@@ -482,7 +485,14 @@ function Home() {
   const [myStore, setMyStore] = useState({});
   const [rows, setRows] = useState([]);
   let history = useHistory();
-
+  const handleCloseUpdateSucess = () => {
+    setUpdateSuccess(false);
+  };
+  const handleCloseUpdateFailed = () => {
+    setUpdateFailed(false);
+  };
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updateFailed, setUpdateFailed] = useState(false);
   useEffect(() => {
     if (data.is_employee === "true") {
       axios.post("http://localhost:4000/api/view_all_employee", data)
@@ -527,7 +537,7 @@ function Home() {
 
   const [openAdd, setOpenAdd] = useState(false);
   const [employee, setEmployee] = useState({});
-
+  const [updateError, setUpdateErrors] = useState({});
   const handleCloseAdd = () => {
     setOpenAdd(false);
   };
@@ -549,10 +559,12 @@ employee.store_store_id = myStore.value;
         console.log(res.data)
         console.log("Success")
 
-        // history.go(0)
+        history.go(0)
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
+        setUpdateErrors(err.response.data);
+        setUpdateFailed(true);
       })
   }
 
@@ -609,7 +621,7 @@ employee.store_store_id = myStore.value;
         >
           ADD new employee information
         </DialogTitle>
-        <form className={classes.form} onSubmit={handleSave}>
+        
           <DialogContent>
 
             <TextField
@@ -825,18 +837,31 @@ employee.store_store_id = myStore.value;
             <Button
               type="submit"
               color="primary"
-
+              onClick={handleSave}
               variant="contained" disableElevation
               className={classes.projectAdd}
             >
               SAVE
              </Button>
           </DialogActions>
-        </form>
+        
       </Dialog>
 
-
+      <Snackbar
+                        open={updateFailed}
+                        autoHideDuration={6000}
+                        onClose={handleCloseUpdateFailed}>
+                        <Alert onClose={handleCloseUpdateFailed} severity="error">
+                        {updateError.validation ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.validation}
+                          </Typography>
+                        ) : null}
+                        fix this error before Creating an Employee.
+                         </Alert>
+                    </Snackbar>
     </div>
+    
   );
 }
 
