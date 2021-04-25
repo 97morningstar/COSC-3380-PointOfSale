@@ -62,18 +62,50 @@ router.post("/create_customer", validInfo, async (req, res) => {
 
       const data  = req.body;
       console.log("auth create custoemr");
-      var user = await pool.query("SELECT * FROM customer WHERE email = ?",[
+      var users_with_same_email = await pool.query("SELECT * FROM customer WHERE email = ?",[
         data.email
     ]); 
-    if (user.length !== 0){
-      return res.status(401).send("Email Already in use")
-   }
-    user = await pool.query("SELECT * FROM employee WHERE email = ?",[
+    if (users_with_same_email.length !== 0){
+      const error = {
+        email_address: "This Email is already in use"
+      }
+       return res.status(401).send(error);
+    }
+    users_with_same_email = await pool.query("SELECT * FROM employee WHERE email = ?",[
       data.email
   ]); 
-   if (user.length !== 0){
-      return res.status(401).send("Email Already in use")
-   }
+  if (users_with_same_email.length !== 0){
+    const error = {
+      email_address: "This Email is already in use"
+    }
+     return res.status(401).send(error);
+  }
+    if (data.password.length < 6){
+      const error = {
+        password: "password must be atleast 6 characters"
+      }
+       return res.status(401).send(error);
+    }
+    if (data.middle_initial.length !== 1){
+      const error = {
+        middle_initial: "Middle Initial must be one character long"
+      }
+       return res.status(401).send(error);
+    }
+    if (data.street_number.match(/^[0-9]+$/) === null){
+      const error = {
+        street_number: "Street Number should only contain digits"
+      }
+       return res.status(401).send(error);
+    }
+    if (data.zip_code.match(/^[0-9]+$/) === null){
+      const error = {
+        zip_code: "Zip Code should only contain digits"
+      }
+       return res.status(401).send(error);
+    }
+    
+   
      const saltRound = 10;
      const salt = await bcrypt.genSalt(saltRound);
      //console.log(data.email);

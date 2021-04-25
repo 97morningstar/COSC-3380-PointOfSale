@@ -42,7 +42,8 @@ app.put("/customer/:id/:store_id_fk", async (req, res) => {
       const {store_id_fk} = req.params;
 
       const data  = req.body;
-
+      console.log("Data Update Customer",data);
+      console.log("Type of street num",typeof data.street_number);
       if(data.first_name == ""){
         const error = {
           first_name: "First Name can't be empty."
@@ -73,8 +74,26 @@ app.put("/customer/:id/:store_id_fk", async (req, res) => {
           zip_code: "Zip Code can't be empty."
         }
        res.status(400).send(error);
+      }
+      else if (data.middle_initial.length !== 1){
+        const error = {
+          middle_initial: "Middle Initial must be one character long"
+        }
+         return res.status(401).send(error);
+      }
+      else if (typeof data.street_number !== 'number' && data.street_number.match(/^[0-9]+$/) === null){
+        const error = {
+          street_number: "Street Number should only contain digits"
+        }
+         return res.status(401).send(error);
+      }
+      else if (typeof data.zip_code !== 'number' && data.zip_code.match(/^[0-9]+$/) === null){
+        const error = {
+          zip_code: "Zip Code should only contain digits"
+        }
+         return res.status(401).send(error);
       }else{
-
+        console.log("No Issues Updating Customer");
       const updateCustomer = await pool.query("UPDATE customer SET first_name = ?, middle_initial = ?, last_name = ?, street_number = ?, street_name = ?, zip_code = ?, date_of_birth = ?, is_member = ?, store_id_fk = ? WHERE customer_id = ?", 
       [ data.first_name, 
       data.middle_initial,
@@ -87,7 +106,10 @@ app.put("/customer/:id/:store_id_fk", async (req, res) => {
       store_id_fk,
       id,
       ]);
-      
+      const updateInvoice = await pool.query("UPDATE invoice SET store_id_fk = ? WHERE customer_id_fk = ? AND order_status = 'cart'",[
+        store_id_fk,
+        id
+      ])
       res.json("Customer was updated successfully!");
     }
     }catch (err) {

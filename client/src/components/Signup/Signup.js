@@ -7,7 +7,8 @@ import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Alert from "@material-ui/lab/Alert";
-
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import DatePicker from "react-date-picker";
 import {
   Button,
@@ -99,7 +100,11 @@ export default function SignUp() {
   const handleChange = (e) => {
     setStudentFirst({ ...studentFirst, [e.target.name]: e.target.value });
   };
-
+  const handleCloseUpdateFailed = () => {
+    setUpdateFailed(false);
+  };
+  const [updateFailed, setUpdateFailed] = useState(false);
+  const [updateError, setUpdateErrors] = useState({});
   let history = useHistory();
 
 
@@ -181,7 +186,11 @@ export default function SignUp() {
           history.push("/");
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>{ 
+        console.log(err)
+        setUpdateErrors(err.response.data);
+        setUpdateFailed(true);
+      });
 
     e.preventDefault();
   };
@@ -474,6 +483,39 @@ export default function SignUp() {
           </Grid>
         </form>
       </div>
+      <Snackbar
+        open={updateFailed}
+        autoHideDuration={6000}
+        onClose={handleCloseUpdateFailed}>
+        <Alert onClose={handleCloseUpdateFailed} severity="error">
+        {updateError.email_address ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.email_address}
+                          </Typography>
+                        ) : null}
+        {updateError.password ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.password}
+                          </Typography>
+                        ) : null}    
+         {updateError.middle_initial ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.middle_initial}
+                          </Typography>
+                        ) : null} 
+         {updateError.street_number ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.street_number}
+                          </Typography>
+                        ) : null}       
+                         {updateError.zip_code ? (
+                          <Typography className={classes.error} color="error">
+                            {updateError.zip_code}
+                          </Typography>
+                        ) : null}                             
+                        fix this error before signing up.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

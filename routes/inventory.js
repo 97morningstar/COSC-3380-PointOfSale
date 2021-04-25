@@ -60,9 +60,24 @@ const authorize = require("../client/src/middleware/authorization");
        
         const {item_id} = req.body; 
         const {store_id} = req.body;
-        
-        const quantity_store = await pool.query("UPDATE store_has_item SET quantity=50 WHERE store_has_item.item_id = ? AND store_has_item.store_id = ?", 
+        var quantity = 50;
+        const check_warehouse_quantity = await pool.query("SELECT * FROM warehouse_has_item WHERE item_id = ? AND warehouse_id = ?",
         [
+          item_id,
+         store_id
+        ])
+        if (check_warehouse_quantity[0].quantity < 50){
+          quantity = check_warehouse_quantity[0].quantity
+        }
+        const quantity_warehouse = await pool.query("UPDATE warehouse_has_item SET quantity = quantity - ? WHERE warehouse_has_item.item_id = ? AND warehouse_has_item.warehouse_id = ?",
+        [
+          quantity,
+          item_id,
+         store_id
+        ])
+        const quantity_store = await pool.query("UPDATE store_has_item SET quantity= quantity + ? WHERE store_has_item.item_id = ? AND store_has_item.store_id = ?", 
+        [
+        quantity,
          item_id,
          store_id
         ]);
