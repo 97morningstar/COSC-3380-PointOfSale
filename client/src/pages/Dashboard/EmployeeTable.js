@@ -178,7 +178,7 @@ function Row(props) {
   
   const handleDelete = () => {
 
-    axios.delete("http://localhost:4000/api/delete/employee/" + row.employee_id)
+    axios.delete("/api/delete/employee/" + row.employee_id)
       .then((res) => {
         console.log(res.data);
         history.go(0);
@@ -192,7 +192,7 @@ function Row(props) {
 
     setOpenEdit(false);
 
-    axios.put("http://localhost:4000/api/employee/" + row.employee_id, rowData)
+    axios.put("/api/employee/" + row.employee_id, rowData)
       .then((res) => {
         console.log(res.data);
         //history.go(0);
@@ -495,7 +495,7 @@ function Home() {
   const [updateFailed, setUpdateFailed] = useState(false);
   useEffect(() => {
     if (data.is_employee === "true") {
-      axios.post("http://localhost:4000/api/view_all_employee", data)
+      axios.post("/api/view_all_employee", data)
         .then((res) => {
 
           console.log("RESDATA", res.data[0].employee_id)
@@ -517,7 +517,7 @@ function Home() {
       history.push("/login");
     }
 
-    axios.get("http://localhost:4000/api/view_all_stores")
+    axios.get("/api/view_all_stores")
       .then((res) => {
         const data = res.data.map((item, index) => {
           return {
@@ -554,7 +554,7 @@ function Home() {
 employee.store_store_id = myStore.value;
 
     /* AXIOS GOES HERE */
-    axios.post("http://localhost:4000/api/employee/create_employee", employee)
+    axios.post("/api/employee/create_employee", employee)
       .then((res) => {
         console.log(res.data)
         console.log("Success")

@@ -136,7 +136,7 @@ useEffect(() => {
   }
 
   /* VERIFY USER IS LOGGED IN */
-  axios.post("http://localhost:4000/get_dashboard", data)
+  axios.post("/get_dashboard", data)
   .then((res) => {
   })
   .catch((err) => {

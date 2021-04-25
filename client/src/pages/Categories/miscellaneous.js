@@ -150,7 +150,7 @@ function Home() {
 
   useEffect(() => {
 
-    axios.get("http://localhost:4000/api/item/category/Miscellaneous")
+    axios.get("/api/item/category/Miscellaneous")
       .then((res) => {
 
         console.log(res.data);

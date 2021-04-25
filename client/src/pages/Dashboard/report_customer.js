@@ -262,7 +262,7 @@ function Home() {
             store_id_fk: myStore.value,
             end_date: endDate.toJSON().substring(0, 10)
         }
-        axios.post("http://localhost:4000/get_total_amont_of_customers", data2)
+        axios.post("/get_total_amont_of_customers", data2)
         .then((res) => {
 
             console.log("found", res.data)
@@ -280,7 +280,7 @@ function Home() {
         .catch((err) => {
             console.log(err.response);
         });
-        axios.post("http://localhost:4000/get_amount_of_customers_by_time_frame", data2)
+        axios.post("/get_amount_of_customers_by_time_frame", data2)
             .then((res) => {
 
                 console.log("found", res.data)
@@ -316,7 +316,7 @@ function Home() {
             end_date: endDate.toJSON().substring(0, 10)
         }
 
-        axios.post("http://localhost:4000/get_all_customers_by_time_frame", data2)
+        axios.post("/get_all_customers_by_time_frame", data2)
             .then((res) => {
 
                 console.log("found", res.data)
@@ -339,7 +339,7 @@ function Home() {
 
     useEffect(() => {
         if (data.is_employee === "true") {
-            axios.get("http://localhost:4000/api/view_all_stores")
+            axios.get("/api/view_all_stores")
                 .then((res) => {
                     const data = res.data.map((item, index) => {
                         return {

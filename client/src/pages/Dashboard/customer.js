@@ -181,7 +181,7 @@ const [rows, setRows] = useState([]);
 let history = useHistory();
   useEffect(() => {
     if (data.is_employee === "true"){
-      axios.post("http://localhost:4000/api/view_all_employee",data)
+      axios.post("/api/view_all_employee",data)
       .then((res) => {
       
       console.log("RESDATA",res.data[0].employee_id)
