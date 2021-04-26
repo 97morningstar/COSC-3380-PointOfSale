@@ -9,11 +9,21 @@ Team 4 - Point of Sale System
 4. Steven Do
 5. Daniel Aigboduwa
 
-# Link
+# Website Link
 
 [Heroku Link](https://cosc3380-pointofsale.herokuapp.com/)
 
-## Instructions :receipt:
+# Login Information
+
+### Employee
+email: p@gmail.com
+password: p
+
+### Customer
+email: newCustomer@gmail.com
+password: password
+
+## Instructions (How to install) :receipt:
 > You need to have installed: npm, git, nodejs
 
 Links:
