@@ -246,11 +246,12 @@ export default function Navbar({ user }) {
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
                   >
-                    <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon} /> View Profile</MenuItem>
+                    
 
 
                     {userType==false ? (<>
                       <MenuItem onClick={handleAccount}> <SupervisorAccountIcon className={classes.icon} /> Account</MenuItem>
+                      <MenuItem onClick={handleProfile}> <AccountCircleIcon className={classes.icon} /> View Profile</MenuItem>
                     </>) : (
                       <></>
                     )
