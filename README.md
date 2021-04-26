@@ -35,13 +35,35 @@ Links:
 [To install git](https://git-scm.com/downloads)
 
 1. Create a folder in your computer
-2. Type in the command line:
+
+### If working with the remote repository:
+
+Type in the command line:
 
 `git init` [inside that folder to initialize a git repository]
 
 `git clone https://github.com/97morningstar/COSC-3380-PointOfSale.git` [To copy the remote repository into your own computer]
 
 `cd COSC-3380-PointOfSale`
+
+`cd client`
+
+`npm install` [inside /client to install client dependencies]
+
+`cd ..`
+
+`npm install` [in the root folder to install server dependencies]
+
+`npm install -g nodemon`
+
+
+### If working with the local repository:
+
+Type in the command line:
+
+Go to the folder you just created and copy the contents of the zip file there
+
+`git init` [inside that folder to initialize a git repository]
 
 `cd client`
 
