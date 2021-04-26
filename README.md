@@ -1,8 +1,25 @@
 # COSC-3380-PointOfSale :credit_card:
 Team 4 - Point of Sale System
 
+# Team Members
+
+1. Kyle Cunningham
+2. Elisa Martinez
+3. Jordan Yu
+4. Steven Do
+5. Daniel Aigboduwa
+
+# Link
+
+[Heroku Link](https://cosc3380-pointofsale.herokuapp.com/)
+
 ## Instructions :receipt:
-> You need to install: npm, git, nodejs
+> You need to have installed: npm, git, nodejs
+
+Links:
+
+[To install npm and nodejs](https://nodejs.org/en/)
+[To install git](https://git-scm.com/downloads)
 
 1. Create a folder in your computer
 2. Type in the command line:
@@ -13,7 +30,11 @@ Team 4 - Point of Sale System
 
 `cd COSC-3380-PointOfSale`
 
+`cd client`
+
 `npm install` [inside /client to install client dependencies]
+
+`cd ..`
 
 `npm install` [in the root folder to install server dependencies]
 
@@ -27,7 +48,9 @@ Team 4 - Point of Sale System
 
 ### Solution :pill:
 
-1. Run the following in the /client:
+1. Run the following in the ./client:
+
+`cd client`
 
 `rm-rf node_modules`
 
@@ -37,12 +60,12 @@ Team 4 - Point of Sale System
 
 `npm install`
 
-`cd mainFolder`
+`cd ..`
 
 `nodemon `
 
-## If you want to work on the server, then main file that we will be working on is in the root folder :hammer:
-index.js
+## All of our queries and code are in the following files :hammer:
+/routes
 
 ## Branching :octocat:
 
@@ -71,8 +94,8 @@ index.js
 
 > Pull requests or PRs are basically how you merge your changes with the master code. They will be revised by a member of the group and that member will post comments on your code and ask you to fix those.
 
-1. Once you push your code you will see a green message saying if you want to create a pull request. Always do a pull request to heroku-deply as it is the main branch. Do not delete your own branch as you will continue to use it.
-2. You can also click on Pull request and open one there.
+1. Once you push your code you will see a green message saying if you want to create a pull request. Always do a pull request to heroku-deploy as it is the main branch. Do not delete your own branch as you will continue to use it.
+2. You can also click on Pull Request and open one there.
 
 ## Tech Stack
 
@@ -91,13 +114,8 @@ heroku :rocket:
 To test the queries:
 
 1. Install Postman
-2. Create collection (once)
-3. Click the 3 dots and create a new request by clicking Add request
-4. Select the right method (get, put, post, delete)
-5. Run the server
-6. Copy the localhot address and go to the link on the request (example: http://localhost:3000/api/create_item)
-
-get: just send
-post/put: 
-1. Go to Body > raw > select JSON
-2. Copy the object, and send
+2. Create a Collection (once)
+3. Click the 3 dots and create a new request by clicking "Add Request"
+4. Select the correct method (get, put, post, delete)
+5. Run the server in the command prompt
+6. Copy the localhost address and go to the link on the request (example: http://localhost:4200/api/create_item)
