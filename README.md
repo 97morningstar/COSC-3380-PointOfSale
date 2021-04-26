@@ -79,7 +79,7 @@ Go to the folder you just created and copy the contents of the zip file there
 `nodemon`
 
 ## Possible Problems :massage_man:
-1. react-scripts is missing or not installed
+1. react-scripts is missing or not installed when running the project with nodemon
 
 ### Solution :pill:
 
