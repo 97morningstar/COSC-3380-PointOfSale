@@ -17,10 +17,13 @@ Team 4 - Point of Sale System
 
 ### Employee
 email: p@gmail.com
+
 password: p
+
 
 ### Customer
 email: newCustomer@gmail.com
+
 password: password
 
 ## Instructions (How to install) :receipt:
