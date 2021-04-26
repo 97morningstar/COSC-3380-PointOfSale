@@ -13,6 +13,10 @@ Team 4 - Point of Sale System
 
 [Heroku Link](https://cosc3380-pointofsale.herokuapp.com/)
 
+# Database file (mySQL)
+
+It is named sqlDumpFile.sql and it's located in the root folder
+
 # Login Information
 
 ### Employee
